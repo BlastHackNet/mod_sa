@@ -1,0 +1,17 @@
+1 VERSIONINFO
+FILEVERSION 4,3,1,4
+FILETYPE 0x00000001
+{
+  BLOCK "StringFileInfo"
+	 {
+		 BLOCK "040904E4"
+		 {
+			 VALUE "FileDescription", "mod_sa"
+			 VALUE "CompanyName", "we_sux (full updated for 0.3e by FYP)"
+		 }
+	 }
+  BLOCK "VarFileInfo"
+	 {
+		 VALUE "Translation", 0x0409, 1252
+	 }
+}
