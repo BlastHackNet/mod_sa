@@ -1,8 +1,20 @@
 mod_sa
 by notaplane, jflm, nuckfuts, FYP and the game modification community
-updated for 0.3x, 0.3z by FYP
-http://code.google.com/p/mod-s0beit-sa/
+https://github.com/BlastHackNet/mod_s0beit_sa/
 http://blasthack.net
+
+Version 4.4.0.0
+* Fully updated to 0.3.7
+* New function FastWarp
+* New function FreezeRot
+* New function Surf
+* New keyboard shortcuts
+* New Aimbot
+* Menu which you can control by a cursor
+* Menu of the RakNet patches
+* Improved some render functions: map, nametags, vehicletags
+* A lot of fixes
+* Map teleport settings
 
 Version 4.3.3.3
 * Updated on 0.3z R1

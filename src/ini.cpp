@@ -2,9 +2,9 @@
 
 	PROJECT:		mod_sa
 	LICENSE:		See LICENSE in the top level directory
-	COPYRIGHT:		Copyright we_sux, FYP
+	COPYRIGHT:		Copyright we_sux, BlastHack
 
-	mod_sa is available from http://code.google.com/p/m0d-s0beit-sa/
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
 
 	mod_sa is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -37,6 +37,8 @@
 #define TYPE_SERVER		12
 #define TYPE_CHATMSG	13
 #define TYPE_GUI		14
+#define TYPE_KEYCOMBO	15
+#define TYPE_NETPATCH	16
 
 #define LTRIM( str ) \
 	while ( *(str) == '\t' || *(str) == ' ' ) \
@@ -306,12 +308,8 @@ static void ini_init ( void )
 	if ( (ent = ini_register_entry("basic_mode", TYPE_BOOL)) != NULL )
 		ini_register_data( ent, &set.basic_mode, "true" );
 
-	// secondary key
-	if ( (ent = ini_register_entry("secondary_key", TYPE_KEY)) != NULL )
-		ini_register_data( ent, &set.secondary_key, "lalt" );
-
 	/* hp cheat */
-	if ( (ent = ini_register_entry("key_hp_cheat", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_hp_cheat", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_hp_cheat, "insert" );
 	if ( (ent = ini_register_entry("hp_minimum", TYPE_FLOAT)) != NULL )
 		ini_register_data( ent, &set.hp_minimum, "0.0" );
@@ -331,43 +329,43 @@ static void ini_init ( void )
 		ini_register_data( ent, &set.hp_disable_inv_sp_enemies, "false" );
 
 	/* key anti freeze */
-	if ( (ent = ini_register_entry("key_anti_freeze", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_anti_freeze", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_anti_freeze, "b" );
 
 	/* air brake */
-	if ( (ent = ini_register_entry("key_air_brake_mod", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_air_brake_mod", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_air_brake_mod, "rshift" );
-	if ( (ent = ini_register_entry("key_air_brake_foot_mod", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_air_brake_foot_mod", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_air_brake_foot_mod, "rshift" );
-	if ( (ent = ini_register_entry("key_air_brake_mod2", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_air_brake_mod2", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_air_brake_mod2, "&0" );
 
 	/* movement */
-	if ( (ent = ini_register_entry("key_air_brake_forward", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_air_brake_forward", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_air_brake_forward, "w" );
-	if ( (ent = ini_register_entry("key_air_brake_backward", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_air_brake_backward", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_air_brake_backward, "s" );
-	if ( (ent = ini_register_entry("key_air_brake_left", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_air_brake_left", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_air_brake_left, "a" );
-	if ( (ent = ini_register_entry("key_air_brake_right", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_air_brake_right", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_air_brake_right, "d" );
-	if ( (ent = ini_register_entry("key_air_brake_up", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_air_brake_up", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_air_brake_up, "up" );
-	if ( (ent = ini_register_entry("key_air_brake_down", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_air_brake_down", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_air_brake_down, "down" );
 
 	/* rotation */
-	if ( (ent = ini_register_entry("key_air_brake_rot_yaw1", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_air_brake_rot_yaw1", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_air_brake_rot_yaw1, "h" );
-	if ( (ent = ini_register_entry("key_air_brake_rot_yaw2", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_air_brake_rot_yaw2", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_air_brake_rot_yaw2, "k" );
-	if ( (ent = ini_register_entry("key_air_brake_rot_roll1", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_air_brake_rot_roll1", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_air_brake_rot_roll1, "n" );
-	if ( (ent = ini_register_entry("key_air_brake_rot_roll2", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_air_brake_rot_roll2", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_air_brake_rot_roll2, "m" );
-	if ( (ent = ini_register_entry("key_air_brake_rot_pitch1", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_air_brake_rot_pitch1", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_air_brake_rot_pitch1, "u" );
-	if ( (ent = ini_register_entry("key_air_brake_rot_pitch2", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_air_brake_rot_pitch2", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_air_brake_rot_pitch2, "j" );
 
 	/* misc */
@@ -385,23 +383,23 @@ static void ini_init ( void )
 		ini_register_data( ent, &set.air_brake_accel_time, "0.5" );
 
 	/* warp */
-	if ( (ent = ini_register_entry("key_warp_mod", TYPE_KEY)) != NULL )
-		ini_register_data( ent, &set.key_warp_mod, "r" );
+	if ( (ent = ini_register_entry("key_warp_mod", TYPE_KEYCOMBO)) != NULL )
+		ini_register_data( ent, &set.key_warp_mod, "lshift r" );
 	if ( (ent = ini_register_entry("warp_speed", TYPE_FLOAT)) != NULL )
 		ini_register_data( ent, &set.warp_speed, "7.0" );
 	if ( (ent = ini_register_entry("warp_use_speed", TYPE_BOOL)) != NULL )
 		ini_register_data( ent, &set.warp_use_speed, "true" );
 
 	//blinking car lights
-	if ( (ent = ini_register_entry("key_blinking_car_lights", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_blinking_car_lights", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_blinking_car_lights, "f2" );
 	if ( (ent = ini_register_entry("enable_car_lights_at_day_time", TYPE_BOOL)) != NULL )
 		ini_register_data( ent, &set.enable_car_lights_at_day_time, "false" );
 
 	//keep trailer, wall collision
-	if ( (ent = ini_register_entry("key_keep_trailer", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_keep_trailer", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_keep_trailer, "f1" );
-	if ( (ent = ini_register_entry("key_disable_Wall_Collisions", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_disable_Wall_Collisions", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_disable_Wall_Collisions, "&0" );
 	if ( (ent = ini_register_entry("wall_collisions_disableObjects", TYPE_BOOL)) != NULL )
 		ini_register_data( ent, &set.wall_collisions_disableObjects, "false" );
@@ -409,11 +407,11 @@ static void ini_init ( void )
 		ini_register_data( ent, &set.wall_collisions_disableRender, "true" );
 
 	// repair car
-	if ( (ent = ini_register_entry("key_repair_car", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_repair_car", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_repair_car, "1" );
 
 	// real nitro
-	if ( (ent = ini_register_entry("key_nitro", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_nitro", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_nitro, "np0" );
 
 #ifdef __CHEAT_VEHRECORDING_H__
@@ -439,7 +437,7 @@ static void ini_init ( void )
 #endif
 
 	/* nitro mod */
-	if ( (ent = ini_register_entry("key_nitro_mod", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_nitro_mod", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_nitro_mod, "lalt" );
 	if ( (ent = ini_register_entry("nitro_high", TYPE_FLOAT)) != NULL )
 		ini_register_data( ent, &set.nitro_high, "1.3" );
@@ -451,31 +449,31 @@ static void ini_init ( void )
 		ini_register_data( ent, &set.nitro_decel_time, "0.1" );
 
 	/* brake */
-	if ( (ent = ini_register_entry("key_brake_mod", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_brake_mod", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_brake_mod, "oem_2" );
 	if ( (ent = ini_register_entry("brake_mult", TYPE_FLOAT)) != NULL )
 		ini_register_data( ent, &set.brake_mult, "1.0" );
 
 	/* unflip */
-	if ( (ent = ini_register_entry("key_unflip", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_unflip", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_unflip, "delete" );
 
 	/* quick turn */
-	if ( (ent = ini_register_entry("key_quick_turn_180", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_quick_turn_180", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_quick_turn_180, "backspace" );
-	if ( (ent = ini_register_entry("key_quick_turn_left", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_quick_turn_left", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_quick_turn_left, "oem_4" );
-	if ( (ent = ini_register_entry("key_quick_turn_right", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_quick_turn_right", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_quick_turn_right, "oem_6" );
 
 	/* hop hop */
-	if ( (ent = ini_register_entry("key_vehicle_hop", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_vehicle_hop", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_vehicle_hop, "oem_3" );
 	if ( (ent = ini_register_entry("vehicle_hop_speed", TYPE_FLOAT)) != NULL )
 		ini_register_data( ent, &set.vehicle_hop_speed, "0.2" );
 
 	/* Spiders and Ninjas */
-	if ( (ent = ini_register_entry("key_spiderwheels", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_spiderwheels", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_spiderwheels, "np5" );
 	/*
 	if ( (ent = ini_register_entry("key_spiderfeet", TYPE_KEY)) != NULL )
@@ -487,7 +485,7 @@ static void ini_init ( void )
 	*/
 
 	/* OnFoot Fly */
-	if ( (ent = ini_register_entry("key_fly_player", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_fly_player", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_fly_player, "oem_period" );
 	if ( (ent = ini_register_entry("key_fly_player_accelerate", TYPE_KEY)) != NULL )
 		ini_register_data( ent, &set.key_fly_player_accelerate, "w" );
@@ -511,7 +509,7 @@ static void ini_init ( void )
 		ini_register_data( ent, &set.handling_multiplier, "0.5" );
 
 	/* misc protections */
-	if ( (ent = ini_register_entry("key_protection", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_protection", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_protection, "decimal" );
 	if ( (ent = ini_register_entry("protection_spin_cap", TYPE_FLOAT)) != NULL )
 		ini_register_data( ent, &set.protection_spin_cap, "0.25f" );
@@ -521,31 +519,31 @@ static void ini_init ( void )
 		ini_register_data( ent, &set.protection_min_height, "-100.0f" );
 
 	/* stick */
-	if ( (ent = ini_register_entry("key_stick", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_stick", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_stick, "&0" );
-	if ( (ent = ini_register_entry("key_stick_prev", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_stick_prev", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_stick_prev, "&0" );
-	if ( (ent = ini_register_entry("key_stick_next", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_stick_next", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_stick_next, "&0" );
 	if ( (ent = ini_register_entry("key_stick_nearest", TYPE_KEY)) != NULL )
 		ini_register_data( ent, &set.key_stick_nearest, "&0" );
 
 	/* movement */
-	if ( (ent = ini_register_entry("key_stick_forward", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_stick_forward", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_stick_forward, "w" );
-	if ( (ent = ini_register_entry("key_stick_backward", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_stick_backward", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_stick_backward, "s" );
-	if ( (ent = ini_register_entry("key_stick_left", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_stick_left", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_stick_left, "a" );
-	if ( (ent = ini_register_entry("key_stick_right", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_stick_right", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_stick_right, "d" );
-	if ( (ent = ini_register_entry("key_stick_up", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_stick_up", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_stick_up, "up" );
-	if ( (ent = ini_register_entry("key_stick_down", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_stick_down", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_stick_down, "down" );
-	if ( (ent = ini_register_entry("key_stick_in", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_stick_in", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_stick_in, "u" );
-	if ( (ent = ini_register_entry("key_stick_out", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_stick_out", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_stick_out, "j" );
 
 	/* misc */
@@ -564,18 +562,18 @@ static void ini_init ( void )
 	if ( (ent = ini_register_entry("key_slowTeleport_stop", TYPE_KEY)) != NULL )
 		ini_register_data( ent, &set.key_slowTeleport_stop, "&0" );
 	*/
-	if ( (ent = ini_register_entry("key_teleport_hist", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_teleport_hist", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_teleport_hist, "p" );
-	if ( (ent = ini_register_entry("key_teleport", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_teleport", TYPE_KEYCOMBO)) != NULL )
 	{
 		for ( i = 0; i < TELEPORT_MAX; i++ )
-			ini_register_data( ent, set.key_teleport + i, "&0" );
+			ini_register_data( ent, &set.key_teleport[i], "&0" );
 	}
 
-	if ( (ent = ini_register_entry("key_teleport_set", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_teleport_set", TYPE_KEYCOMBO)) != NULL )
 	{
 		for ( i = 0; i < TELEPORT_MAX; i++ )
-			ini_register_data( ent, set.key_teleport_set + i, "&0" );
+			ini_register_data( ent, &set.key_teleport_set[i], "&0" );
 	}
 
 	if ( (ent = ini_register_entry("teleport_pos", TYPE_COORD)) != NULL )
@@ -598,41 +596,41 @@ static void ini_init ( void )
 	}
 
 	/* checkpoint */
-	if ( (ent = ini_register_entry("key_checkpoint_1", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_checkpoint_1", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_checkpoint_1, "np1" );
-	if ( (ent = ini_register_entry("key_checkpoint_2", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_checkpoint_2", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_checkpoint_2, "np3" );
 	if ( (ent = ini_register_entry("checkpoint_min_height", TYPE_FLOAT)) != NULL )
 		ini_register_data( ent, &set.checkpoint_min_height, "-100.0" );
 
 	/* self destruct */
-	if ( (ent = ini_register_entry("key_self_destruct", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_self_destruct", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_self_destruct, "f3" );
 
 	/* vehicle jumper */
-	if ( (ent = ini_register_entry("key_vehicle_jumper", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_vehicle_jumper", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_vehicle_jumper, "home" );
-	if ( (ent = ini_register_entry("key_vehicle_occupied_jumper", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_vehicle_occupied_jumper", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_vehicle_occupied_jumper, "end" );
 
 	/* engine toggle */
-	if ( (ent = ini_register_entry("key_engine", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_engine", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_engine, "oem_1" );
 
 	/* auto aim */
-	if ( (ent = ini_register_entry("key_autoaim_toggle", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_autoaim_toggle", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_autoaim_toggle, "z" );
 	if ( (ent = ini_register_entry("use_gta_autoaim", TYPE_BOOL)) != NULL )
 		ini_register_data( ent, &set.use_gta_autoaim, "false" );
 
 	/* map */
-	if ( (ent = ini_register_entry("key_map", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_map", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_map, "m" );
-	if ( (ent = ini_register_entry("key_map_show_vehicles", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_map_show_vehicles", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_map_show_vehicles, "x" );
 
 	/* weapons */
-	if ( (ent = ini_register_entry("key_weapon", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_weapon", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_weapon, "f5" );
 	if ( (ent = ini_register_entry("weapon_enabled", TYPE_BOOL)) != NULL )
 		ini_register_data( ent, &set.weapon_enabled, "false" );
@@ -653,7 +651,7 @@ static void ini_init ( void )
 	}
 
 	/* money */
-	if ( (ent = ini_register_entry("key_money", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_money", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_money, "f2" );
 	if ( (ent = ini_register_entry("money_value", TYPE_INT)) != NULL )
 		ini_register_data( ent, &set.money_value, "69" );
@@ -671,7 +669,7 @@ static void ini_init ( void )
 		ini_register_data( ent, &set.money_interval_rand_max, "30" );
 
 	/* menu */
-	if ( (ent = ini_register_entry("key_menu", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_menu", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_menu, "f11" );
 	if ( (ent = ini_register_entry("key_menu_up", TYPE_KEY)) != NULL )
 		ini_register_data( ent, &set.key_menu_up, "up" );
@@ -687,6 +685,8 @@ static void ini_init ( void )
 		ini_register_data( ent, &set.key_menu_dec, "subtract" );
 	if ( (ent = ini_register_entry("key_menu_inc", TYPE_KEY)) != NULL )
 		ini_register_data( ent, &set.key_menu_inc, "add" );
+	if ( (ent = ini_register_entry("key_menu_mousecontrol", TYPE_KEYCOMBO)) != NULL )
+		ini_register_data( ent, &set.key_menu_mousecontrol, "lshift" );
 
 	// custom GUI settings
 	if ( (ent = ini_register_entry("hud_draw_bar", TYPE_BOOL)) != NULL )
@@ -761,9 +761,6 @@ static void ini_init ( void )
 	if ( (ent = ini_register_entry("speedometer_needle_png_filename", TYPE_STRING)) != NULL )
 		ini_register_data( ent, set.speedometer_needle_png_filename, "needle.png" );
 
-	if ( (ent = ini_register_entry("logo_enable", TYPE_BOOL)) != NULL )
-		ini_register_data( ent, &set.logo_enable, "true" );
-
 	if ( (ent = ini_register_entry("chams_on", TYPE_BOOL)) != NULL )
 		ini_register_data( ent, &set.chams_on, "false" );
 	if ( (ent = ini_register_entry("chams_wireframe", TYPE_BOOL)) != NULL )
@@ -811,16 +808,16 @@ static void ini_init ( void )
 
 	if ( (ent = ini_register_entry("clickwarp_enabled", TYPE_BOOL)) != NULL )
 		ini_register_data( ent, &set.clickwarp_enabled, "false" );
-	if ( (ent = ini_register_entry("key_clickwarp_enable", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_clickwarp_enable", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_clickwarp_enable, "mbutton" );
-	if ( (ent = ini_register_entry("key_clickwarp_click", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_clickwarp_click", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_clickwarp_click, "lbutton" );
 
-	if ( (ent = ini_register_entry("key_player_info_list", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_player_info_list", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_player_info_list, "i" );
 
 	/* fast exit */
-	if ( (ent = ini_register_entry("key_fast_exit", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_fast_exit", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_fast_exit, "n" );
 
 	// anti car-jacking
@@ -828,49 +825,46 @@ static void ini_init ( void )
 		ini_register_data( ent, &set.anti_carjacking, "true" );
 
 	/* brakedance keys */
-	if ( (ent = ini_register_entry("key_brkd_toggle", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_brkd_toggle", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_brkd_toggle, "p" );
-	if ( (ent = ini_register_entry("key_brkd_forward", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_brkd_forward", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_brkd_forward, "i" );
-	if ( (ent = ini_register_entry("key_brkd_left", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_brkd_left", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_brkd_left, "j" );
-	if ( (ent = ini_register_entry("key_brkd_backward", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_brkd_backward", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_brkd_backward, "k" );
-	if ( (ent = ini_register_entry("key_brkd_right", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_brkd_right", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_brkd_right, "l" );
-	if ( (ent = ini_register_entry("key_brkd_rightward", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_brkd_rightward", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_brkd_rightward, "o" );
-	if ( (ent = ini_register_entry("key_brkd_leftward", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_brkd_leftward", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_brkd_leftward, "u" );
 	if ( (ent = ini_register_entry("brkdance_velocity", TYPE_FLOAT)) != NULL )
 		ini_register_data( ent, &set.brkdance_velocity, "1.0" );
 
-	if ( (ent = ini_register_entry("key_fly_vehicle", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_fly_vehicle", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_fly_vehicle, "oem_period" );
-	if ( (ent = ini_register_entry("key_fly_vehicle_modeChange", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_fly_vehicle_modeChange", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_fly_vehicle_modeChange, "oem_comma" );
 	if ( (ent = ini_register_entry("fly_vehicle_heliMode", TYPE_BOOL)) != NULL )
 		ini_register_data( ent, &set.fly_vehicle_heliMode, "false" );
 
-	if ( (ent = ini_register_entry("key_rejoin", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_rejoin", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_rejoin, "b" );
 	if ( (ent = ini_register_entry("rejoin_delay", TYPE_INT)) != NULL )
 		ini_register_data( ent, &set.rejoin_delay, "5000" );
 
-	if ( (ent = ini_register_entry("send_spec_data", TYPE_BOOL)) != NULL )
-		ini_register_data( ent, &set.send_spec_data, "false" );
-
-	if ( (ent = ini_register_entry("key_vehicles_freeze", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_vehicles_freeze", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_vehicles_freeze, "pause" );
 
-	if ( (ent = ini_register_entry("key_respawn", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_respawn", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_respawn, "7" );
 
-	if ( (ent = ini_register_entry("key_render_player_tags", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_render_player_tags", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_render_player_tags, "g" );
 	if ( (ent = ini_register_entry("player_tags_dist", TYPE_FLOAT)) != NULL )
 		ini_register_data( ent, &set.player_tags_dist, "225.0" );
-	if ( (ent = ini_register_entry("key_render_vehicle_tags", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_render_vehicle_tags", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_render_vehicle_tags, "h" );
 	if ( (ent = ini_register_entry("vehicle_tags_dist", TYPE_FLOAT)) != NULL )
 		ini_register_data( ent, &set.vehicle_tags_dist, "100.0" );
@@ -897,7 +891,7 @@ static void ini_init ( void )
 		ini_register_data( ent, &set.mod_commands_activated, "false" );
 
 	// keybinder
-	if ( (ent = ini_register_entry("chat_secondary_key", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("chat_secondary_key", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.chat_secondary_key, "oem_comma" );
 	if ( (ent = ini_register_entry("chat", TYPE_CHATMSG)) != NULL )
 	{
@@ -918,7 +912,13 @@ static void ini_init ( void )
 			ini_register_data( ent, set.sampPatch + i, "" );
 	}
 
-	if ( (ent = ini_register_entry("key_panic", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("netPatch", TYPE_NETPATCH)) != NULL )
+	{
+		for ( i = 0; i < INI_NETPATCHES_MAX; i++ )
+			ini_register_data( ent, &set.netPatch[i], "" );
+	}
+
+	if ( (ent = ini_register_entry("key_panic", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_panic, "f12" );
 
 	if ( (ent = ini_register_entry("custom_runanimation_enabled", TYPE_BOOL)) != NULL )
@@ -959,11 +959,25 @@ static void ini_init ( void )
 		ini_register_data( ent, &set.enable_clouds, "true" );
 	if ( (ent = ini_register_entry("enable_extra_godmode", TYPE_BOOL)) != NULL )
 		ini_register_data( ent, &set.enable_extra_godmode, "true" );
+	if ( (ent = ini_register_entry("key_map_teleport", TYPE_KEY)) != NULL )
+		ini_register_data( ent, &set.key_map_teleport, "rbutton" );
+	if ( (ent = ini_register_entry("map_must_be_open", TYPE_BOOL)) != NULL )
+		ini_register_data( ent, &set.map_must_be_open, "true" );
+	if ( (ent = ini_register_entry("key_fastwarp", TYPE_KEYCOMBO)) != NULL )
+		ini_register_data( ent, &set.key_fastwarp, "rbutton r" );
+	if ( (ent = ini_register_entry("key_surf", TYPE_KEYCOMBO)) != NULL )
+		ini_register_data( ent, &set.key_surf, "k" );
+	if ( (ent = ini_register_entry("key_freezerot", TYPE_KEYCOMBO)) != NULL )
+		ini_register_data( ent, &set.key_freezerot, "&0" );
+	if ( (ent = ini_register_entry("map_draw_lines", TYPE_BOOL)) != NULL )
+		ini_register_data( ent, &set.map_draw_lines, "true" );
+	if ( (ent = ini_register_entry("hud_indicator_surf", TYPE_BOOL)) != NULL )
+		ini_register_data( ent, &set.hud_indicator_surf, "true" );
+	if ( (ent = ini_register_entry("hud_indicator_freezerot", TYPE_BOOL)) != NULL )
+		ini_register_data( ent, &set.hud_indicator_freezerot, "true" );
 }
 
-int iGTAPatchesCount = 0;
-int iSAMPPatchesCount = 0;
-int iServersCount = 0;
+int iGTAPatchesCount = 0, iSAMPPatchesCount = 0, iNetPatchesCount = 0, iServersCount = 0;
 static void ini_entry_parse_type ( struct ini_entry *ent, int idx, const char *val )
 {
 	struct ini_entry_data	*ent_data = ent->data + idx;
@@ -1002,12 +1016,9 @@ static void ini_entry_parse_type ( struct ini_entry *ent, int idx, const char *v
 	case TYPE_BOOL:
 		if ( split->argc != 1 )
 			goto wrong_argc;
-		if ( strcmp(split->argv[0], "true") == 0
-		 ||	 strcmp(split->argv[0], "True") == 0
-		 ||	 strcmp(split->argv[0], "TRUE") == 0 ) * (int *)ent_data->data = 1;
-		else if ( strcmp(split->argv[0], "false") == 0
-			  ||  strcmp(split->argv[0], "False") == 0
-			  ||  strcmp(split->argv[0], "FALSE") == 0 )
+		if ( _stricmp(split->argv[0], "true") == 0 )
+			* (int *)ent_data->data = 1;
+		else if ( _stricmp(split->argv[0], "false") == 0 )
 			* (int *)ent_data->data = 0;
 		else
 		{
@@ -1342,6 +1353,68 @@ static void ini_entry_parse_type ( struct ini_entry *ent, int idx, const char *v
 		ok = 1;
 		break;
 
+	case TYPE_KEYCOMBO:
+	{
+		if (split->argc < 1 || split->argc > INI_KEYCOMBO_MAX)
+			goto wrong_argc;
+
+		keycombo *kc = (keycombo *)ent_data->data;
+		kc->count = 0;
+		for (i = 0; i < split->argc; ++i)
+		{
+			int key = key_lookup(split->argv[i]);
+			if (key == -1)
+			{
+				Log("Invalid key name '%s' in %s", split->argv[i], ini_entry_name(ent, idx));
+				break;
+			}
+			kc->key[i] = key;
+			++kc->count;
+		}
+		ok = 1;
+		break;
+	}
+
+	case TYPE_NETPATCH:
+	{
+		if ( split->argc <= 1 )
+			break;
+
+		if ( split->argc != 5 )
+			goto wrong_argc;
+
+		stNetPatch *netPatch = (stNetPatch *)ent_data->data;
+
+		netPatch->name = _strdup( split->argv[0] );
+		if (_stricmp(split->argv[1], "incoming RPC") == 0)
+			netPatch->type = INCOMING_RPC;
+		else if (_stricmp(split->argv[1], "outcoming RPC") == 0)
+			netPatch->type = OUTCOMING_RPC;
+		else if (_stricmp(split->argv[1], "incoming packet") == 0)
+			netPatch->type = INCOMING_PACKET;
+		else if (_stricmp(split->argv[1], "outcoming packet") == 0)
+			netPatch->type = OUTCOMING_PACKET;
+		else
+		{
+			Log("Invalid type '%s' in %s", split->argv[1], ini_entry_name(ent, idx));
+			break;
+		}
+		int id = parse_int( split->argv[2] );
+		if (id >= RAKNET_MAX_PACKET)
+		{
+			Log("Invalid packet id '%d' in %s", id, ini_entry_name(ent, idx));
+			break;
+		}
+		netPatch->id = id;
+		netPatch->hotkey = key_lookup( split->argv[3] );
+		netPatch->enabled = parse_int( split->argv[4] ) != 0;
+		set.netPatchAssoc[netPatch->id][netPatch->type] = netPatch; // for higher performance
+		++iNetPatchesCount;
+
+		ok = 1;
+		break;
+	}
+
 	default:
 		Log( "BUG: %s has invalid data type", ini_entry_name(ent, idx) );
 	}
@@ -1540,7 +1613,7 @@ void ini_load ( void )
 				continue;
 
 			/* don't reload patches (cause this would fuck things up...) */
-			if ( !first_load && ent->type == TYPE_PATCH )
+			if (!first_load && (ent->type == TYPE_PATCH || ent->type == TYPE_SAMPPATCH || ent->type == TYPE_NETPATCH))
 			{
 				match = 1;
 				break;

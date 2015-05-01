@@ -1,8 +1,24 @@
-/* 
- * PROJECT: mod_sa
- * COPYRIGHT: FYP
- * DATE: 21.02.2013
- * FILE: RakClient.cpp
+/*
+
+	PROJECT:		mod_sa
+	LICENSE:		See LICENSE in the top level directory
+	COPYRIGHT:		Copyright we_sux, BlastHack
+
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
+
+	mod_sa is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	mod_sa is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with mod_sa.  If not, see <http://www.gnu.org/licenses/>.
+
 */
 
 #include "main.h"
@@ -31,7 +47,7 @@ bool RakClient::Send( BitStream *bitStream, PacketPriority priority, PacketRelia
 }
 
 // misc functions
-void  RakClient::SendDeath( uint16_t killerId, uint8_t reason )
+void RakClient::SendDeath( uint16_t killerId, uint8_t reason )
 {
 	BitStream bsDeath;
 
@@ -49,7 +65,7 @@ void RakClient::SendPickUp( int pickupId )
 	RPC( RPC_PickedUpPickup, &bsPickup );
 }
 
-void  RakClient::RequestClass( int classId )
+void RakClient::RequestClass( int classId )
 {
 	BitStream bsClass;
 
@@ -57,7 +73,7 @@ void  RakClient::RequestClass( int classId )
 	g_RakClient->RPC( RPC_RequestClass, &bsClass );
 }
 
-void  RakClient::SendSCMEvent( int vehicleID, int eventId, int param1, int param2 )
+void RakClient::SendSCMEvent( int vehicleID, int eventId, int param1, int param2 )
 {
 	BitStream bsScmEvent;
 
@@ -66,8 +82,9 @@ void  RakClient::SendSCMEvent( int vehicleID, int eventId, int param1, int param
 	bsScmEvent.Write ( param2 );
 	bsScmEvent.Write ( eventId );
 
-	RPC( RPC_ScmEvent, &bsScmEvent );
+	RPC( RPC_SCMEvent, &bsScmEvent );
 }
+
 void RakClient::SendSpawn( void )
 {
 	BitStream bsSpawn;

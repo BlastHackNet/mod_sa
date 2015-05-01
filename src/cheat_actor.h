@@ -2,9 +2,9 @@
 
 	PROJECT:		mod_sa
 	LICENSE:		See LICENSE in the top level directory
-	COPYRIGHT:		Copyright we_sux, FYP
+	COPYRIGHT:		Copyright we_sux, BlastHack
 
-	mod_sa is available from http://code.google.com/p/m0d-s0beit-sa/
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
 
 	mod_sa is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -25,6 +25,6 @@ void				cheat_handle_actor_autoaim ( struct actor_info *info, double time_diff )
 void				cheat_handle_actor_air_brake ( struct actor_info *info, double time_diff );
 //void				cheat_handle_SpiderFeet ( struct actor_info *ainfo, double time_diff );
 void				cheat_handle_actor_fly ( struct actor_info *ainfo, double time_diff );
-
+void				cheat_handle_actor_surf(struct actor_info *ainfo);
 
 CEntitySAInterface	*cheat_actor_GetCEntitySAInterface ( actor_info *ainfo );

@@ -2,9 +2,9 @@
 
 	PROJECT:		mod_sa
 	LICENSE:		See LICENSE in the top level directory
-	COPYRIGHT:		Copyright we_sux, FYP
+	COPYRIGHT:		Copyright we_sux, BlastHack
 
-	mod_sa is available from http://code.google.com/p/m0d-s0beit-sa/
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
 
 	mod_sa is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -21,6 +21,9 @@
 
 */
 struct menu;
+
+#define MENU_ROWS				12
+#define MENU_WIDTH				400
 
 #define MENU_SCROLL_SPEED		15	/* auto-scroll speed (scrolls per second) */
 #define MENU_SCROLL_DELAY		200 /* delay in milliseconds before auto-scrolling */
@@ -60,8 +63,11 @@ struct menu
 };
 
 void				menu_run ( void );
+bool				menu_wndproc(UINT uMsg, WPARAM wParam, LPARAM lParam);
+void				menu_toggle(bool toggle);
 void				menu_maybe_init ( void );
 void				menu_items_free ( struct menu *menu );
 void				menu_free_all ( void );
 
 extern struct menu	*menu_active;
+extern int menu_mouseover;

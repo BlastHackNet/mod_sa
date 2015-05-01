@@ -2,9 +2,9 @@
 
 	PROJECT:		mod_sa
 	LICENSE:		See LICENSE in the top level directory
-	COPYRIGHT:		Copyright we_sux, FYP
+	COPYRIGHT:		Copyright we_sux, BlastHack
 
-	mod_sa is available from http://code.google.com/p/m0d-s0beit-sa/
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
 
 	mod_sa is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -1321,7 +1321,7 @@ int vehicle_find_nearest ( int flags )
 		if ( g_SAMP != NULL )
 		{
 			int iVehicleSAMPID = getSAMPVehicleIDFromGTAVehicle( info );
-			if ( isBadPtr_SAMP_iVehicleID(iVehicleSAMPID) )
+			if ( isBadSAMPVehicleID(iVehicleSAMPID) )
 				continue;
 		}
 
@@ -1387,6 +1387,11 @@ int vehicle_filter_flags ( vehicle_info *info, int flags )
 /* returns the id of the nearest actor */
 int actor_find_nearest ( int flags )
 {
+	return actor_find_nearest_ex(flags, [](actor_info *){ return true; });
+}
+
+int actor_find_nearest_ex(int flags, std::function<bool(actor_info *)> pred)
+{
 	const struct actor_info *self;
 
 	if ( pool_actor == NULL )
@@ -1395,7 +1400,7 @@ int actor_find_nearest ( int flags )
 	if ( (self = actor_info_get(ACTOR_SELF, 0)) == NULL )
 		return -1;
 
-	const struct actor_info *info;
+	struct actor_info		*info;
 	float					vect[3];
 	float					dist = -1.0f;
 	int						id_nearest = -1;
@@ -1407,6 +1412,9 @@ int actor_find_nearest ( int flags )
 			continue;
 
 		if ( self->base.matrix == info->base.matrix )
+			continue;
+
+		if (!pred(info))
 			continue;
 
 		vect3_vect3_sub( &self->base.matrix[4 * 3], &info->base.matrix[4 * 3], vect );
@@ -2858,6 +2866,16 @@ void vehicle_setColor1 ( vehicle_info *vinfo, int new_color )
 	}
 }
 
+RwColor getVehicleColorRGB(unsigned int index)
+{
+	static RwColor *colorTable = nullptr;
+	if (colorTable == nullptr)
+	{
+		memcpy_safe(&colorTable, (void *)0x4C8390, 4);
+	}
+	return colorTable[index];
+}
+
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 
@@ -3210,6 +3228,87 @@ size_t strlcat ( char *dst, const char *src, size_t size )
 	return dlen + slen;
 }
 
+bool findstrinstr ( char *text, char *find )
+{
+	char	realtext[256];
+	char	subtext[256];
+	char	*result;
+	char	*next;
+	char	temp;
+	int		i = 0;
+
+	traceLastFunc( "findstrinstr()" );
+
+	// can't find stuff that isn't there unless you are high
+	if ( text == NULL || find == NULL )
+		return false;
+
+	// lower case text ( sizeof()-2 = 1 for array + 1 for termination after while() )
+	while ( text[i] != NULL && i < (sizeof(realtext)-2) )
+	{
+		temp = text[i];
+		if ( isupper(temp) )
+			temp = tolower( temp );
+		realtext[i] = temp;
+		i++;
+	}
+	realtext[i] = 0;
+
+	// replace unwanted characters/spaces with dots
+	i = 0;
+	while ( find[i] != NULL && i < (sizeof(subtext)-2) )
+	{
+		temp = find[i];
+		if ( isupper(temp) )
+			temp = tolower( temp );
+		if ( !isalpha(temp) )
+			temp = '.';
+		subtext[i] = temp;
+		i++;
+	}
+	subtext[i] = 0;
+
+	// use i to count the successfully found text parts
+	i = 0;
+
+	// split and find every part of subtext/find in text
+	result = &subtext[0];
+	while ( *result != NULL )
+	{
+		next = strstr( result, "." );
+		if ( next != NULL )
+		{
+			// more than one non-alphabetic character
+			if ( next == result )
+			{
+				do
+					next++;
+				while ( *next == '.' );
+
+				if ( *next == NULL )
+					return (i != 0);
+				result = next;
+				next = strstr( result, "." );
+				if ( next != NULL )
+					*next = NULL;
+			}
+			else
+				*next = NULL;
+		}
+
+		if ( strstr(realtext, result) == NULL )
+			return false;
+
+		if ( next == NULL )
+			return true;
+
+		i++;
+		result = next + 1;
+	}
+
+	return false;
+}
+
 void *memdup ( const void *src, int len )
 {
 	void	*dest = malloc( len );
@@ -3259,30 +3358,16 @@ uint8_t *hex_to_bin ( const char *str )
 	return sbuf;
 }
 
-D3DCOLOR hex_to_color( const char *str, int len )
+bool hex_is_valid( std::string hex )
 {
-	char buf[12];
-	strncpy_s( buf, str, len );
-	D3DCOLOR color = 0x00;
-	byte *colorByteSet = ( byte * ) &color;
-	int stri = 0;
-	for ( int i = sizeof( color ) - 1; i >= 0; i-- )
+	if ( hex.empty() )
+		return false;
+	for ( size_t i = 0; i < hex.length(); i++ )
 	{
-		if ( i == 3 && len == 6 )
-		{
-			colorByteSet[3] = 0xFF;
-		}
-		else
-		{
-			signed char bh = hex_to_dec( buf[stri++] );
-			signed char bl = hex_to_dec( buf[stri++] );
-			if ( bh != -1 && bl != -1 )
-			{
-				colorByteSet[i] = bl | ( bh << 4 );
-			}
-		}
+		if ( hex_to_dec( hex[i] ) == -1 )
+			return false;
 	}
-	return color;
+	return true;
 }
 
 // new functions related to R* classes //

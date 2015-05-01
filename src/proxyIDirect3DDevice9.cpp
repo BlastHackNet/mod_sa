@@ -2,9 +2,9 @@
 
 	PROJECT:		mod_sa
 	LICENSE:		See LICENSE in the top level directory
-	COPYRIGHT:		Copyright we_sux, FYP
+	COPYRIGHT:		Copyright we_sux, BlastHack
 
-	mod_sa is available from http://code.google.com/p/m0d-s0beit-sa/
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
 
 	mod_sa is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -78,10 +78,6 @@ CD3DFont				*pD3DFontChat = new CD3DFont( "Tahoma", 11, FCR_BOLD | FCR_BORDER );
 //pD3DFontDebugWnd = debug window
 CD3DFont				*pD3DFontDebugWnd = new CD3DFont("Lucida Console", 8, FCR_BORDER );
 
-#define MENU_ROWS					12
-#define MENU_WIDTH					400
-#define IS_SCOREBOARD_TOGGLED_ON	*(int *)( *(DWORD *)( g_dwSAMP_Addr + SAMP_SCOREBOARD_INFO ) ) == 1
-
 struct gui				*hud_bar = &set.guiset[0];
 struct gui				*menu_titlebar_background = &set.guiset[2];
 struct gui				*menu_background = &set.guiset[3];
@@ -96,6 +92,55 @@ extern int				iClickWarpEnabled;
 ///////////////////////////////////////////////////////////////////////////////
 // Common D3D functions.
 ///////////////////////////////////////////////////////////////////////////////
+
+// Function taken from the MTA:SA source code (MTA10/core/CGraphics.cpp)
+void CalcScreenCoors ( D3DXVECTOR3 *vecWorld, D3DXVECTOR3 *vecScreen )
+{
+	/** C++-ifyed function 0x71DA00, formerly called by CHudSA::CalcScreenCoors **/
+	// Get the static view matrix as D3DXMATRIX
+	D3DXMATRIX	m ( (float *)(0xB6FA2C) );
+
+	// Get the static virtual screen (x,y)-sizes
+	DWORD		*dwLenX = ( DWORD * ) ( 0xC17044 );
+	DWORD		*dwLenY = ( DWORD * ) ( 0xC17048 );
+
+	//DWORD *dwLenZ = (DWORD*)(0xC1704C);
+	//double aspectRatio = (*dwLenX) / (*dwLenY);
+	// Do a transformation
+	vecScreen->x = ( vecWorld->z * m._31 ) + ( vecWorld->y * m._21 ) + ( vecWorld->x * m._11 ) + m._41;
+	vecScreen->y = ( vecWorld->z * m._32 ) + ( vecWorld->y * m._22 ) + ( vecWorld->x * m._12 ) + m._42;
+	vecScreen->z = ( vecWorld->z * m._33 ) + ( vecWorld->y * m._23 ) + ( vecWorld->x * m._13 ) + m._43;
+
+	// Get the correct screen coordinates
+	double	fRecip = (double)1.0 / vecScreen->z;	//(vecScreen->z - (*dwLenZ));
+	vecScreen->x *= (float)( fRecip * (*dwLenX) );
+	vecScreen->y *= (float)( fRecip * (*dwLenY) );
+}
+
+void CalcWorldCoors ( D3DXVECTOR3 *vecScreen, D3DXVECTOR3 *vecWorld )
+{
+	// Get the static view matrix as D3DXMATRIX
+	D3DXMATRIX	m ( (float *)(0xB6FA2C) );
+
+	// Invert the view matrix
+	D3DXMATRIX minv;
+	memset ( &minv, 0, sizeof ( D3DXMATRIX ) );
+	m._44 = 1.0f;
+	D3DXMatrixInverse ( &minv, NULL, &m );
+
+	DWORD		*dwLenX = ( DWORD * ) ( 0xC17044 );
+	DWORD		*dwLenY = ( DWORD * ) ( 0xC17048 );
+
+	// Reverse screen coordinates
+	double fRecip = (double)1.0 / vecScreen->z;
+	vecScreen->x /= (float)(fRecip * (*dwLenX) );
+	vecScreen->y /= (float)(fRecip * (*dwLenY) );
+
+	// Do an (inverse) transformation
+	vecWorld->x = ( vecScreen->z * minv._31 ) + ( vecScreen->y * minv._21 ) + ( vecScreen->x * minv._11 ) + minv._41;
+	vecWorld->y = ( vecScreen->z * minv._32 ) + ( vecScreen->y * minv._22 ) + ( vecScreen->x * minv._12 ) + minv._42;
+	vecWorld->z = ( vecScreen->z * minv._33 ) + ( vecScreen->y * minv._23 ) + ( vecScreen->x * minv._13 ) + minv._43;
+}
 
 static WCHAR *ToWChar ( char *str )
 {
@@ -382,20 +427,19 @@ void RenderMenu ( void )
 	static const int	ROW_HEIGHT = (int)ceilf( pD3DFont->DrawHeight() );
 	static const int	MENU_HEIGHT = (int)ceilf( pD3DFont->DrawHeight() * (float)MENU_ROWS ) + 2;
 
-	char				title[256];
+	char				title[256] = NAME;
 	struct menu_item	*item;
 	struct menu			*menu;
 	int					left, top;
 	float				x, y;
 	int					pos, top_pos, i;
+	float				tdlen;
 
 	if ( menu_active == NULL )
 		return;
 
 	/* find root menu */
 	for ( menu = menu_active; menu->parent != NULL; menu = menu->parent );
-
-	strlcpy( title, NAME, sizeof(title) );
 
 	while ( menu != NULL )
 	{
@@ -412,11 +456,17 @@ void RenderMenu ( void )
 	left = pPresentParam.BackBufferWidth / 2 - MENU_WIDTH / 2;
 	top = pPresentParam.BackBufferHeight - MENU_HEIGHT - ROW_HEIGHT - 2 - 20 - 2;
 
-	render->D3DBoxBorderi( left, top, (int)ceilf(pD3DFont->DrawLength(title)) + 2, ROW_HEIGHT + 2,
+	tdlen = pD3DFont->DrawLength(title);
+	tdlen -= MENU_WIDTH;
+	if (tdlen < 0.0f)
+		tdlen = 0.0f;
+	int cp = pD3DFont->GetCharPos(title, tdlen); // child p... char pos
+	if (cp > 0) ++cp;
+	render->D3DBoxBorderi( left, top, MENU_WIDTH, ROW_HEIGHT + 2,
 						   D3DCOLOR_ARGB(223, 91, 91, 91), D3DCOLOR_ARGB(menu_titlebar_background->alpha,
 						   menu_titlebar_background->red, menu_titlebar_background->green,
 						   menu_titlebar_background->blue) );
-	pD3DFont->PrintShadow( (float)(left + 1), (float)(top + 1), D3DCOLOR_XRGB(223, 223, 223), title );
+	pD3DFont->PrintShadow( (float)(left + 1), (float)(top + 1), D3DCOLOR_XRGB(223, 223, 223), &title[cp] );
 
 	/* draw window */
 	left = pPresentParam.BackBufferWidth / 2 - MENU_WIDTH / 2;
@@ -458,6 +508,13 @@ void RenderMenu ( void )
 		{
 			render->D3DBoxi( left + 1, (int)floorf(y) + 1, MENU_WIDTH - 1, ROW_HEIGHT + 1, D3DCOLOR_ARGB(
 								 menu_selected_item_bar->alpha, menu_selected_item_bar->red,
+							 menu_selected_item_bar->green, menu_selected_item_bar->blue), NULL );
+		}
+
+		if ( i == menu_mouseover )
+		{
+			render->D3DBoxi( left + 1, (int)floorf(y) + 1, MENU_WIDTH - 1, ROW_HEIGHT + 1, D3DCOLOR_ARGB(
+								 menu_selected_item_bar->alpha / 2, menu_selected_item_bar->red,
 							 menu_selected_item_bar->green, menu_selected_item_bar->blue), NULL );
 		}
 
@@ -505,6 +562,10 @@ void RenderMapDot ( const float self_pos[3], const float pos[16], DWORD color, c
 
 	x = (float)pPresentParam.BackBufferWidth / 2 + roundf( rvect[0] );
 	y = (float)pPresentParam.BackBufferHeight / 2 + roundf( rvect[1] );
+	if (x < 0.0f || x > pPresentParam.BackBufferWidth || y < 0.0f || y > pPresentParam.BackBufferHeight)
+		return;
+	if (set.map_draw_lines && vect3_length(vect) > 5.0f)
+		render->D3DLine(x, y, pPresentParam.BackBufferWidth / 2, pPresentParam.BackBufferHeight / 2, color);
 
 	/* the "^ v o" icons are 9x9 large, and located at 168x98 in the texture */
 	if ( pSpriteTexture != NULL )
@@ -512,7 +573,7 @@ void RenderMapDot ( const float self_pos[3], const float pos[16], DWORD color, c
 		float	u, v, ts;
 
 		if ( name != NULL )
-			pD3DFontFixed->PrintShadow( x - pD3DFontFixed->DrawLength(name) / 2.0f, y - 14.0f, color, name );
+			pD3DFontFixed->PrintShadow( floor(x - pD3DFontFixed->DrawLength(name) / 2.0f), floor(y - 14.0f), color, name );
 
 		u = 168.0f;
 		v = 98.0f;
@@ -535,21 +596,21 @@ void RenderMapDot ( const float self_pos[3], const float pos[16], DWORD color, c
 	else
 	{
 		if ( name != NULL )
-			pD3DFont->PrintShadow( x - pD3DFontFixed->DrawLength(name) / 2.0f, y - 14.0f, color, name );
+			pD3DFont->PrintShadow( floor(x - pD3DFontFixed->DrawLength(name) / 2.0f), floor(y - 14.0f), color, name );
 
 		if ( vect[2] < -4.0f )
 		{
-			pD3DFont->PrintShadow( x - 4.5f, y - 4.5f, color, "v" );
+			pD3DFont->PrintShadow( floor(x - 4.5f), floor(y - 4.5f), color, "v" );
 			return;
 		}
 		else if ( vect[2] <= 4.0f )
 		{
-			pD3DFont->PrintShadow( x - 4.5f, y - 4.5f, color, "o" );
+			pD3DFont->PrintShadow( floor(x - 4.5f), floor(y - 4.5f), color, "o" );
 			return;
 		}
 		else if ( vect[2] > 4.0f )
 		{
-			pD3DFont->PrintShadow( x - 4.5f, y - 4.5f, color, "^" );
+			pD3DFont->PrintShadow( floor(x - 4.5f), floor(y - 4.5f), color, "^" );
 			return;
 		}
 	}
@@ -559,11 +620,15 @@ void RenderMap ( void )
 {
 	traceLastFunc( "renderMap()" );
 
+	// don't run in the menu
+	if ( gta_menu_active() )
+		return;
+
 	if ( g_SAMP != NULL )
 	{
 		// showing scorelist?
 		if ( (GetAsyncKeyState(VK_TAB) < 0 && set.d3dtext_score)
-		 ||	 IS_SCOREBOARD_TOGGLED_ON ) 
+		 ||	 g_Scoreboard->iIsEnabled ) 
 			return;
 
 		if ( GetAsyncKeyState(VK_F1) < 0 )
@@ -587,7 +652,7 @@ void RenderMap ( void )
 	{
 		if ( g_SAMP != NULL )
 		{
-			for ( i = 0; i < SAMP_PLAYER_MAX; i++ )
+			for ( i = 0; i < SAMP_MAX_PLAYERS; i++ )
 			{
 				if ( !getPlayerPos(i, pos) )
 					continue;
@@ -616,7 +681,7 @@ void RenderMap ( void )
 		{
 			if ( g_Vehicles != NULL )
 			{
-				for ( i = 0; i < SAMP_VEHICLE_MAX; i++ )
+				for ( i = 0; i < SAMP_MAX_VEHICLES; i++ )
 				{
 					if ( g_Vehicles->iIsListed[i] != 1 )
 						continue;
@@ -628,10 +693,11 @@ void RenderMap ( void )
 						if ( g_Players->pLocalPlayer->sCurrentVehicleID == i )
 							continue;
 
+						RwColor color = getVehicleColorRGB(vehicle_getColor0(g_Vehicles->pSAMP_Vehicle[i]->pGTA_Vehicle));
 						_snprintf_s( buf, sizeof(buf)-1, "%s(%d)", vehicle->name, i );
 						RenderMapDot( &self->base.matrix[4 * 3],
 									  &g_Vehicles->pSAMP_Vehicle[i]->pGTA_Vehicle->base.matrix[4 * 3],
-									  D3DCOLOR_XRGB(150, 150, 150), buf );
+									  D3DCOLOR_XRGB(color.r, color.g, color.b), buf );
 					}
 				}
 			}
@@ -643,9 +709,10 @@ void RenderMap ( void )
 				struct vehicle_info *vehs = vehicle_info_get( i, VEHICLE_ALIVE );
 				if ( vehs == NULL )
 					continue;
+				RwColor color = getVehicleColorRGB(vehicle_getColor0(vehs));
 				vehicle = gta_vehicle_get_by_id( vehs->base.model_alt_id );
 				_snprintf_s( buf, sizeof(buf)-1, "%s (%d)", vehicle->name, i );
-				RenderMapDot( &self->base.matrix[4 * 3], &vehs->base.matrix[4 * 3], D3DCOLOR_XRGB(150, 150, 150), buf );
+				RenderMapDot( &self->base.matrix[4 * 3], &vehs->base.matrix[4 * 3], D3DCOLOR_XRGB(color.r, color.g, color.b), buf );
 			}
 		}
 	}
@@ -657,11 +724,11 @@ void RenderMap ( void )
 			vect3_copy( &cheat_state->teleport[i].matrix[4 * 3], pos );
 			if ( vect3_near_zero(pos) )
 				continue;
-			_snprintf_s( buf, sizeof(buf)-1, "Teleport %d", i );
+			_snprintf_s( buf, sizeof(buf)-1, "Teleport %d (%0.1f)", i, vect3_dist(&self->base.matrix[4 * 3], pos) );
 			RenderMapDot( &self->base.matrix[4 * 3], pos, D3DCOLOR_XRGB(0, 200, 200), buf );
 		}
 	}
-
+	
 	// self
 	RenderMapDot( &self->base.matrix[4 * 3], &self->base.matrix[4 * 3], D3DCOLOR_XRGB(255, 255, 255), NULL );
 }
@@ -845,54 +912,6 @@ void RenderVehicleHPBar ( void )
 
 }
 
-// Function taken from the MTA:SA source code (MTA10/core/CGraphics.cpp)
-void CalcScreenCoors ( D3DXVECTOR3 *vecWorld, D3DXVECTOR3 *vecScreen )
-{
-	/** C++-ifyed function 0x71DA00, formerly called by CHudSA::CalcScreenCoors **/
-	// Get the static view matrix as D3DXMATRIX
-	D3DXMATRIX	m ( (float *)(0xB6FA2C) );
-
-	// Get the static virtual screen (x,y)-sizes
-	DWORD		*dwLenX = ( DWORD * ) ( 0xC17044 );
-	DWORD		*dwLenY = ( DWORD * ) ( 0xC17048 );
-
-	//DWORD *dwLenZ = (DWORD*)(0xC1704C);
-	//double aspectRatio = (*dwLenX) / (*dwLenY);
-	// Do a transformation
-	vecScreen->x = ( vecWorld->z * m._31 ) + ( vecWorld->y * m._21 ) + ( vecWorld->x * m._11 ) + m._41;
-	vecScreen->y = ( vecWorld->z * m._32 ) + ( vecWorld->y * m._22 ) + ( vecWorld->x * m._12 ) + m._42;
-	vecScreen->z = ( vecWorld->z * m._33 ) + ( vecWorld->y * m._23 ) + ( vecWorld->x * m._13 ) + m._43;
-
-	// Get the correct screen coordinates
-	double	fRecip = (double)1.0 / vecScreen->z;	//(vecScreen->z - (*dwLenZ));
-	vecScreen->x *= (float)( fRecip * (*dwLenX) );
-	vecScreen->y *= (float)( fRecip * (*dwLenY) );
-}
-void CalcWorldCoors ( D3DXVECTOR3 *vecScreen, D3DXVECTOR3 *vecWorld )
-{
-	// Get the static view matrix as D3DXMATRIX
-	D3DXMATRIX	m ( (float *)(0xB6FA2C) );
-
-	// Invert the view matrix
-	D3DXMATRIX minv;
-	memset ( &minv, 0, sizeof ( D3DXMATRIX ) );
-	m._44 = 1.0f;
-	D3DXMatrixInverse ( &minv, NULL, &m );
-
-	DWORD		*dwLenX = ( DWORD * ) ( 0xC17044 );
-	DWORD		*dwLenY = ( DWORD * ) ( 0xC17048 );
-
-	// Reverse screen coordinates
-	double fRecip = (double)1.0 / vecScreen->z;
-	vecScreen->x /= (float)(fRecip * (*dwLenX) );
-	vecScreen->y /= (float)(fRecip * (*dwLenY) );
-
-	// Do an (inverse) transformation
-	vecWorld->x = ( vecScreen->z * minv._31 ) + ( vecScreen->y * minv._21 ) + ( vecScreen->x * minv._11 ) + minv._41;
-	vecWorld->y = ( vecScreen->z * minv._32 ) + ( vecScreen->y * minv._22 ) + ( vecScreen->x * minv._12 ) + minv._42;
-	vecWorld->z = ( vecScreen->z * minv._33 ) + ( vecScreen->y * minv._23 ) + ( vecScreen->x * minv._13 ) + minv._43;
-}
-
 // for renderPlayerTags()
 struct playerTagInfo
 {
@@ -902,7 +921,7 @@ struct playerTagInfo
 	bool	isStairStacked;
 	float	stairStackedOffset;
 	bool	isPastMaxDistance;
-} g_playerTagInfo[SAMP_PLAYER_MAX];
+} g_playerTagInfo[SAMP_MAX_PLAYERS];
 
 // new "Air Ride" player ESP by nuckfuts
 // this is optimized to all hell, so please don't
@@ -931,7 +950,7 @@ void renderPlayerTags ( void )
 		if (
 			// Scoreboard open?
 			( GetAsyncKeyState(VK_TAB) < 0 && set.d3dtext_score )
-			|| IS_SCOREBOARD_TOGGLED_ON
+			|| g_Scoreboard->iIsEnabled
 			// F10 key down?
 			|| GetAsyncKeyState(VK_F10) < 0
 		)
@@ -952,15 +971,15 @@ void renderPlayerTags ( void )
 		return;
 
 	// for tracking player states as we iterate through
-	bool	isPedESPCollided[SAMP_PLAYER_MAX];
-	bool	isPedESPStairStacked[SAMP_PLAYER_MAX];
-	memset( isPedESPCollided, false, sizeof(bool) * SAMP_PLAYER_MAX );
-	memset( isPedESPStairStacked, true, sizeof(bool) * SAMP_PLAYER_MAX );
+	bool	isPedESPCollided[SAMP_MAX_PLAYERS];
+	bool	isPedESPStairStacked[SAMP_MAX_PLAYERS];
+	memset( isPedESPCollided, false, sizeof(bool) * SAMP_MAX_PLAYERS );
+	memset( isPedESPStairStacked, true, sizeof(bool) * SAMP_MAX_PLAYERS );
 
 	// alignment settings
 	int			ESP_tag_player_pixelOffsetY = -10;
 	float		ESP_tag_player_D3DBox_pixelOffsetX = -0.5f;
-	float		ESP_tag_player_D3DBox_pixelOffsetY = -0.5f;
+	float		ESP_tag_player_D3DBox_pixelOffsetY = 1.0f;
 	float		ESP_tag_player_posOffsetZ = 1.0f;
 	float		ESP_tag_player_espHeight = 20.0f;
 	//float		ESP_tag_player_movementSpeed = 5.0f;
@@ -1307,32 +1326,27 @@ void renderPlayerTags ( void )
 			va = iterPed->GetArmor();
 		}
 
-		D3DCOLOR	color = D3DCOLOR_ARGB( 75, 0, 200, 0 );
 		if ( vh > 100.0f )
 			vh = 100.0f;
-		if ( vh < 100.0f && vh > 60.0f )
-			color = D3DCOLOR_ARGB( 111, 0, 200, 0 );
-		if ( vh < 60.0f && vh > 20.0f )
-			color = D3DCOLOR_ARGB( 111, 200, 200, 0 );
-		if ( vh < 20.0f && vh > 0.0f )
-			color = D3DCOLOR_ARGB( 111, 200, 0, 0 );
-
-		render->D3DBox( g_playerTagInfo[iGTAID].tagPosition.fX + ESP_tag_player_D3DBox_pixelOffsetX,
-						playerBaseY + ESP_tag_player_D3DBox_pixelOffsetY, 100.0f, 10.0f, D3DCOLOR_ARGB(111, 0, 0, 0) );
-		render->D3DBox( g_playerTagInfo[iGTAID].tagPosition.fX + 1.0f + ESP_tag_player_D3DBox_pixelOffsetX,
-						playerBaseY + 1.0f + ESP_tag_player_D3DBox_pixelOffsetY, vh - 2.0f, 8.0f, color );
+		vh *= 70.0f / 100.0f;
 
 		if ( va > 0.0f )
 		{
 			if ( va > 100.0f )
 				va = 100.0f;
-			va /= 1.0f;
-			render->D3DBox( g_playerTagInfo[iGTAID].tagPosition.fX + ESP_tag_player_D3DBox_pixelOffsetX,
-							playerBaseY + ESP_tag_player_D3DBox_pixelOffsetY, va - 1.0f, 10.0f, D3DCOLOR_ARGB(111, 0, 0, 0) );
+			va *= 70.0f / 100.0f;
+			render->D3DBoxBorder( g_playerTagInfo[iGTAID].tagPosition.fX + ESP_tag_player_D3DBox_pixelOffsetX,
+							playerBaseY + ESP_tag_player_D3DBox_pixelOffsetY, 70.0f, 10.0f, D3DCOLOR_ARGB(255, 0, 0, 0), D3DCOLOR_ARGB(128, 50, 50, 50) );
 			render->D3DBox( g_playerTagInfo[iGTAID].tagPosition.fX + 1.0f + ESP_tag_player_D3DBox_pixelOffsetX,
 							playerBaseY + 1.0f + ESP_tag_player_D3DBox_pixelOffsetY, va - 2.0f, 8.0f,
-							D3DCOLOR_ARGB(111, 220, 220, 220) );
+							D3DCOLOR_ARGB(128, 250, 250, 250) );
+			ESP_tag_player_D3DBox_pixelOffsetY += 11.0f;
 		}
+
+		render->D3DBoxBorder( g_playerTagInfo[iGTAID].tagPosition.fX + ESP_tag_player_D3DBox_pixelOffsetX,
+						playerBaseY + ESP_tag_player_D3DBox_pixelOffsetY, 70.0f, 10.0f, D3DCOLOR_ARGB(255, 0, 0, 0), D3DCOLOR_ARGB(128, 80, 0, 0) );
+		render->D3DBox( g_playerTagInfo[iGTAID].tagPosition.fX + 1.0f + ESP_tag_player_D3DBox_pixelOffsetX,
+						playerBaseY + 1.0f + ESP_tag_player_D3DBox_pixelOffsetY, vh - 2.0f, 8.0f, D3DCOLOR_ARGB(128, 255, 0, 0) );
 
 		// this should also calculate the anti-aliasing top edge somehow
 		h = pD3DFontFixedSmall->DrawHeight() + 1;
@@ -1341,35 +1355,32 @@ void renderPlayerTags ( void )
 		// so now we only need to check if samp is running
 		if ( !g_Players )
 		{
-			_snprintf_s( buf, sizeof(buf)-1, "H: %d, A: %d", (int)iterPed->GetHealth(), (int)iterPed->GetArmor() );
-			pD3DFontFixedSmall->PrintShadow( g_playerTagInfo[iGTAID].tagPosition.fX + 8.0f, playerBaseY - h + 10.0f,
-										 D3DCOLOR_ARGB(130, 0xFF, 0x6A, 0), buf );
+			_snprintf_s( buf, sizeof(buf)-1, "%d {E00000}%d", (int)iterPed->GetArmor(), (int)iterPed->GetHealth() );
+			float w = pD3DFontFixedSmall->DrawLength(buf);
+			pD3DFontFixedSmall->PrintShadow( g_playerTagInfo[iGTAID].tagPosition.fX + 70.0f - w - 1.0f, playerBaseY + 10.0f + ESP_tag_player_D3DBox_pixelOffsetY,
+										 D3DCOLOR_ARGB(0xFF, 0xF0, 0xF0, 0xF0), buf );
 		}
 		else
 		{
-			_snprintf_s( buf, sizeof(buf)-1, "H: %d, A: %d",
-						 (int)g_Players->pRemotePlayer[iSAMPID]->pPlayerData->fActorHealth,
-						 (int)g_Players->pRemotePlayer[iSAMPID]->pPlayerData->fActorArmor );
-			pD3DFontFixedSmall->PrintShadow( g_playerTagInfo[iGTAID].tagPosition.fX + 8.0f, playerBaseY - h + 10.0f,
-										 D3DCOLOR_ARGB(130, 0xFF, 0x6A, 0), buf );
-
 			// render the main nametag last so it's on top
 			// this should calculate the anti-aliasing top edge somehow
 			h = pD3DFont_sampStuff->DrawHeight() - 1;
 			_snprintf_s( buf, sizeof(buf)-1, "%s (%d)", getPlayerName(iSAMPID), iSAMPID );
 			pD3DFont_sampStuff->PrintShadow( g_playerTagInfo[iGTAID].tagPosition.fX, playerBaseY - h,
-				samp_color_get( iSAMPID, 0xDD000000 ), buf );
+			samp_color_get( iSAMPID, 0xDD000000 ), buf );
 
-			if ( g_Players->pRemotePlayer[iSAMPID]->pPlayerData->iAFKState == 2 )
+
+			_snprintf_s( buf, sizeof(buf)-1, "%d {E00000}%d",
+						 (int)g_Players->pRemotePlayer[iSAMPID]->pPlayerData->fActorArmor,
+						 (int)g_Players->pRemotePlayer[iSAMPID]->pPlayerData->fActorHealth );
+			float w = pD3DFontFixedSmall->DrawLength(buf);
+			pD3DFontFixedSmall->PrintShadow( g_playerTagInfo[iGTAID].tagPosition.fX + 70.0f - w - 1.0f, playerBaseY + 10.0f + ESP_tag_player_D3DBox_pixelOffsetY,
+										 D3DCOLOR_ARGB(0xFF, 0xF0, 0xF0, 0xF0), buf );
+
+			if (g_Players->pRemotePlayer[iSAMPID]->pPlayerData->iAFKState == 2)
 			{
-				char AFKText[] = "AFK";
-				float w = pD3DFontFixedSmall->DrawLength( AFKText );
-				h = pD3DFontFixedSmall->DrawHeight() + 1;
-				render->D3DBox( g_playerTagInfo[iGTAID].tagPosition.fX + ESP_tag_player_D3DBox_pixelOffsetX + 100.0f + 1.0f,
-					playerBaseY + ESP_tag_player_D3DBox_pixelOffsetY, pD3DFont_sampStuff->DrawLength( AFKText ) + 2.0f, 10.0f, D3DCOLOR_ARGB(111, 0, 0, 0) );
-				pD3DFontFixedSmall->PrintShadow( g_playerTagInfo[iGTAID].tagPosition.fX + ESP_tag_player_D3DBox_pixelOffsetX + 100.0f + 2.0f, playerBaseY - h + 10.0f,
-					D3DCOLOR_ARGB(130, 170, 170, 170), AFKText );
-
+				pD3DFontFixedSmall->PrintShadow(g_playerTagInfo[iGTAID].tagPosition.fX + 1.0f, playerBaseY + 10.0f + ESP_tag_player_D3DBox_pixelOffsetY,
+												D3DCOLOR_ARGB(0xFF, 0xF0, 0xF0, 0xF0), "AFK");
 			}
 		}
 	}
@@ -1403,7 +1414,7 @@ void renderVehicleTags ( void )
 	if	( g_SAMP && g_dwSAMP_Addr &&
 			(
 				(GetAsyncKeyState(VK_TAB) < 0 && set.d3dtext_score)
-				|| IS_SCOREBOARD_TOGGLED_ON
+				|| g_Scoreboard->iIsEnabled
 				|| GetAsyncKeyState(VK_F10) < 0
 			)
 		)
@@ -1500,16 +1511,14 @@ void renderVehicleTags ( void )
 		_snprintf_s( buf, sizeof(buf)-1, "%s (%d)", vehicle->name, v );
 		w = pD3DFontFixed->DrawLength( buf );
 
-		// different color if car is being driven
-		DWORD	color_veh;
-		if ( iterVehicle->IsBeingDriven() )
-			color_veh = D3DCOLOR_ARGB( 128, 150, 0, 0 ); // blueish 100, 150, 235
-		else
-			color_veh = D3DCOLOR_ARGB( 128, 255, 255, 255 );
+		// get color by primary vehicle color from colors palette
+		byte color[4];
+		iterVehicle->GetColor(&color[0], &color[1], &color[2], &color[3]);
+		RwColor rwcolor = getVehicleColorRGB(color[0]);
 
 		// render vehicle name
 		pD3DFontFixed->PrintShadow( screenPosition.fX, screenPosition.fY - h + ESP_tag_vehicle_pixelOffsetY,
-										 color_veh, buf );
+										 D3DCOLOR_ARGB( 128, rwcolor.r, rwcolor.g, rwcolor.b ), buf );
 
 		// health bar
 		vh = iterVehicle->GetVehicleInterface()->m_nHealth;
@@ -1574,9 +1583,6 @@ void renderVehicleTags ( void )
 						D3DCOLOR_ARGB(255, 255, 0, 0) );
 */
 	}
-
-	// omg i'm a moron
-	return;
 }
 
 void RenderTeleportTexts ( void )
@@ -1622,29 +1628,29 @@ void RenderPickupTexts ( void )
 
 	if ( cheat_state->_generic.cheat_panic_enabled )
 		return;
-	if ( g_SAMP->pPools->pPool_Pickup == NULL )
+	if ( g_SAMP->pPools->pPickup == NULL )
 		return;
 
 	struct actor_info	*self = actor_info_get( ACTOR_SELF, 0 );
 
 	if ( (GetAsyncKeyState(VK_TAB) < 0 && set.d3dtext_score)
-	 ||	 IS_SCOREBOARD_TOGGLED_ON ) 
+	 ||	 g_Scoreboard->iIsEnabled ) 
 		return;
 
 	char	buf[32];
 	int		i;
 	if ( self != NULL )
 	{
-		for ( i = 0; i < SAMP_PICKUP_MAX; i++ )
+		for ( i = 0; i < SAMP_MAX_PICKUPS; i++ )
 		{
-			if ( g_SAMP->pPools->pPool_Pickup->pickup[i].iModelID == 0 )
+			if ( g_SAMP->pPools->pPickup->pickup[i].iModelID == 0 )
 				continue;
-			if ( g_SAMP->pPools->pPool_Pickup->pickup[i].iType == 0 )
+			if ( g_SAMP->pPools->pPickup->pickup[i].iType == 0 )
 				continue;
 
 			float		pos[3], screenpos[3];
 			D3DXVECTOR3 poss, screenposs;
-			vect3_copy( g_SAMP->pPools->pPool_Pickup->pickup[i].fPosition, pos );
+			vect3_copy( g_SAMP->pPools->pPickup->pickup[i].fPosition, pos );
 			if ( vect3_near_zero(pos) )
 				continue;
 			if ( vect3_dist( pos, &self->base.matrix[4 * 3] ) > set.pickup_tags_dist )
@@ -1660,7 +1666,7 @@ void RenderPickupTexts ( void )
 			if ( screenpos[2] < 1.f )
 				continue;
 
-			_snprintf_s( buf, sizeof(buf)-1, "Pickup: %d, ModelID: %d", i, g_SAMP->pPools->pPool_Pickup->pickup[i].iModelID );
+			_snprintf_s( buf, sizeof(buf)-1, "Pickup: %d, ModelID: %d", i, g_SAMP->pPools->pPickup->pickup[i].iModelID );
 			pD3DFontFixed->PrintShadow( screenpos[0], screenpos[1] - 5.0f, D3DCOLOR_XRGB(0, 200, 0), buf );
 		}
 	}
@@ -1673,27 +1679,27 @@ void RenderObjectTexts ( void )
 	struct actor_info	*self = actor_info_get( ACTOR_SELF, 0 );
 	if ( cheat_state->_generic.cheat_panic_enabled || self == NULL )
 		return;
-	if ( g_SAMP->pPools->pPool_Object == NULL )
+	if ( g_SAMP->pPools->pObject == NULL )
 		return;
 
 	if ( (GetAsyncKeyState(VK_TAB) < 0 && set.d3dtext_score)
-	 ||	IS_SCOREBOARD_TOGGLED_ON ) 
+	 ||	g_Scoreboard->iIsEnabled ) 
 		return;
 
 	char	buf[32];
 	int		i;
-	for ( i = 0; i < SAMP_OBJECTS_MAX; i++ )
+	for ( i = 0; i < SAMP_MAX_OBJECTS; i++ )
 	{
-		if ( g_SAMP->pPools->pPool_Object->iIsListed[i] != 1 )
+		if ( g_SAMP->pPools->pObject->iIsListed[i] != 1 )
 			continue;
-		if ( g_SAMP->pPools->pPool_Object->object[i] == NULL )
+		if ( g_SAMP->pPools->pObject->object[i] == NULL )
 			continue;
-		if ( g_SAMP->pPools->pPool_Object->object[i]->pGTAObject == NULL )
+		if ( g_SAMP->pPools->pObject->object[i]->pGTAEntity == NULL )
 			continue;
 
 		float		pos[3], screenpos[3];
 		D3DXVECTOR3 poss, screenposs;
-		vect3_copy( &g_SAMP->pPools->pPool_Object->object[i]->pGTAObject->base.matrix[4 * 3], pos );
+		vect3_copy( &g_SAMP->pPools->pObject->object[i]->pGTAEntity->base.matrix[4 * 3], pos );
 		if ( vect3_near_zero(pos) )
 			continue;
 		if ( vect3_dist(pos, &self->base.matrix[4 * 3]) > set.object_tags_dist )
@@ -1710,7 +1716,7 @@ void RenderObjectTexts ( void )
 			continue;
 
 		_snprintf_s( buf, sizeof(buf)-1, "Object: %d, ModelID: %d", i,
-				 g_SAMP->pPools->pPool_Object->object[i]->pGTAObject->base.model_alt_id );
+				 g_SAMP->pPools->pObject->object[i]->pGTAEntity->base.model_alt_id );
 		pD3DFontFixed->PrintShadow( screenpos[0], screenpos[1] - 5.0f, D3DCOLOR_XRGB(200, 200, 0), buf );
 	}
 }
@@ -1723,7 +1729,7 @@ void renderPlayerInfoList ( void )
 		return;
 
 	if ( (GetAsyncKeyState(VK_TAB) < 0 && set.d3dtext_score)
-	 ||	IS_SCOREBOARD_TOGGLED_ON ) return;
+	 ||	g_Scoreboard->iIsEnabled ) return;
 
 	if ( GetAsyncKeyState(VK_F1) < 0 )
 		return;
@@ -1794,7 +1800,7 @@ void renderPlayerInfoList ( void )
 
 	/***/
 	int i;
-	for ( i = current_player_id; i < SAMP_PLAYER_MAX; i++ )
+	for ( i = current_player_id; i < SAMP_MAX_PLAYERS; i++ )
 	{
 		D3DCOLOR	color = MENU_COLOR_DEFAULT;
 		if ( g_Players->iIsListed[i] != 1 )
@@ -1885,7 +1891,7 @@ void renderTextLabels ()
 	if ( cheat_state->_generic.cheat_panic_enabled )
 		return;
 
-	if ( g_SAMP->pPools->pPool_Text3D == NULL || g_Vehicles == NULL || g_Players == NULL )
+	if ( g_SAMP->pPools->pText3D == NULL || g_Vehicles == NULL || g_Players == NULL )
 		return;
 
 	struct actor_info	*self = actor_info_get( ACTOR_SELF, 0 );
@@ -1896,30 +1902,30 @@ void renderTextLabels ()
 	memcpy_safe( (void *)(g_dwSAMP_Addr + SAMP_DRAWTEXTLABELS), "\xEB", 1 );
 
 	if ( (GetAsyncKeyState(VK_TAB) < 0 && set.d3dtext_score)
-		|| IS_SCOREBOARD_TOGGLED_ON ) 
+		|| g_Scoreboard->iIsEnabled ) 
 		return;
 
 	if ( GetAsyncKeyState(VK_F10) < 0 )
 		return;
 
 	char	buf[2048];
-	for ( int i = 0; i < MAX_3DTEXT; i++ )
+	for ( int i = 0; i < SAMP_MAX_3DTEXTS; i++ )
 	{
-		if ( !g_SAMP->pPools->pPool_Text3D->iIsListed[i] )
+		if ( !g_SAMP->pPools->pText3D->iIsListed[i] )
 			continue;
-		if ( g_SAMP->pPools->pPool_Text3D->textLabel[i].pText != NULL )
+		if ( g_SAMP->pPools->pText3D->textLabel[i].pText != NULL )
 		{
 			float		pos[3], screenpos[3];
 			D3DXVECTOR3 poss, screenposs;
 
-			if ( g_SAMP->pPools->pPool_Text3D->textLabel[i].sAttachedToPlayerID == ((uint16_t) - 1)
-			 &&	 g_SAMP->pPools->pPool_Text3D->textLabel[i].sAttachedToVehicleID == ((uint16_t) - 1) )
+			if ( g_SAMP->pPools->pText3D->textLabel[i].sAttachedToPlayerID == ((uint16_t) - 1)
+			 &&	 g_SAMP->pPools->pText3D->textLabel[i].sAttachedToVehicleID == ((uint16_t) - 1) )
 			{
-				vect3_copy( g_SAMP->pPools->pPool_Text3D->textLabel[i].fPosition, pos );
+				vect3_copy( g_SAMP->pPools->pText3D->textLabel[i].fPosition, pos );
 			}
-			else if ( g_SAMP->pPools->pPool_Text3D->textLabel[i].sAttachedToPlayerID != ((uint16_t) - 1) )
+			else if ( g_SAMP->pPools->pText3D->textLabel[i].sAttachedToPlayerID != ((uint16_t) - 1) )
 			{
-				int id = g_SAMP->pPools->pPool_Text3D->textLabel[i].sAttachedToPlayerID;
+				int id = g_SAMP->pPools->pText3D->textLabel[i].sAttachedToPlayerID;
 				// check if player is valid
 				if ( g_Players->pRemotePlayer[id] == NULL || g_Players->pRemotePlayer[id]->pPlayerData == NULL 
 					|| g_Players->pRemotePlayer[id]->pPlayerData->pSAMP_Actor == NULL
@@ -1930,9 +1936,9 @@ void renderTextLabels ()
 				if ( !near_zero(pos[2]) )
 					pos[2] += 0.5f;
 			}
-			else if ( g_SAMP->pPools->pPool_Text3D->textLabel[i].sAttachedToVehicleID != ((uint16_t) - 1) )
+			else if ( g_SAMP->pPools->pText3D->textLabel[i].sAttachedToVehicleID != ((uint16_t) - 1) )
 			{
-				int id = g_SAMP->pPools->pPool_Text3D->textLabel[i].sAttachedToVehicleID;
+				int id = g_SAMP->pPools->pText3D->textLabel[i].sAttachedToVehicleID;
 				// check if vehicle is valid
 				if ( g_Vehicles->pGTA_Vehicle[id] == NULL )
 					continue;
@@ -1956,8 +1962,8 @@ void renderTextLabels ()
 			if ( screenpos[2] < 1.f )
 				continue;
 
-			snprintf( buf, sizeof(buf), "%s", g_SAMP->pPools->pPool_Text3D->textLabel[i].pText );
-			pD3DFontFixed->PrintShadow( screenpos[0], screenpos[1], g_SAMP->pPools->pPool_Text3D->textLabel[i].color,
+			snprintf( buf, sizeof(buf), "%s", g_SAMP->pPools->pText3D->textLabel[i].pText );
+			pD3DFontFixed->PrintShadow( screenpos[0], screenpos[1], g_SAMP->pPools->pText3D->textLabel[i].color,
 										buf );
 		}
 	}
@@ -1984,9 +1990,9 @@ void renderScoreList ()
 	{
 		patched = !sampPatchDisableScoreboardToggleOn( 0 );
 		if ( KEY_DOWN(VK_TAB) )
-			*(int *)( *(DWORD *)( g_dwSAMP_Addr + SAMP_SCOREBOARD_INFO ) ) = 1;
+			g_Scoreboard->iIsEnabled = 1;
 		else
-			*(int *)( *(DWORD *)( g_dwSAMP_Addr + SAMP_SCOREBOARD_INFO ) ) = 0;
+			g_Scoreboard->iIsEnabled = 0;
 		return;
 	}
 	else if ( cheat_state->_generic.cheat_panic_enabled )
@@ -2001,15 +2007,12 @@ void renderScoreList ()
 		return;
 
 	//// Close SAMP Scoreboard, SAMP Chat and Textdraws
-	*(int *)( *(DWORD *)( g_dwSAMP_Addr + SAMP_SCOREBOARD_INFO ) ) = 0;
+	g_Scoreboard->iIsEnabled = 0;
 	g_Chat->iChatWindowMode = 0;
 	//memcpy_safe( (void *)(g_dwSAMP_Addr + SAMP_GAMEPROCESSHOOK), "\xEB", 1 );
 
 	//// Want updated data
-	uint32_t	samp_info = ( uint32_t ) g_SAMP;
-	uint32_t	func = g_dwSAMP_Addr + SAMP_FUNCUPDATESCOREBOARDDATA;
-	__asm mov ecx, samp_info
-	__asm call func
+	updateScoreboardData();
 
 	char 	buffer[512];
 	float	lowest;
@@ -2083,7 +2086,7 @@ void renderScoreList ()
 	_snprintf_s( buffer, sizeof(buffer)-1, "%d", g_Players->iLocalPlayerPing );
 	pD3DFont_sampStuff->PrintShadow( loc[0], loc[1], samp_color_get(g_Players->sLocalPlayerID), buffer );
 
-	for ( int i = current_player_id; i < SAMP_PLAYER_MAX; i++ )
+	for ( int i = current_player_id; i < SAMP_MAX_PLAYERS; i++ )
 	{
 		if ( g_Players->sLocalPlayerID == i )
 			continue;
@@ -2131,7 +2134,7 @@ void renderKillList ( void )
 	static int	kill_last = -1, kill_render = 0;
 
 	if ( (GetAsyncKeyState(VK_TAB) < 0 && set.d3dtext_score)
-	 ||	 IS_SCOREBOARD_TOGGLED_ON ) return;
+	 ||	 g_Scoreboard->iIsEnabled ) return;
 
 	if ( GetAsyncKeyState(VK_F10) < 0 )
 		return;
@@ -2224,7 +2227,7 @@ void clickWarp()
 		float pos[3];
 		char buf[256];
 
-		CVehicle *pCVehicleTeleport = NULL;
+		CVehicle *pCVehicleTeleport = nullptr;
 		screenposs.x = (float)cursor_pos.x;
 		screenposs.y = (float)cursor_pos.y;
 		screenposs.z = 700.0f;
@@ -2235,8 +2238,8 @@ void clickWarp()
 
 		// setup variables
 		CVector				vecOrigin, vecGroundPos;
-		CColPoint			*pCollision = NULL;
-		CEntitySAInterface	*pCollisionEntity = NULL;
+		CColPoint			*pCollision = nullptr;
+		CEntitySAInterface	*pCollisionEntity = nullptr;
 
 		// origin = our camera
 		vecOrigin = *pGame->GetCamera()->GetCam(pGame->GetCamera()->GetActiveCam())->GetSource();
@@ -2277,7 +2280,7 @@ void clickWarp()
 				if (pCVehicleTeleport)
 				{
 					const struct vehicle_entry *vehicleEntry = gta_vehicle_get_by_id(pCVehicleTeleport->GetModelIndex());
-					if (vehicleEntry != NULL)
+					if (vehicleEntry != nullptr)
 					{
 						sprintf(buf, "Warp to %s", vehicleEntry->name);
 					}
@@ -2292,9 +2295,6 @@ void clickWarp()
 			{
 				sprintf(buf, "Distance %0.2f", vect3_dist(&vecOrigin.fX, &vecGroundPos.fX));
 			}
-
-			// destroy the collision object
-			pCollision->Destroy();
 		}
 		else
 		{
@@ -2302,10 +2302,14 @@ void clickWarp()
 			//toggleSAMPCursor(0);
 			return;
 		}
-
+		if (pCollision != nullptr)
+		{
+			// destroy the collision object
+			pCollision->Destroy();
+		}
 		if (iClickWarpEnabled)
 		{
-			if (pCVehicleTeleport != NULL)
+			if (pCVehicleTeleport != nullptr)
 			{
 				// ClickWarp to vehicle
 				int iVehicleID = getVehicleGTAIDFromInterface( (DWORD*) pCVehicleTeleport->GetInterface() );
@@ -2325,8 +2329,6 @@ void clickWarp()
 						pos[0] = pCollision->GetPosition()->fX;
 						pos[1] = pCollision->GetPosition()->fY;
 						pos[2] = pCollision->GetPosition()->fZ + 0.5f; // should be enough so we're surfing properly
-						// destroy the collision object
-						pCollision->Destroy();
 					}
 					else
 					{
@@ -2335,7 +2337,11 @@ void clickWarp()
 						pos[1] = vecGroundPos.fY;
 						pos[2] = vecGroundPos.fZ + 0.5f;
 					}
-
+					if (pCollision != nullptr)
+					{
+						// destroy the collision object
+						pCollision->Destroy();
+					}
 					// teleport
 					cheat_teleport(pos, gta_interior_id_get());
 					GTAfunc_TogglePlayerControllable(0);
@@ -2389,9 +2395,6 @@ void clickWarp()
 							pos[0] = pCollision->GetPosition()->fX;
 							pos[1] = pCollision->GetPosition()->fY;
 							pos[2] = pCollision->GetPosition()->fZ + 1.0f; // should be enough to stay above the ground properly
-							
-							// destroy the collision object
-							pCollision->Destroy();
 						}
 						else
 						{
@@ -2399,6 +2402,11 @@ void clickWarp()
 							pos[0] = vecGroundPos.fX;
 							pos[1] = vecGroundPos.fY;
 							pos[2] = vecGroundPos.fZ + 0.5f;
+						}
+						if (pCollision != nullptr)
+						{
+							// destroy the collision object
+							pCollision->Destroy();
 						}
 					}
 					else
@@ -2425,9 +2433,10 @@ void clickWarp()
 
 			iClickWarpEnabled = 0;
 			toggleSAMPCursor(0);
+			g_iCursorEnabled = 0;
 		}
 
-		if (pCVehicleTeleport != NULL)
+		if (pCVehicleTeleport != nullptr)
 		{
 			D3DXVECTOR3 vehPoss, vehScreenposs;
 			vehPoss.x = pCVehicleTeleport->GetPosition()->fX;
@@ -2468,7 +2477,7 @@ void renderChat ( void )
 	}
 
 	if ( (KEY_DOWN(VK_TAB) && set.d3dtext_score)
-	 ||	 (IS_SCOREBOARD_TOGGLED_ON && !set.d3dtext_score) ) return;
+	 ||	 (g_Scoreboard->iIsEnabled && !set.d3dtext_score) ) return;
 
 	if ( GetAsyncKeyState(VK_F1) < 0 )
 		return;
@@ -2628,16 +2637,13 @@ void renderChat ( void )
 						{
 							if ( strncmp(url_buffer, "samp://", 7) == 0 )
 							{
-								extern int joining_server;
 								char *port = strstr( &url_buffer[7],":" );
 								if ( port != NULL )
 								{
 									// 0-terminate the IP
 									*port = NULL;
 									port++;
-									strncpy_s( g_SAMP->szIP, &url_buffer[7], sizeof(g_SAMP->szIP)-1 );
-									g_SAMP->ulPort = atoi( port );
-									joining_server = 1;
+									changeServer(&url_buffer[7], atoi(port), "");
 								}
 								else //- Try to connect to port 7777? Looks invalid though
 									addMessageToChatWindow( "Port missing. Correct would be: samp://127.0.0.1:7777" );
@@ -2682,7 +2688,7 @@ void renderPlayerInfo ( int iPlayerID )
 	traceLastFunc( "renderPlayerInfo()" );
 
 	if ( (KEY_DOWN(VK_TAB) && set.d3dtext_score)
-	 ||	 (IS_SCOREBOARD_TOGGLED_ON && !set.d3dtext_score) ) return;
+	 ||	 (g_Scoreboard->iIsEnabled && !set.d3dtext_score) ) return;
 
 	if ( GetAsyncKeyState(VK_F1) < 0 )
 		return;
@@ -2871,16 +2877,13 @@ void renderPlayerInfo ( int iPlayerID )
 							 g_Players->pLocalPlayer->trailerData.fPosition[2] );
 					pD3DFontFixed->PrintShadow( 20.0f, y, color, buf );
 					( y ) += 1.0f + pD3DFontFixed->DrawHeight();
-					sprintf( buf, "    pLocalPlayer->trailerData.fDirection: %0.2f %0.2f %0.2f",
-							 g_Players->pLocalPlayer->trailerData.fDirection[0],
-							 g_Players->pLocalPlayer->trailerData.fDirection[1],
-							 g_Players->pLocalPlayer->trailerData.fDirection[2] );
+					sprintf( buf, "    pLocalPlayer->trailerData.fQuaternion: %0.2f %0.2f %0.2f %0.2f",
+							 g_Players->pLocalPlayer->trailerData.fQuaternion[0],
+							 g_Players->pLocalPlayer->trailerData.fQuaternion[1],
+							 g_Players->pLocalPlayer->trailerData.fQuaternion[2],
+							 g_Players->pLocalPlayer->trailerData.fQuaternion[3] );
 					pD3DFontFixed->PrintShadow( 20.0f, y, color, buf );
 					( y ) += 1.0f + pD3DFontFixed->DrawHeight();
-					sprintf( buf, "    pLocalPlayer->trailerData.fRoll: %0.2f %0.2f %0.2f",
-							 g_Players->pLocalPlayer->trailerData.fRoll[0],
-							 g_Players->pLocalPlayer->trailerData.fRoll[1],
-							 g_Players->pLocalPlayer->trailerData.fRoll[2] );
 					pD3DFontFixed->PrintShadow( 20.0f, y, color, buf );
 					( y ) += 1.0f + pD3DFontFixed->DrawHeight();
 					sprintf( buf, "    pLocalPlayer->trailerData.fSpeed: %0.2f %0.2f %0.2f",
@@ -3129,25 +3132,25 @@ extern int	iDebuggingPlayer, iViewingInfoPlayer;
 void renderSAMP ( void )
 {
 	traceLastFunc( "renderSAMP()" );
-
+	
 	// get samp structures
 	if ( !g_renderSAMP_initSAMPstructs )
 	{
 		g_SAMP = stGetSampInfo();
 		if ( isBadPtr_writeAny(g_SAMP, sizeof(stSAMP)) )
 			return;
-
+		
 		if ( isBadPtr_writeAny(g_SAMP->pPools, sizeof(stSAMPPools)) )
 			return;
-
-		g_Players = g_SAMP->pPools->pPool_Player;
+		
+		g_Players = g_SAMP->pPools->pPlayer;
 		if ( isBadPtr_writeAny(g_Players, sizeof(stPlayerPool)) )
 			return;
 
-		g_Vehicles = g_SAMP->pPools->pPool_Vehicle;
+		g_Vehicles = g_SAMP->pPools->pVehicle;
 		if ( isBadPtr_writeAny(g_Vehicles, sizeof(stVehiclePool)) )
 			return;
-
+		
 		g_Chat = stGetSampChatInfo();
 		if ( isBadPtr_writeAny(g_Chat, sizeof(stChatInfo)) )
 			return;
@@ -3159,19 +3162,22 @@ void renderSAMP ( void )
 		g_DeathList = stGetKillInfo();
 		if ( isBadPtr_writeAny(g_DeathList, sizeof(stKillInfo)) )
 			return;
+
+		g_Scoreboard = stGetScoreboardInfo();
+		if ( isBadPtr_writeAny(g_Scoreboard, sizeof(stScoreboardInfo)) )
+			return;
 			
 		if ( g_SAMP->pRakClientInterface == NULL )
 			return;
-
+		
 		// initialize raknet
 		g_RakClient = new RakClient( g_SAMP->pRakClientInterface );
 		g_SAMP->pRakClientInterface = new HookedRakClientInterface();
 		
-		//init modCommands
+		// init modCommands
 		if ( set.mod_commands_activated )
-			init_samp_chat_cmds();
+			initChatCmds();
 
-		// patch
 		memcpy_safe((void *)(g_dwSAMP_Addr + SAMP_PATCH_NOCARCOLORRESETTING), "\xC3", 1);
 		memcpy_safe((void *)0x004B35A0, (uint8_t *)"\x83\xEC\x0C\x56\x8B\xF1", 6 ); // godmode patch
 		
@@ -3218,9 +3224,9 @@ void renderSAMP ( void )
 		if ( !a )
 		{
 			if ( set.player_tags_dist > set.line_of_sight_dist )
-				memcpy_safe( (void *)(g_dwSAMP_Addr + VALUE_DRAWING_DISTANCE), &set.player_tags_dist, sizeof(float) );
+				memcpy_safe( (void *)(g_dwSAMP_Addr + SAMP_DRAWING_DISTANCE), &set.player_tags_dist, sizeof(float) );
 			else
-				memcpy_safe( (void *)(g_dwSAMP_Addr + VALUE_DRAWING_DISTANCE), &set.line_of_sight_dist, sizeof(float) );
+				memcpy_safe( (void *)(g_dwSAMP_Addr + SAMP_DRAWING_DISTANCE), &set.line_of_sight_dist, sizeof(float) );
 
 			a = 1;
 		}
@@ -3229,7 +3235,10 @@ void renderSAMP ( void )
 
 void mapMenuTeleport ( void )
 {
-	if ( (*(int *)0xBA6774 != 0) && GetAsyncKeyState(VK_RBUTTON) && pGameInterface != NULL )
+	if ( set.map_must_be_open && *(byte *)0xBA68A5 != 5 )
+		return;
+
+	if ( (*(int *)0xBA6774 != 0) && GetAsyncKeyState(set.key_map_teleport) & ( 1 << 16 ) && pGameInterface != NULL )
 	{
 		// ty to Racer_S for this
 		float	mapPos[3];
@@ -3293,7 +3302,7 @@ float getFPS ( void )
 	fpsFrameCounter++;
 
 	// get fps
-	if ( (GetTickCount() - 250) > fps_time )
+	if ( (GetTickCount() - 240) > fps_time )
 	{
 		// for averaging
 		fpsBuf4 = fpsBuf3;
@@ -3792,6 +3801,11 @@ void renderHandler()
 					HUD_TEXT_TGL( x, cheat_state->vehicle.fly ? color_enabled : color_disabled, "Fly" );
 				}
 
+				if ( set.hud_indicator_freezerot )
+				{
+					HUD_TEXT_TGL( x, cheat_state->vehicle.freezerot ? color_enabled : color_disabled, "FreezeRot" );
+				}
+
 				RenderVehicleHPBar();
 			}
 			else if ( cheat_state->state == CHEAT_STATE_ACTOR )
@@ -3814,6 +3828,11 @@ void renderHandler()
 				if ( set.hud_indicator_onfoot_fly )
 				{
 					HUD_TEXT_TGL( x, cheat_state->actor.fly_on ? color_enabled : color_disabled, "Fly" );
+				}
+
+				if (set.hud_indicator_surf)
+				{
+					HUD_TEXT_TGL( x, cheat_state->actor.surf ? color_enabled : color_disabled, "Surf" );
 				}
 
 				RenderPedHPBar();
@@ -4463,12 +4482,12 @@ HRESULT proxyIDirect3DDevice9::DrawIndexedPrimitive ( D3DPRIMITIVETYPE Primitive
 													  UINT MinVertexIndex, UINT NumVertices, UINT startIndex,
 													  UINT primCount )
 {
+	DWORD	dwRet_addr = ( DWORD ) _ReturnAddress();
+
 	// chams probably works better with texture instead of shaders
 	if ( set.chams_on
 	 &&	 !cheat_state->_generic.cheat_panic_enabled )
 	{
-		DWORD	dwRet_addr = ( DWORD ) _ReturnAddress();
-
 		// actors
 		if ( dwRet_addr == 0x761142 )
 		{

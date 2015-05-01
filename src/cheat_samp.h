@@ -20,19 +20,19 @@
 	along with mod_sa.  If not, see <http://www.gnu.org/licenses/>.
 
 */
-typedef signed char			int8_t;
-typedef unsigned char		uint8_t;
-typedef signed short		int16_t;
-typedef unsigned short		uint16_t;
-typedef signed int			int32_t;
-typedef unsigned int		uint32_t;
-typedef signed long long	int64_t;
-typedef unsigned long long	uint64_t;
 
-struct t_WindowsInfo
-{
-	int osPlatform;
-	int osVer;
-	int winVer;
-	int winMajor;
-};
+void sampMainCheat(void);
+void sampAntiHijack(void);
+void spectateHandle(void);
+void spectatePlayer(int iPlayerID);
+void HandleRPCPacketFunc(unsigned char id, struct RPCParameters *rpcParams, void(*callback) (struct RPCParameters *));
+void initChatCmds(void);
+bool OnSendRPC(int uniqueID, BitStream *parameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, bool shiftTimestamp);
+bool OnSendPacket(BitStream *parameters, PacketPriority priority, PacketReliability reliability, char orderingChannel);
+bool OnReceivePacket(Packet *p);
+
+extern int										g_iSpectateEnabled;
+extern int										g_iCursorEnabled;
+extern int										g_iJoiningServer;
+extern int										g_iNumPlayersMuted;
+extern bool										g_bPlayerMuted[SAMP_MAX_PLAYERS];

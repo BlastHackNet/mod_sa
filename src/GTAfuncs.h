@@ -2,9 +2,9 @@
 
 	PROJECT:		mod_sa
 	LICENSE:		See LICENSE in the top level directory
-	COPYRIGHT:		Copyright we_sux, FYP
+	COPYRIGHT:		Copyright we_sux, BlastHack
 
-	mod_sa is available from http://code.google.com/p/m0d-s0beit-sa/
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
 
 	mod_sa is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -174,3 +174,4 @@ void GTAfunc_PerformAnimation(const char *szBlockName, const char *szAnimName, i
 							  bool bUpdatePosition, bool bInterruptable, bool bFreezeLastFrame, bool bRunInSequence, bool bOffsetPed, bool bHoldLastFrame);
 void GTAfunc_DisembarkInstantly();
 void GTAfunc_ApplyRotoryPulseAboutAnAxis(float fX, float fY, float fZ);
+void GTAfunc_showStyledText( const char *text, int time, int style );

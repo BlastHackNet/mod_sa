@@ -2,9 +2,9 @@
 
 	PROJECT:		mod_sa
 	LICENSE:		See LICENSE in the top level directory
-	COPYRIGHT:		Copyright we_sux, FYP
+	COPYRIGHT:		Copyright we_sux, BlastHack
 
-	mod_sa is available from http://code.google.com/p/m0d-s0beit-sa/
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
 
 	mod_sa is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -135,10 +135,12 @@ public:
 	HRESULT		Initialize ( IDirect3DDevice9 *pD3Ddev );
 	HRESULT		Invalidate ();
 
-	HRESULT		Print ( float x, float y, DWORD color, const char *szText, bool isShadow = false );
+	HRESULT		Print( const char *text, D3DCOLOR color, float x, float y, bool shadow, bool noColorFormat );
 	HRESULT		PrintShadow ( float x, float y, DWORD color, const char *szText );
 
-	float		DrawLength ( const char * ) const;
+	float		DrawLength ( const char *szText, bool noColorFormat = false ) const;
+	size_t		GetCharPos( const char *text, float x, bool noColorFormat = false ) const;
+
 	float DrawHeight () const
 	{
 		return m_fChrHeight;
@@ -186,7 +188,7 @@ public:
 	void	D3DBoxi ( int x, int y, int w, int h, D3DCOLOR color, int maxW );
 	void	D3DBoxBorder ( float x, float y, float w, float h, D3DCOLOR border_color, D3DCOLOR color );
 	void	D3DBoxBorderi ( int x, int y, int w, int h, D3DCOLOR border_color, D3DCOLOR color );
-
+	void	D3DLine(int x, int y, int x2, int y2, D3DCOLOR color);
 	bool	DrawLine ( const D3DXVECTOR3 &a, const D3DXVECTOR3 &b, DWORD dwColor );
 private:
 	D3DPRIMITIVETYPE		m_primType;

@@ -2,9 +2,9 @@
 
 	PROJECT:		mod_sa
 	LICENSE:		See LICENSE in the top level directory
-	COPYRIGHT:		Copyright we_sux, FYP
+	COPYRIGHT:		Copyright we_sux, BlastHack
 
-	mod_sa is available from http://code.google.com/p/m0d-s0beit-sa/
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
 
 	mod_sa is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -23,9 +23,11 @@
 #define INI_STRLEN_MAX		64	/* including null */
 #define INI_PATCHES_MAX		96
 #define INI_SAMPPATCHES_MAX 128 /*64*/
+#define INI_NETPATCHES_MAX	1024
 #define INI_SERVERS_MAX		64
 #define INI_CHATMSGS_MAX	64
 #define INI_GUI_MAX			8
+#define INI_KEYCOMBO_MAX	8
 
 struct settings_coord
 {
@@ -59,6 +61,12 @@ struct gui
 	int			blue;
 };
 
+struct keycombo
+{
+	unsigned int count;
+	uint8_t key[INI_KEYCOMBO_MAX];
+};
+
 // set structure
 // DO NOT use bool types in here, it screws up the alignment even with pragma pack directive
 struct settings
@@ -69,7 +77,7 @@ struct settings
 	int						basic_mode;
 	int						fps_limit;
 
-	int						key_hp_cheat;
+	keycombo				key_hp_cheat;
 	float					hp_minimum;
 	float					hp_regen;
 	float					hp_regen_onfoot;
@@ -78,58 +86,54 @@ struct settings
 	int						hp_actor_fire_inv;
 	int						hp_keep_vehicleHPsane;
 	int						hp_disable_inv_sp_enemies;
-
-	int						secondary_key;
+	int						hp_tire_support;
 
 	int						mod_commands_activated;
 
-	int						key_anti_freeze;
+	keycombo				key_anti_freeze;
 
-	int						hp_indestructible;
-	int						hp_tire_support;
-
-	int						key_autoaim_toggle;
+	keycombo				key_autoaim_toggle;
 	int						use_gta_autoaim;
 
-	int						key_map;
-	int						key_map_show_vehicles;
+	keycombo				key_map;
+	keycombo				key_map_show_vehicles;
 
-	int						key_air_brake_mod;
-	int						key_air_brake_foot_mod;
-	int						key_air_brake_mod2;
-	int						key_air_brake_forward;
-	int						key_air_brake_backward;
-	int						key_air_brake_left;
-	int						key_air_brake_right;
-	int						key_air_brake_up;
-	int						key_air_brake_down;
-	int						key_air_brake_rot_yaw1;
-	int						key_air_brake_rot_yaw2;
-	int						key_air_brake_rot_roll1;
-	int						key_air_brake_rot_roll2;
-	int						key_air_brake_rot_pitch1;
-	int						key_air_brake_rot_pitch2;
+	keycombo				key_air_brake_mod;
+	keycombo				key_air_brake_foot_mod;
+	keycombo				key_air_brake_mod2;
+	keycombo				key_air_brake_forward;
+	keycombo				key_air_brake_backward;
+	keycombo				key_air_brake_left;
+	keycombo				key_air_brake_right;
+	keycombo				key_air_brake_up;
+	keycombo				key_air_brake_down;
+	keycombo				key_air_brake_rot_yaw1;
+	keycombo				key_air_brake_rot_yaw2;
+	keycombo				key_air_brake_rot_roll1;
+	keycombo				key_air_brake_rot_roll2;
+	keycombo				key_air_brake_rot_pitch1;
+	keycombo				key_air_brake_rot_pitch2;
 	int						air_brake_toggle;
 	int						air_brake_behaviour;
 	float					air_brake_speed;
 	float					air_brake_rot_speed;
 	float					air_brake_accel_time;
 
-	int						key_warp_mod;
+	keycombo				key_warp_mod;
 	float					warp_speed;
 	int						warp_use_speed;
 
-	int						key_blinking_car_lights;
+	keycombo				key_blinking_car_lights;
 	int						enable_car_lights_at_day_time;
 
-	int						key_keep_trailer;
-	int						key_disable_Wall_Collisions;
+	keycombo				key_keep_trailer;
+	keycombo				key_disable_Wall_Collisions;
 	int						wall_collisions_disableObjects;
 	int						wall_collisions_disableRender;
 
-	int						key_repair_car;
+	keycombo				key_repair_car;
 
-	int						key_nitro;
+	keycombo				key_nitro;
 
 #ifdef __CHEAT_VEHRECORDING_H__
 	int						recording_activated;
@@ -145,62 +149,60 @@ struct settings
 
 	//int					teleport_slow;
 	//int					key_slowTeleport_stop;
-	int						key_teleport_hist;
-	int						key_teleport[TELEPORT_MAX];
-	int						key_teleport_set[TELEPORT_MAX];
+	keycombo				key_teleport_hist;
+	keycombo				key_teleport[TELEPORT_MAX];
+	keycombo				key_teleport_set[TELEPORT_MAX];
 	struct settings_coord	teleport[TELEPORT_MAX];
 
 	char					static_teleport_name[STATIC_TELEPORT_MAX][INI_STRLEN_MAX];
 	struct settings_coord	static_teleport[STATIC_TELEPORT_MAX];
 
-	int						hb_color;
+	keycombo				key_unflip;
+	keycombo				key_quick_turn_180;
+	keycombo				key_quick_turn_left;
+	keycombo				key_quick_turn_right;
 
-	int						key_unflip;
-	int						key_quick_turn_180;
-	int						key_quick_turn_left;
-	int						key_quick_turn_right;
-
-	int						key_stick;
-	int						key_stick_prev;
-	int						key_stick_next;
-	int						key_stick_nearest;
-	int						key_stick_forward;
-	int						key_stick_backward;
-	int						key_stick_left;
-	int						key_stick_right;
-	int						key_stick_up;
-	int						key_stick_down;
-	int						key_stick_in;
-	int						key_stick_out;
+	keycombo				key_stick;
+	keycombo				key_stick_prev;
+	keycombo				key_stick_next;
+	keycombo				key_stick_nearest;
+	keycombo				key_stick_forward;
+	keycombo				key_stick_backward;
+	keycombo				key_stick_left;
+	keycombo				key_stick_right;
+	keycombo				key_stick_up;
+	keycombo				key_stick_down;
+	keycombo				key_stick_in;
+	keycombo				key_stick_out;
 	float					stick_min_height;
 	float					stick_vect[4];	/* must be 4d! */
 	float					stick_vect_dist;
 	float					stick_accel_time;
 
-	int						key_checkpoint_1;
-	int						key_checkpoint_2;
+	keycombo				key_checkpoint_1;
+	keycombo				key_checkpoint_2;
 	float					checkpoint_min_height;
 
-	int						key_nitro_mod;
+	keycombo				key_nitro_mod;
 	float					nitro_high;
 	float					nitro_low;
 	float					nitro_accel_time;
 	float					nitro_decel_time;
 
-	int						key_brake_mod;
+	keycombo				key_brake_mod;
 	float					brake_mult;
 
-	int						key_protection;
+	keycombo				key_protection;
 	float					protection_spin_cap;
 	float					protection_speed_cap;
 	float					protection_min_height;
 
-	int						key_self_destruct;
-	int						key_engine;
-	int						key_vehicle_jumper;
-	int						key_vehicle_occupied_jumper;
+	keycombo				key_self_destruct;
+	keycombo				key_engine;
+	keycombo				key_vehicle_jumper;
+	keycombo				key_vehicle_occupied_jumper;
 
-	int						key_weapon;
+	keycombo				key_weapon;
 	int						weapon_enabled;
 	int						restore_weapons_after_death;
 
@@ -210,7 +212,7 @@ struct settings
 
 	struct weapon_entry		*weapon[13];
 
-	int						key_money;
+	keycombo				key_money;
 	int						money_value;
 	int						money_enabled;
 	int						money_amount_max;
@@ -219,7 +221,7 @@ struct settings
 	int						money_interval_rand_min;
 	int						money_interval_rand_max;
 
-	int						key_menu;
+	keycombo				key_menu;
 	int						key_menu_up;
 	int						key_menu_right;
 	int						key_menu_down;
@@ -227,6 +229,7 @@ struct settings
 	int						key_menu_select;
 	int						key_menu_dec;
 	int						key_menu_inc;
+	keycombo				key_menu_mousecontrol;
 
 	int						hud_draw_bar;
 	int						render_text_shadows;
@@ -264,8 +267,6 @@ struct settings
 	char					speedometer_speedo_png_filename[32];
 	char					speedometer_needle_png_filename[32];
 
-	int						logo_enable;
-
 	int						chams_on;
 	int						chams_wireframe;
 
@@ -292,11 +293,11 @@ struct settings
 	int						headsync_sendrate;
 
 	int						clickwarp_enabled;
-	int						key_clickwarp_enable;
-	int						key_clickwarp_click;
+	keycombo				key_clickwarp_enable;
+	keycombo				key_clickwarp_click;
 
-	int						key_player_info_list;
-	int						key_fast_exit;
+	keycombo				key_player_info_list;
+	keycombo				key_fast_exit;
 
 	int						anti_carjacking;
 
@@ -309,26 +310,26 @@ struct settings
 	int						walk_under_water;
 	int						vehicles_unlock;
 	int						vehicles_warp_invert;
-	int						key_vehicles_freeze;
+	keycombo				key_vehicles_freeze;
 
-	int						key_respawn;
+	keycombo				key_respawn;
 
-	int						key_render_player_tags;
+	keycombo				key_render_player_tags;
 	float					player_tags_dist;
-	int						key_render_vehicle_tags;
+	keycombo				key_render_vehicle_tags;
 	float					vehicle_tags_dist;
 
-	int						key_vehicle_hop;
+	keycombo				key_vehicle_hop;
 	float					vehicle_hop_speed;
 
-	int						key_spiderwheels;
+	keycombo				key_spiderwheels;
 	/*
 	int						key_spiderfeet;
 	int						key_ninjaflipfront;
 	int						key_ninjaflipback;
 	*/
 
-	int						key_fly_player;
+	keycombo				key_fly_player;
 	int						key_fly_player_accelerate;
 	int						key_fly_player_decelerate;
 	int						key_fly_player_strafeLeft;
@@ -343,34 +344,32 @@ struct settings
 	int						use_current_name;
 	struct fav_server		server[INI_SERVERS_MAX];
 
-	int						chat_secondary_key;
+	keycombo				chat_secondary_key;
 	struct chat_msg			chat[INI_CHATMSGS_MAX];
 
 	struct patch_set		patch[INI_PATCHES_MAX];
 	struct patch_set		sampPatch[INI_SAMPPATCHES_MAX];
 
-	int						key_panic;
+	keycombo				key_panic;
 
 	int						custom_runanimation_enabled;
 	int						custom_runanimation_id;
 
-	int						key_brkd_toggle;
-	int						key_brkd_forward;
-	int						key_brkd_left;
-	int						key_brkd_backward;
-	int						key_brkd_right;
-	int						key_brkd_rightward;
-	int						key_brkd_leftward;
+	keycombo				key_brkd_toggle;
+	keycombo				key_brkd_forward;
+	keycombo				key_brkd_left;
+	keycombo				key_brkd_backward;
+	keycombo				key_brkd_right;
+	keycombo				key_brkd_rightward;
+	keycombo				key_brkd_leftward;
 	float					brkdance_velocity;
 
-	int						key_fly_vehicle;
-	int						key_fly_vehicle_modeChange;
+	keycombo				key_fly_vehicle;
+	keycombo				key_fly_vehicle_modeChange;
 	int						fly_vehicle_heliMode;
 
-	int						key_rejoin;
+	keycombo				key_rejoin;
 	int						rejoin_delay;
-
-	int						send_spec_data;
 
 	// new ESP ish
 	int						esp_vehicles_defaulton;
@@ -381,7 +380,21 @@ struct settings
 	int						render_object_texts;
 	float					object_tags_dist;
 	int						enable_clouds;
+
 	int						enable_extra_godmode;
+	int						key_map_teleport;
+	int						map_must_be_open;
+	int						map_draw_lines;
+	
+	keycombo				key_fastwarp;
+	keycombo				key_surf;
+	keycombo				key_freezerot;
+
+	int						hud_indicator_surf;
+	int						hud_indicator_freezerot;
+
+	stNetPatch				netPatch[INI_NETPATCHES_MAX];
+	stNetPatch				*netPatchAssoc[RAKNET_MAX_PACKET][4];
 
 	///////////////////////////////////////////////
 	// DO NOT PUT ANYTHING AFTER THIS, DUMB FUCK //

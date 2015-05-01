@@ -2,9 +2,9 @@
 
 	PROJECT:		mod_sa
 	LICENSE:		See LICENSE in the top level directory
-	COPYRIGHT:		Copyright we_sux, FYP
+	COPYRIGHT:		Copyright we_sux, BlastHack
 
-	mod_sa is available from http://code.google.com/p/m0d-s0beit-sa/
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
 
 	mod_sa is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -128,14 +128,19 @@ static struct patch_set patch_gta_auto_aim =
 	"GTA: Autoaim",
 	0,
 	0,
-	{ { 1, (void *)0x00B6EC2E, (uint8_t *)"\x01", (uint8_t *)"\x00", NULL }, { 1, (void *)0x00BA6818, (uint8_t *)"\x00",
-	(uint8_t *)"\x01", NULL }, { 5, (void *)0x00524013,
-	(uint8_t *)"\xA0\x2E\xEC\xB6\x00", NULL, NULL }, { 5, (void *)0x00523F3E,
-	(uint8_t *)"\xA0\x2E\xEC\xB6\x00", NULL, NULL }, { 5, (void *)0x00525615,
-	(uint8_t *)"\xA0\x2E\xEC\xB6\x00", NULL, NULL }, { 5, (void *)0x005221FC,
-	(uint8_t *)"\xA0\x2E\xEC\xB6\x00", NULL, NULL }, { 6, (void *)0x0060E08E,
-	(uint8_t *)"\x0F\x85\x79\x02\x00\x00", NULL, NULL }, { 6, (void *)0x0060E6B1,
-	(uint8_t *)"\x0F\x85\xAC\x00\x00\x00", NULL, NULL }
+	{
+		{ 1, (void *)0x00B6EC2E, (uint8_t *)"\x01", (uint8_t *)"\x00", NULL },
+		{ 1, (void *)0x00BA6818, (uint8_t *)"\x00", (uint8_t *)"\x01", NULL },
+		{ 5, (void *)0x00524013, (uint8_t *)"\xA0\x2E\xEC\xB6\x00", NULL, NULL },
+		{ 5, (void *)0x00523F3E, (uint8_t *)"\xA0\x2E\xEC\xB6\x00", NULL, NULL },
+		{ 5, (void *)0x00525615, (uint8_t *)"\xA0\x2E\xEC\xB6\x00", NULL, NULL },
+		{ 5, (void *)0x005221FC, (uint8_t *)"\xA0\x2E\xEC\xB6\x00", NULL, NULL },
+		{ 6, (void *)0x0060E08E, (uint8_t *)"\x0F\x85\x79\x02\x00\x00", NULL, NULL },
+		{ 6, (void *)0x0060E6B1, (uint8_t *)"\x0F\x85\xAC\x00\x00\x00", NULL, NULL },
+		{ 3, (void *)0x0050AC20, NULL, (uint8_t *)"\xE9\x48\x65", NULL },
+		{ 1, (void *)0x005A82C0, NULL, (uint8_t *)"\x56", NULL },
+		{ 1, (void *)0x0060DC50, NULL, (uint8_t *)"\x81", NULL },
+		{ 3, (void *)0x0060E530, NULL, (uint8_t *)"\x6A\xFF\xE9", NULL }
 	}
 };
 

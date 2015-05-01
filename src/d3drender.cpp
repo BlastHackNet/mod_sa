@@ -2,9 +2,9 @@
 
 	PROJECT:		mod_sa
 	LICENSE:		See LICENSE in the top level directory
-	COPYRIGHT:		Copyright we_sux, FYP
+	COPYRIGHT:		Copyright we_sux, BlastHack
 
-	mod_sa is available from http://code.google.com/p/m0d-s0beit-sa/
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
 
 	mod_sa is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -428,65 +428,103 @@ HRESULT CD3DFont::Invalidate ()
 	return S_OK;
 }
 
-HRESULT CD3DFont::Print ( float x, float y, DWORD color, const char *szText, bool isShadow )
+
+struct stColorTag
 {
-	if ( !m_isReady )
+	D3DCOLOR _color;
+	bool _alpha;
+	bool _valid;
+};
+
+stColorTag GetColorTag( const char *text, size_t maxLen )
+{
+	stColorTag color = { 0, false, false };
+	const int minLen = 8; // { + XXXXXX + } = 8
+
+	if ( text == nullptr || *text != '{' || maxLen < minLen )
+		return color;
+	
+	if ( text[7] == '}' )
+	{
+		color._alpha = false;
+		color._valid = true;
+	}
+	else if ( minLen + 2 <= maxLen && text[9] == '}' )
+	{
+		color._alpha = true;
+		color._valid = true;
+	}
+	if ( color._valid )
+	{
+		if ( hex_is_valid( std::string( text ).substr( 1, color._alpha ? 8 : 6 ) ) )
+			color._color = strtol( &text[1], nullptr, 16 );
+		else
+			color._valid = false;
+	}
+	return color;
+}
+
+HRESULT CD3DFont::Print( const char *text, D3DCOLOR color, float x, float y, bool shadow, bool noColorFormat )
+{
+	if ( !m_isReady || text == nullptr || *text == '\0' )
 		return E_FAIL;
 
-	x -= (float)m_chrSpacing;
+	float xp = x, yp = y;
+	D3DCOLOR clr = color;
+	xp = x -= ( float ) m_chrSpacing;
 
-	if ( FAILED(this->BeginRender()) )
+	if ( FAILED( this->BeginRender() ) )
 		return E_FAIL;
 
-	DWORD	fvf;
+	DWORD fvf;
 	m_pD3Ddev->GetFVF( &fvf );
 	m_pD3Ddev->SetFVF( D3DFVF_BITMAPFONT );
 	m_pD3Ddev->SetTexture( 0, m_pD3Dtex );
 	m_pD3Ddev->SetStreamSource( 0, m_pD3Dbuf, 0, sizeof(d3dvertex_s) );
 
-	if ( szText && *szText )
+	UINT		usedTriangles = 0;
+	d3dvertex_s *pVertex;
+
+	if ( FAILED( m_pD3Dbuf->Lock( 0, 0, ( void ** ) &pVertex, D3DLOCK_DISCARD ) ) )
 	{
-		UINT		usedTriangles = 0;
-		d3dvertex_s *pVertex;
+		m_pD3Ddev->SetFVF( fvf );
+		this->EndRender();
+		return E_FAIL;
+	}
 
-		if ( FAILED(m_pD3Dbuf->Lock(0, 0, (void **) &pVertex, D3DLOCK_DISCARD)) )
+	size_t len = strlen( text );
+	for ( int shdw = !shadow; shdw < 2; shdw++ ) // for shadow :D
+	{
+		xp = x;
+		if ( !shdw )
+			xp += 1.0f, yp += 1.0f, clr = D3DCOLOR_ARGB( ( byte ) HIBYTE( HIWORD( clr ) ), 0, 0, 0 );
+		else
+			xp = x, yp = y, clr = color;
+		for ( size_t cpos = 0; cpos < len; cpos++ )
 		{
-			m_pD3Ddev->SetFVF( fvf );
-			this->EndRender();
-			return E_FAIL;
-		}
-
-		size_t len = strlen( szText );
-		for ( size_t cpos = 0; cpos < len && szText[cpos] != '\0'; cpos++ )
-		{
-			int c = * ( unsigned char * ) ( &szText[cpos] ) - 32;
-			if ( !(c >= 0 && c < 224) )
+			if ( text[cpos] == '\n' )
+			{
+				xp = x;
+				yp += DrawHeight();
+				continue;
+			}
+			int c = ( byte ) ( text[cpos] ) - 32;
+			if ( !( c >= 0 && c < 224 ) )
 				continue;
 
-			if ( szText[cpos] == '{' )
+			if ( text[cpos] == '{' && !noColorFormat )
 			{
-				size_t npos = cpos + 7;
-				if ( npos < len && szText[npos] == '}' )
+				stColorTag tag = GetColorTag( &text[cpos], len - cpos );
+				if ( tag._valid )
 				{
-					if ( !isShadow )
+					if ( shdw )
 					{
-						color = hex_to_color( &szText[cpos + 1], 6 );
+						clr = tag._color;
+						if ( !tag._alpha )
+							clr |= 0xFF000000;
 					}
-					cpos = npos;
+					cpos += tag._alpha ? 9 : 7;
 					continue;
-				}
-				else 
-				{
-					npos += 2;
-					if ( npos < len && szText[npos] == '}' )
-					{
-						if ( !isShadow )
-						{
-							color = hex_to_color( &szText[cpos + 1], 8 );
-						}
-						cpos = npos;
-						continue;
-					}
 				}
 			}
 
@@ -494,31 +532,29 @@ HRESULT CD3DFont::Print ( float x, float y, DWORD color, const char *szText, boo
 			float	tx2 = m_fTexCoords[c][2];
 			float	ty1 = m_fTexCoords[c][1];
 			float	ty2 = m_fTexCoords[c][3];
-			float	w = ( tx2 - tx1 ) * m_texWidth;
-			float	h = ( ty2 - ty1 ) * m_texHeight;
+			float	dx = xp, dy = yp;
+			float	w = ( tx2 - tx1 ) * m_texWidth, h = ( ty2 - ty1 ) * m_texHeight;
 
-			*pVertex++ = Init2DVertex( x - 0.5f, y - 0.5f, color, tx1, ty1 );			//topleft
-			*pVertex++ = Init2DVertex( x + w - 0.5f, y - 0.5f, color, tx2, ty1 );		//topright
-			*pVertex++ = Init2DVertex( x - 0.5f, y + h - 0.5f, color, tx1, ty2 );		//bottomleft
-			*pVertex++ = Init2DVertex( x + w - 0.5f, y - 0.5f, color, tx2, ty1 );		//topright
-			*pVertex++ = Init2DVertex( x + w - 0.5f, y + h - 0.5f, color, tx2, ty2 );	//bottomright
-			*pVertex++ = Init2DVertex( x - 0.5f, y + h - 0.5f, color, tx1, ty2 );		//bottomleft
+			*pVertex++ = Init2DVertex( dx - 0.5f, dy - 0.5f, clr, tx1, ty1 );			//topleft
+			*pVertex++ = Init2DVertex( dx + w - 0.5f, dy - 0.5f, clr, tx2, ty1 );		//topright
+			*pVertex++ = Init2DVertex( dx - 0.5f, dy + h - 0.5f, clr, tx1, ty2 );		//bottomleft
+			*pVertex++ = Init2DVertex( dx + w - 0.5f, dy - 0.5f, clr, tx2, ty1 );		//topright
+			*pVertex++ = Init2DVertex( dx + w - 0.5f, dy + h - 0.5f, clr, tx2, ty2 );	//bottomright
+			*pVertex++ = Init2DVertex( dx - 0.5f, dy + h - 0.5f, clr, tx1, ty2 );		//bottomleft
 			if ( m_dwCreateFlags & FCR_BORDER )
 				w -= 2.0f;
 
-			x += w - ( m_chrSpacing * 2 );
+			xp += w - ( m_chrSpacing * 2 );
 			usedTriangles += 2;
 			if ( usedTriangles >= m_maxTriangles )
 				break;
 		}
-
+		m_pD3Dbuf->Unlock();
 		if ( usedTriangles > 0 )
 		{
-			m_pD3Dbuf->Unlock();
 			m_pD3Ddev->DrawPrimitive( D3DPT_TRIANGLELIST, 0, usedTriangles );
 		}
 	}
-
 	m_pD3Ddev->SetFVF( fvf );
 	this->EndRender();
 
@@ -527,14 +563,10 @@ HRESULT CD3DFont::Print ( float x, float y, DWORD color, const char *szText, boo
 
 HRESULT CD3DFont::PrintShadow ( float x, float y, DWORD color, const char *szText )
 {
-	DWORD shadow = D3DCOLOR_ARGB((BYTE)HIBYTE(HIWORD(color)), 0, 0, 0);
-	Print( x + 1, y + 1, shadow, szText, true );
-	Print( x, y, color, szText );
-
-	return S_OK;
+	return Print(szText, color, x, y, true, false);
 }
 
-float CD3DFont::DrawLength ( const char *szText ) const
+float CD3DFont::DrawLength ( const char *szText, bool noColorFormat ) const
 {
 	float	len = 0.0f;
 	float	sub = ( m_dwCreateFlags & FCR_BORDER ) ? 2.0f : 0.0f;
@@ -542,32 +574,52 @@ float CD3DFont::DrawLength ( const char *szText ) const
 	size_t strl = strlen( szText );
 	for ( size_t cpos = 0; cpos < strl && szText[cpos] != '\0'; cpos++ )
 	{
-		int c = * ( unsigned char * ) ( &szText[cpos] ) - 32;
-		if ( !(c >= 0 && c < 224) )
+		int c = ( byte ) ( szText[cpos] ) - 32;
+		if ( !( c >= 0 && c < 224 ) )
 			continue;
 
-		if ( szText[cpos] == '{' )
+		if ( szText[cpos] == '{' && !noColorFormat )
 		{
-			size_t npos = cpos + 7;
-			if ( npos < strl && szText[npos] == '}' )
+			stColorTag tag = GetColorTag( &szText[cpos], strl - cpos );
+			if ( tag._valid )
 			{
-				cpos = npos;
+				cpos += tag._alpha ? 9 : 7;
 				continue;
-			}
-			else 
-			{
-				npos += 2;
-				if ( npos < strl && szText[npos] == '}' )
-				{
-					cpos = npos;
-					continue;
-				}
 			}
 		}
 
 		len += ( (m_fTexCoords[c][2] - m_fTexCoords[c][0]) * m_texWidth - sub ) - m_chrSpacing * 2;
 	}
 	return len;
+}
+
+size_t CD3DFont::GetCharPos( const char *text, float x, bool noColorFormat ) const
+{
+	size_t pos = 0;
+	float	len = 0.0f;
+	float	sub = ( m_dwCreateFlags & FCR_BORDER ) ? 2.0f : 0.0f;
+
+	size_t strl = strlen( text );
+	for ( size_t cpos = 0; cpos < strl && text[cpos] != '\0'; cpos++, pos++ )
+	{
+		int c = ( byte ) ( text[cpos] ) - 32;
+		if ( !( c >= 0 && c < 224 ) )
+			continue;
+
+		if ( text[cpos] == '{' && !noColorFormat )
+		{
+			stColorTag tag = GetColorTag( &text[cpos], strl - cpos );
+			if ( tag._valid )
+			{
+				cpos += tag._alpha ? 9 : 7;
+				continue;
+			}
+		}
+		len += ( (m_fTexCoords[c][2] - m_fTexCoords[c][0]) * m_texWidth - sub ) - m_chrSpacing * 2;
+		if ( len >= x )
+			break;
+	}
+	return pos;
 }
 
 CD3DRender::CD3DRender ( int numVertices )
@@ -793,16 +845,27 @@ void CD3DRender::D3DBoxi ( int x, int y, int w, int h, D3DCOLOR color, int maxW 
 
 void CD3DRender::D3DBoxBorder ( float x, float y, float w, float h, D3DCOLOR border_color, D3DCOLOR color )
 {
-	D3DBox( x, y, w, 1.0f, border_color );
-	D3DBox( x + w, y, 1.0f, h, border_color );
-	D3DBox( x, y, 1.0f, h, border_color );
-	D3DBox( x, y + h, w, 1.0f, border_color );
-	D3DBox( x + 1.0f, y + 1.0f, w - 1.0f, h - 1.0f, color );
+	D3DBox( x, y, w - 1.0f, 1.0f, border_color );
+	D3DBox( x + w - 1.0f, y, 1.0f, h - 1.0f, border_color );
+	D3DBox( x + 1.0f, y + h - 1.0f, w - 1.0f, 1.0f, border_color );
+	D3DBox( x, y + 1.0f, 1.0f, h - 1.0f, border_color );
+	D3DBox( x + 1.0f, y + 1.0f, w - 2.0f, h - 2.0f, color );
 }
 
 void CD3DRender::D3DBoxBorderi ( int x, int y, int w, int h, D3DCOLOR border_color, D3DCOLOR color )
 {
 	D3DBoxBorder( (float)x, (float)y, (float)w, (float)h, border_color, color );
+}
+
+void CD3DRender::D3DLine(int x, int y, int x2, int y2, D3DCOLOR color)
+{
+	if (SUCCEEDED(Begin(D3DPT_LINELIST)))
+	{
+		D3DColor(color);
+		D3DVertex2f(x, y);
+		D3DVertex2f(x2, y2);
+		End();
+	}
 }
 
 bool CD3DRender::DrawLine ( const D3DXVECTOR3 &a, const D3DXVECTOR3 &b, DWORD dwColor )

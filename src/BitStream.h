@@ -1,10 +1,24 @@
 /* 
- * PROJECT: mod_sa
- * COPYRIGHT: FYP
- * DATE: 21.02.2013
- * FILE: BitStream.h
- 
- lite version of RakNet BitStream Copyright 2003 Kevin Jenkins.
+	PROJECT:		mod_sa
+	LICENSE:		See LICENSE in the top level directory
+	COPYRIGHT:		Copyright we_sux, BlastHack
+
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
+
+	mod_sa is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	mod_sa is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with mod_sa.  If not, see <http://www.gnu.org/licenses/>.
+
+	lite version of RakNet BitStream Copyright 2003 Kevin Jenkins.
 */
 
 /// Given a number of bits, return how many bytes are needed to represent that.

@@ -6,8 +6,8 @@
 !define MUI_INSTFILESPAGE_PROGRESSBAR colored
 !define NAME 'mod_sa'
 !define MP 'SA-MP'
-!define MP_VERSION 'v0.3z R1'
-!define VERSION 'v4.3.3.3'
+!define MP_VERSION 'v0.3.7 R1'
+!define VERSION 'v4.4.0.0'
 
 ; create output directory if it doesn't exist
 !system 'mkdir "..\_distro_installers\"'
@@ -46,7 +46,7 @@ FunctionEnd
 ; branding url
 !define MUI_CUSTOMFUNCTION_GUIINIT onGUIInit
 Function onGUIInit
- BrandingURL::Set /NOUNLOAD "0" "0" "200" "http://code.google.com/p/mod-s0beit-sa/"
+ BrandingURL::Set /NOUNLOAD "0" "0" "200" "https://github.com/BlastHackNet/mod_s0beit_sa/"
 FunctionEnd
 
 ; main installation screen variables

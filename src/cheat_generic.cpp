@@ -2,9 +2,9 @@
 
 	PROJECT:		mod_sa
 	LICENSE:		See LICENSE in the top level directory
-	COPYRIGHT:		Copyright we_sux, FYP
+	COPYRIGHT:		Copyright we_sux, BlastHack
 
-	mod_sa is available from http://code.google.com/p/m0d-s0beit-sa/
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
 
 	mod_sa is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -21,8 +21,6 @@
 
 */
 #include "main.h"
-
-int iClickWarpEnabled = 0;
 
 int cheat_panic ( void )
 {
@@ -44,7 +42,7 @@ int cheat_panic ( void )
 		pstate_deathlist = 0, // deathlist
 		pstate_extragm = 0; // extra godmode
 
-	if ( KEY_PRESSED(set.key_panic) )
+	if ( KEYCOMBO_PRESSED(set.key_panic) )
 	{
 		// toggle panic
 		cheat_state->_generic.cheat_panic_enabled ^= 1;
@@ -100,7 +98,7 @@ int cheat_panic ( void )
 
 			// m0d's menu
 			pstate_generic_menu = cheat_state->_generic.menu;
-			cheat_state->_generic.menu = 0;
+			menu_toggle(false);
 
 			// remove "Extra actor invincibility" patch
 			pstate_actor_hp_nSP = patch_actor_hp_extraInv.installed;
@@ -174,7 +172,7 @@ int cheat_panic ( void )
 			// restore some cheat_states
 			set.d3dtext_hud = pstate_d3dtext_hud;
 			cheat_state->_generic.map = pstate_map;
-			cheat_state->_generic.menu = pstate_generic_menu;
+			menu_toggle(pstate_generic_menu != 0);
 
 			// restore patches
 			for ( i = 0; i < INI_PATCHES_MAX; i++ )
@@ -234,38 +232,132 @@ void cheat_teleport_nearest_car ( void )
 	cheat_teleport( &info->base.matrix[4 * 3], info->base.interior_id );
 }
 
-void cheat_handle_misc ( void )
+void cheat_handle_fastwarp(struct vehicle_info *vehicle_info, struct actor_info *actor_info)
 {
-	if ( set.clickwarp_enabled && iIsSAMPSupported )
+	if (KEYCOMBO_PRESSED(set.key_fastwarp))
 	{
-		if(KEY_PRESSED(set.key_clickwarp_enable))
+		CCam *pCam = pGame->GetCamera()->GetCam(pGame->GetCamera()->GetActiveCam());
+		CVector camsrc(*pCam->GetSource()), src, target, tppos;
+		CColPoint *pCollision = nullptr;
+		CEntitySAInterface *pEntity = nullptr;
+
+		if (pCam->GetMode() == MODE_AIMWEAPON || pCam->GetMode() == MODE_AIMWEAPON_ATTACHED || pCam->GetMode() == MODE_AIMWEAPON_FROMCAR)
 		{
-			g_iCursorEnabled ^= 1;
-			toggleSAMPCursor(g_iCursorEnabled);
+			// calculate target position by aim vector
+			pGame->GetCamera()->Find3rdPersonCamTargetVector(700.0f, &camsrc, &src, &target);
 		}
-		if(g_iCursorEnabled && KEY_PRESSED(set.key_clickwarp_click))
+		else
 		{
-			iClickWarpEnabled = 1;
+			// else by camera vector
+			target = camsrc + *pCam->GetFront() * 700.0f;
+		}
+
+		// ignore self vehicle
+		if (vehicle_info != nullptr)
+		{
+			*(::vehicle_info **)VAR_IgnoredEntity = vehicle_info;
+		}
+
+		if (GTAfunc_ProcessLineOfSight(&camsrc, &target, &pCollision, &pEntity, true, true, false, true, true, false, false, false))
+		{
+			tppos = *pCollision->GetPosition();
+			tppos -= (*pCollision->GetNormal()) * 0.5f;
+			
+			if (pCollision->GetNormal()->fZ >= 0.5f || pPedSelf->GetAreaCode() != 0)
+			{
+				tppos.fZ += 1.0f;
+				tppos.fZ = pGameInterface->GetWorld()->FindGroundZFor3DPosition(&tppos);
+			}
+			else
+			{
+				tppos.fZ = pGameInterface->GetWorld()->FindGroundZForPosition(tppos.fX, tppos.fY);
+			}
+
+			if (vehicle_info != nullptr)
+			{
+				// check for collision
+				CVehicle *vehSelf = pPedSelf->GetVehicle();
+				if (vehSelf)
+				{
+					pCollision->Destroy();
+					// check for collision
+					CVector vecVehicleGravity;
+					vehSelf->GetGravity(&vecVehicleGravity);
+					CVector vecVehicleAbove = (-vecVehicleGravity * 5.0f) + tppos;
+					CVector vecVehicleBelow = (vecVehicleGravity * 5.0f) + tppos;
+					bool bCollision = GTAfunc_ProcessLineOfSight(&vecVehicleAbove, &vecVehicleBelow, &pCollision, &pEntity,
+																 true, false, false, true, true, false, false, false); // not checking for vehicle collisions
+					if (bCollision && pCollision)
+					{
+						// set vehicle to same Up position has surface normal
+						CMatrix matVehicleSelf;
+						vehSelf->GetMatrix(&matVehicleSelf);
+						CVector vecCollisionNormal = *pCollision->GetNormal();
+
+						// get "down" from vehicle model
+						CVector rotationAxis = matVehicleSelf.vUp;
+
+						// normalize our vectors
+						vecCollisionNormal.Normalize();
+						rotationAxis.Normalize();
+
+						// axis and rotation for gravity
+						float	theta = acos(rotationAxis.DotProduct(&vecCollisionNormal));
+						if (!near_zero(theta))
+						{
+							rotationAxis.CrossProduct(&vecCollisionNormal);
+							rotationAxis.Normalize();
+							rotationAxis.ZeroNearZero();
+							matVehicleSelf = matVehicleSelf.Rotate(&rotationAxis, -theta);
+						}
+
+						// set the new matrix
+						vehSelf->SetMatrix(&matVehicleSelf);
+
+						// set pos floats for actual teleporting
+						tppos.fX = pCollision->GetPosition()->fX;
+						tppos.fY = pCollision->GetPosition()->fY;
+						tppos.fZ = pCollision->GetPosition()->fZ + 1.0f; // should be enough to stay above the ground properly
+					}
+					else
+					{
+						tppos.fZ += 0.5f;
+					}
+					cheat_vehicle_teleport(vehicle_info, &tppos.fX, gta_interior_id_get(), true);
+				}
+			}
+			else if (actor_info != nullptr)
+			{
+				tppos.fZ += 1.0f;
+				cheat_actor_teleport(actor_info, &tppos.fX, gta_interior_id_get());
+			}
+			GTAfunc_TogglePlayerControllable(0);
+			GTAfunc_LockActor(0);
+		}
+		if (pCollision != nullptr)
+		{
+			pCollision->Destroy();
 		}
 	}
+}
 
-	if ( KEY_PRESSED(set.key_map) )
+void cheat_handle_misc ( void )
+{
+	if ( KEYCOMBO_PRESSED(set.key_map) )
 	{
 		cheat_state->_generic.map ^= 1; /* toggle minimap */
 	}
 
-	if ( KEY_PRESSED(set.key_map_show_vehicles) )
+	if ( KEYCOMBO_PRESSED(set.key_map_show_vehicles) )
 	{
 		cheat_state->_generic.map_vehicles ^= 1;
 	}
 
-	if ( KEY_DOWN(set.secondary_key) )
-	{
-		if ( KEY_PRESSED(set.key_render_player_tags) )
-			cheat_state->render_player_tags ^= 1;
-		if ( KEY_PRESSED(set.key_render_vehicle_tags) )
-			cheat_state->render_vehicle_tags ^= 1;
-	}
+	if ( KEYCOMBO_PRESSED(set.key_render_player_tags) )
+		cheat_state->render_player_tags ^= 1;
+
+	if ( KEYCOMBO_PRESSED(set.key_render_vehicle_tags) )
+		cheat_state->render_vehicle_tags ^= 1;
 
 	/* time */
 	if ( set.force_hour >= 0 )
@@ -477,7 +569,7 @@ void cheat_handle_freeze_vehicles ( struct vehicle_info *vehicle_info, struct ac
 	float						*pos;
 	int							i;
 
-	if ( KEY_PRESSED(set.key_vehicles_freeze) )
+	if ( KEYCOMBO_PRESSED(set.key_vehicles_freeze) )
 	{
 		cheat_state->_generic.vehicles_freeze ^= 1;
 		if ( !cheat_state->_generic.vehicles_freeze && freeze != NULL )
@@ -563,7 +655,7 @@ void cheat_handle_hp ( struct vehicle_info *vehicle_info, struct actor_info *act
 
 	static float	prev_pos[3];
 
-	if ( KEY_PRESSED(set.key_hp_cheat) )
+	if ( KEYCOMBO_PRESSED(set.key_hp_cheat) )
 		cheat_state->_generic.hp_cheat ^= 1;	/* toggle hp cheat */
 
 	// this will make SP enemies invulnerable
@@ -711,7 +803,7 @@ void cheat_handle_stick ( struct vehicle_info *vehicle_info, struct actor_info *
 	static int			id = -1;
 	int					i;
 
-	if ( KEY_PRESSED(set.key_stick) )
+	if ( KEYCOMBO_PRESSED(set.key_stick) )
 	{
 		if ( vehicle_info != NULL )
 			cheat_state->vehicle.stick ^= 1;
@@ -720,7 +812,7 @@ void cheat_handle_stick ( struct vehicle_info *vehicle_info, struct actor_info *
 		id = actor_find( id - 1, 1, ACTOR_ALIVE | ACTOR_NOT_SAME_VEHICLE );
 	}
 
-	if ( KEY_PRESSED(set.key_stick_nearest) )
+	if ( KEYCOMBO_PRESSED(set.key_stick_nearest) )
 	{
 		if ( vehicle_info != NULL )
 			cheat_state->vehicle.stick ^= 1;
@@ -741,10 +833,10 @@ void cheat_handle_stick ( struct vehicle_info *vehicle_info, struct actor_info *
 		if ( id != -1 && actor_info_get(id, ACTOR_ALIVE) == NULL )
 			id = actor_find_nearest( ACTOR_ALIVE | ACTOR_NOT_SAME_VEHICLE );
 
-		if ( KEY_PRESSED(set.key_stick_prev) )
+		if ( KEYCOMBO_PRESSED(set.key_stick_prev) )
 			id = actor_find( id, -1, ACTOR_ALIVE | ACTOR_NOT_SAME_VEHICLE );
 
-		if ( KEY_PRESSED(set.key_stick_next) )
+		if ( KEYCOMBO_PRESSED(set.key_stick_next) )
 			id = actor_find( id, 1, ACTOR_ALIVE | ACTOR_NOT_SAME_VEHICLE );
 
 		/* no actors to stick to */
@@ -775,7 +867,7 @@ void cheat_handle_stick ( struct vehicle_info *vehicle_info, struct actor_info *
 
 		/* allow warping to work + always warp towards whatever we're sticking to...
          but only when we're in a vehicle */
-		if ( KEY_PRESSED(set.key_warp_mod) && vehicle_info != NULL )
+		if ( KEYCOMBO_PRESSED(set.key_warp_mod) && vehicle_info != NULL )
 		{
 			float	out[4];
 
@@ -787,28 +879,28 @@ void cheat_handle_stick ( struct vehicle_info *vehicle_info, struct actor_info *
 			vect3_mult( out, -set.warp_speed, speed_self );
 		}
 
-		if ( !KEY_DOWN(set.key_warp_mod) )
+		if ( !KEYCOMBO_DOWN(set.key_warp_mod) )
 		{
 			float	d[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 			float	accel_mult = 1.0f;
 			float	out[4];
 
 			/* handle stick movement keys */
-			if ( KEY_DOWN(set.key_stick_forward) )
+			if ( KEYCOMBO_DOWN(set.key_stick_forward) )
 				d[1] += 1.0f;
-			if ( KEY_DOWN(set.key_stick_backward) )
+			if ( KEYCOMBO_DOWN(set.key_stick_backward) )
 				d[1] -= 1.0f;
-			if ( KEY_DOWN(set.key_stick_left) )
+			if ( KEYCOMBO_DOWN(set.key_stick_left) )
 				d[0] -= 1.0f;
-			if ( KEY_DOWN(set.key_stick_right) )
+			if ( KEYCOMBO_DOWN(set.key_stick_right) )
 				d[0] += 1.0f;
-			if ( KEY_DOWN(set.key_stick_up) )
+			if ( KEYCOMBO_DOWN(set.key_stick_up) )
 				d[2] += 1.0f;
-			if ( KEY_DOWN(set.key_stick_down) )
+			if ( KEYCOMBO_DOWN(set.key_stick_down) )
 				d[2] -= 1.0f;
-			if ( KEY_DOWN(set.key_stick_in) )
+			if ( KEYCOMBO_DOWN(set.key_stick_in) )
 				d[3] -= 1.0f;
-			if ( KEY_DOWN(set.key_stick_out) )
+			if ( KEYCOMBO_DOWN(set.key_stick_out) )
 				d[3] += 1.0f;
 
 			if ( !near_zero(set.stick_accel_time) )
@@ -896,7 +988,7 @@ void cheat_handle_money ( void )
 	if ( !cheat_state->_generic.money )
 		next_time = time_get();
 
-	if ( KEY_PRESSED(set.key_money) )
+	if ( KEYCOMBO_PRESSED(set.key_money) )
 		cheat_state->_generic.money ^= 1;
 
 	if ( cheat_state->_generic.money && time_get() >= next_time )
@@ -923,7 +1015,7 @@ void cheat_handle_weapon ( void )
 	struct actor_info	*actor_info = actor_info_get( ACTOR_SELF, ACTOR_ALIVE );
 	int					i;
 
-	if ( KEY_PRESSED(set.key_weapon) )
+	if ( KEYCOMBO_PRESSED(set.key_weapon) )
 		cheat_state->_generic.weapon ^= 1;	/* toggle weapon cheat */
 
 	if ( cheat_state->_generic.weapon )
@@ -971,9 +1063,9 @@ void cheat_handle_teleport ( struct vehicle_info *vehicle_info, struct actor_inf
 	// Set teleport coordinates
 	for ( i = 0; i < TELEPORT_MAX; i++ )
 	{
-		if ( set.key_teleport_set[i] == 0 )
+		if ( set.key_teleport_set[i].count == 0 )
 			continue;
-		if ( KEY_PRESSED(set.key_teleport_set[i]) )
+		if ( KEYCOMBO_PRESSED(set.key_teleport_set[i]) )
 		{
 			cheat_state->teleport[i].set = 1;
 			matrix_copy( base->matrix, cheat_state->teleport[i].matrix );
@@ -985,9 +1077,9 @@ void cheat_handle_teleport ( struct vehicle_info *vehicle_info, struct actor_inf
 	// Teleport to stored coordinates
 	for ( i = 0; i < TELEPORT_MAX; i++ )
 	{
-		if ( set.key_teleport[i] == 0 )
+		if ( set.key_teleport[i].count == 0 )
 			continue;
-		if ( KEY_PRESSED(set.key_teleport[i]) )
+		if ( KEYCOMBO_PRESSED(set.key_teleport[i]) )
 		{
 			if ( cheat_state->teleport[i].set )
 			{
@@ -1011,7 +1103,7 @@ void cheat_handle_teleport ( struct vehicle_info *vehicle_info, struct actor_inf
 		}
 	}
 
-	if ( KEY_PRESSED(set.key_teleport_hist) )
+	if ( KEYCOMBO_PRESSED(set.key_teleport_hist) )
 	{
 		struct cheat_state_teleport *teleport = NULL;
 
@@ -1036,9 +1128,9 @@ void cheat_handle_teleport ( struct vehicle_info *vehicle_info, struct actor_inf
 
 void cheat_handle_checkpoint ( void )
 {
-	if ( KEY_PRESSED(set.key_checkpoint_1) || KEY_PRESSED(set.key_checkpoint_2) )
+	if ( KEYCOMBO_PRESSED(set.key_checkpoint_1) || KEYCOMBO_PRESSED(set.key_checkpoint_2) )
 	{
-		int					n = KEY_PRESSED( set.key_checkpoint_1 ) ? 0 : 1;
+		int					n = KEYCOMBO_PRESSED( set.key_checkpoint_1 ) ? 0 : 1;
 		struct checkpoint	*cp = gta_checkpoint_info_get( n );
 		float				pos[3];
 
@@ -1064,7 +1156,7 @@ void cheat_handle_unfreeze ( struct vehicle_info *vehicle_info, struct actor_inf
 {
 	traceLastFunc( "cheat_handle_unfreeze()" );
 
-	if ( KEY_PRESSED(set.key_anti_freeze) )
+	if ( KEYCOMBO_PRESSED(set.key_anti_freeze) )
 	{
 		GTAfunc_TogglePlayerControllable(0);
 		GTAfunc_LockActor(0);
@@ -1084,7 +1176,7 @@ void cheat_handle_emo ( struct vehicle_info *vehicle_info, struct actor_info *ac
 
 	if ( !isBadPtr_GTA_pPed(actor_info) )
 	{
-		if ( KEY_PRESSED(set.key_self_destruct) )
+		if ( KEYCOMBO_PRESSED(set.key_self_destruct) )
 			actor_info->hitpoints = 0.0f;
 	}
 	else if ( !isBadPtr_GTA_pVehicle(vehicle_info) )
@@ -1092,7 +1184,7 @@ void cheat_handle_emo ( struct vehicle_info *vehicle_info, struct actor_info *ac
 		actor_info = actor_info_get(ACTOR_SELF, 0);
 		if ( actor_info->state == ACTOR_STATE_DRIVING && actor_info->vehicle->passengers[0] == actor_info )
 		{
-			if ( KEY_PRESSED(set.key_self_destruct) )
+			if ( KEYCOMBO_PRESSED(set.key_self_destruct) )
 			{
 				for ( vtemp = vehicle_info; vtemp != NULL; vtemp = vtemp->trailer )
 				{
@@ -1127,57 +1219,6 @@ void cheat_handle_exit_vehicle ( struct vehicle_info *vehicle_info, struct actor
 		{
 			cheat_state->_generic.pVehicleExit_Last->m_nVehicleFlags.bCanBeDamaged = true;
 			cheat_state->_generic.pVehicleExit_Last = NULL;
-		}
-	}
-}
-
-// sa-mp only
-void cheat_handle_antiHijack ( actor_info *ainfo, vehicle_info *veh, float time_diff )
-{
-	if ( g_SAMP == NULL )
-		return;
-
-	traceLastFunc( "cheat_handle_antiHijack()" );
-
-	if ( set.anti_carjacking && veh == NULL )
-	{
-		if ( cheat_state->_generic.got_vehicle_id )
-			cheat_state->_generic.got_vehicle_id = false;
-		if ( cheat_state->_generic.anti_carjackTick
-		 &&	 cheat_state->_generic.anti_carjackTick < (GetTickCount() - 500)
-		 &&	 cheat_state->_generic.car_jacked )
-		{
-			if ( cheat_state->_generic.car_jacked_last_vehicle_id == 0 )
-			{
-				showGameText( "~r~Unable To Unjack~w~!", 1000, 5 );
-				cheat_state->_generic.anti_carjackTick = 0;
-				cheat_state->_generic.car_jacked = false;
-				return;
-			}
-
-			cheat_state->_generic.anti_carjackTick = 0;
-			cheat_state->_generic.car_jacked = false;
-			cheat_state->_generic.unrelatedToAnything = 1337;
-			GTAfunc_PutActorInCar(GetVehicleByGtaId(cheat_state->_generic.car_jacked_last_vehicle_id));
-			cheat_state->_generic.unrelatedToAnything = 0x1337;
-
-			struct vehicle_info *veh = GetVehicleByGtaId( cheat_state->_generic.car_jacked_last_vehicle_id );
-			//if ( veh != NULL )
-			//	vect3_copy( cheat_state->_generic.car_jacked_lastPos, &veh->base.matrix[4 * 3] );
-			showGameText( "~r~Car Unjacked~w~!", 1000, 5 );
-			return;
-		}
-	}
-	else if ( set.anti_carjacking )
-	{
-		if ( veh->passengers[0] == actor_info_get(ACTOR_SELF, 0) )
-		{
-			if ( !cheat_state->_generic.got_vehicle_id )
-			{
-				cheat_state->_generic.car_jacked_last_vehicle_id = getPlayerVehicleGTAScriptingID( ACTOR_SELF );
-				if ( cheat_state->_generic.car_jacked_last_vehicle_id > 0 )
-					cheat_state->_generic.got_vehicle_id = true;
-			}
 		}
 	}
 }

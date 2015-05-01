@@ -2,9 +2,9 @@
 
 	PROJECT:		mod_sa
 	LICENSE:		See LICENSE in the top level directory
-	COPYRIGHT:		Copyright we_sux, FYP
+	COPYRIGHT:		Copyright we_sux, BlastHack
 
-	mod_sa is available from http://code.google.com/p/m0d-s0beit-sa/
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
 
 	mod_sa is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -79,6 +79,9 @@
 #define ID_CHEAT_CUSTOM_RUNSTYLE			210
 #define ID_CHEAT_FLY_SPEED					220
 #define ID_CHEAT_DISABLE_WAVES				230
+#define ID_CHEAT_MAP_DRAW_LINES				231
+#define ID_CHEAT_SURF						232
+#define ID_CHEAT_FREEZEROT					233
 
 #define ID_CHEAT_INVULN_ACTOR				0
 #define ID_CHEAT_INVULN_VEHICLE				1
@@ -174,7 +177,9 @@
 #define ID_HUDIND_LB_BARS					14
 #define ID_HUDIND_INVEH_SPIDER				15
 #define ID_HUDIND_INVEH_FLY					16
-#define ID_HUDIND_ONFOOT_FLY			17
+#define ID_HUDIND_ONFOOT_FLY				17
+#define ID_HUDIND_SURF						18
+#define ID_HUDIND_FREEZEROT					19
 
 #define ID_MENU_SAMPMISC					0
 #define ID_MENU_SAMPMISC_VEHICLES_INSTANT	108
@@ -210,8 +215,15 @@
 #define ID_MENU_SPECIAL_ACTION_CARRY			25
 #define ID_MENU_SPECIAL_ACTION_URINATE			68
 
+#define ID_MENU_NETPATCHES_INRPC				10024
+#define ID_MENU_NETPATCHES_OUTRPC				10025
+#define ID_MENU_NETPATCHES_INPACKET				10026
+#define ID_MENU_NETPATCHES_OUTPACKET			10027
+#define ID_MENU_NETPATCHES_TOGGLE_ALL			INI_NETPATCHES_MAX
+
 struct menu *menu_active = NULL;
-static int	menu_init = 0;
+int	menu_init = 0, menu_mouseover = -1;
+extern int	iGTAPatchesCount, iSAMPPatchesCount, iNetPatchesCount, iServersCount;
 
 static struct menu *menu_new ( struct menu *parent, int id, menu_callback callback )
 {
@@ -334,7 +346,7 @@ static void menu_cheats_spoof_kill_populate ( struct menu *menu )
 	char	text[64];
 	int		i;
 
-	for ( i = 0; i < SAMP_PLAYER_MAX; i++ )
+	for ( i = 0; i < SAMP_MAX_PLAYERS; i++ )
 	{
 		D3DCOLOR	color = MENU_COLOR_DEFAULT;
 
@@ -404,7 +416,7 @@ static void menu_players_warp_populate ( struct menu *menu )
 
 	char	text[64];
 	int		i;
-	for ( i = 0; i < SAMP_PLAYER_MAX; i++ )
+	for ( i = 0; i < SAMP_MAX_PLAYERS; i++ )
 	{
 		D3DCOLOR	color = MENU_COLOR_DEFAULT;
 
@@ -434,7 +446,7 @@ static void menu_players_vehwarp_populate ( struct menu *menu )
 
 	char	text[64];
 	int		i;
-	for ( i = 0; i < SAMP_PLAYER_MAX; i++ )
+	for ( i = 0; i < SAMP_MAX_PLAYERS; i++ )
 	{
 		D3DCOLOR	color = MENU_COLOR_DEFAULT;
 
@@ -469,7 +481,7 @@ static void menu_vehicles_instant_populate ( struct menu *menu )
 	const struct vehicle_entry	*vehicle;
 	char						text[64];
 	int							v;
-	for ( v = 0; v < SAMP_VEHICLE_MAX; v++ )
+	for ( v = 0; v < SAMP_MAX_VEHICLES; v++ )
 	{
 		if ( g_Vehicles->iIsListed[v] != 1 )
 			continue;
@@ -495,7 +507,7 @@ static void menu_players_spectator_mode_populate ( struct menu *menu )
 
 	char	text[64];
 	int		i;
-	for ( i = 0; i < SAMP_PLAYER_MAX; i++ )
+	for ( i = 0; i < SAMP_MAX_PLAYERS; i++ )
 	{
 		D3DCOLOR	color = MENU_COLOR_DEFAULT;
 
@@ -519,20 +531,20 @@ static void menu_telepickup_populate ( struct menu *menu )
 {
 	menu_items_free( menu );
 
-	if ( g_SAMP->pPools->pPool_Pickup == NULL )
+	if ( g_SAMP->pPools->pPickup == NULL )
 		return;
 
 	char	text[64];
 	int		i;
-	for ( i = 0; i < SAMP_PICKUP_MAX; i++ )
+	for ( i = 0; i < SAMP_MAX_PICKUPS; i++ )
 	{
-		if ( g_SAMP->pPools->pPool_Pickup->pickup[i].iModelID == 0 )
+		if ( g_SAMP->pPools->pPickup->pickup[i].iModelID == 0 )
 			continue;
-		if ( g_SAMP->pPools->pPool_Pickup->pickup[i].iType == 0 )
+		if ( g_SAMP->pPools->pPickup->pickup[i].iType == 0 )
 			continue;
 
 		D3DCOLOR	color = MENU_COLOR_DEFAULT;
-		snprintf( text, sizeof(text), "Pickup (%d, ModelID: %d)", i, g_SAMP->pPools->pPool_Pickup->pickup[i].iModelID );
+		snprintf( text, sizeof(text), "Pickup (%d, ModelID: %d)", i, g_SAMP->pPools->pPickup->pickup[i].iModelID );
 		menu_item_add( menu, NULL, text, i, color, NULL );
 	}
 }
@@ -543,18 +555,18 @@ static int menu_callback_telepickup ( int op, struct menu_item *item )
 	{
 		int id = item->id;
 
-		if ( g_SAMP->pPools->pPool_Pickup == NULL )
+		if ( g_SAMP->pPools->pPickup == NULL )
 			return 0;
-		if ( g_SAMP->pPools->pPool_Pickup->pickup[id].iType == 0 )
+		if ( g_SAMP->pPools->pPickup->pickup[id].iType == 0 )
 			return 0;
-		if ( g_SAMP->pPools->pPool_Pickup->pickup[id].iModelID == 0 )
+		if ( g_SAMP->pPools->pPickup->pickup[id].iModelID == 0 )
 			return 0;
 		if ( item->id == ID_NONE )
 			return 0;
 
 		float	pos[3];
 
-		vect3_copy( g_SAMP->pPools->pPool_Pickup->pickup[id].fPosition, pos );
+		vect3_copy( g_SAMP->pPools->pPickup->pickup[id].fPosition, pos );
 		pos[1] += 2.0f;
 		cheat_teleport( pos, 0 );
 
@@ -568,29 +580,29 @@ static void menu_teleobject_populate ( struct menu *menu )
 {
 	menu_items_free( menu );
 
-	if ( g_SAMP->pPools->pPool_Object == NULL )
+	if ( g_SAMP->pPools->pObject == NULL )
 		return;
 
 	char	text[64];
 	int		i;
-	for ( i = 0; i < SAMP_OBJECTS_MAX; i++ )
+	for ( i = 0; i < SAMP_MAX_OBJECTS; i++ )
 	{
 		D3DCOLOR	color = MENU_COLOR_DEFAULT;
 
-		if ( g_SAMP->pPools->pPool_Object->iIsListed[i] != 1 )
+		if ( g_SAMP->pPools->pObject->iIsListed[i] != 1 )
 			continue;
-		if ( g_SAMP->pPools->pPool_Object->object[i] == NULL )
+		if ( g_SAMP->pPools->pObject->object[i] == NULL )
 			continue;
-		if ( g_SAMP->pPools->pPool_Object->object[i]->pGTAObject == NULL )
+		if ( g_SAMP->pPools->pObject->object[i]->pGTAEntity == NULL )
 			continue;
 
 		float	pos[3];
-		vect3_copy( &g_SAMP->pPools->pPool_Object->object[i]->pGTAObject->base.matrix[4 * 3], pos );
+		vect3_copy( &g_SAMP->pPools->pObject->object[i]->pGTAEntity->base.matrix[4 * 3], pos );
 		if ( vect3_near_zero(pos) )
 			continue;
 
 		snprintf( text, sizeof(text), "Object (%d, ModelID %d)", i,
-				  g_SAMP->pPools->pPool_Object->object[i]->pGTAObject->base.model_alt_id );
+				  g_SAMP->pPools->pObject->object[i]->pGTAEntity->base.model_alt_id );
 		menu_item_add( menu, NULL, text, i, color, NULL );
 	}
 }
@@ -599,7 +611,7 @@ static int menu_callback_teleobject ( int op, struct menu_item *item )
 {
 	if ( op == MENU_OP_SELECT )
 	{
-		if ( g_SAMP->pPools->pPool_Object == NULL )
+		if ( g_SAMP->pPools->pObject == NULL )
 			return 0;
 		if ( item->id == ID_NONE )
 			return 0;
@@ -607,19 +619,19 @@ static int menu_callback_teleobject ( int op, struct menu_item *item )
 		int		id = item->id;
 		float	pos[3];
 
-		if ( g_SAMP->pPools->pPool_Object->iIsListed[id] != 1 )
+		if ( g_SAMP->pPools->pObject->iIsListed[id] != 1 )
 		{
 			addMessageToChatWindow( "Object does not exist." );
 			return 0;
 		}
 
-		if ( g_SAMP->pPools->pPool_Object->object[id]->pGTAObject == NULL )
+		if ( g_SAMP->pPools->pObject->object[id]->pGTAEntity == NULL )
 		{
 			addMessageToChatWindow( "Invalid object info." );
 			return 0;
 		}
 
-		vect3_copy( &g_SAMP->pPools->pPool_Object->object[id]->pGTAObject->base.matrix[4 * 3], pos );
+		vect3_copy( &g_SAMP->pPools->pObject->object[id]->pGTAEntity->base.matrix[4 * 3], pos );
 		pos[2] += 2.0f;
 		cheat_teleport( pos, 0 );
 
@@ -686,13 +698,13 @@ static void menu_playerinfo_populate ( struct menu *menu )
 	if ( g_Players == NULL )
 		return;
 
-	menu_item_add( menu, NULL, "Disable", SAMP_PLAYER_MAX + 1, MENU_COLOR_DEFAULT, NULL );
+	menu_item_add( menu, NULL, "Disable", SAMP_MAX_PLAYERS + 1, MENU_COLOR_DEFAULT, NULL );
 
 	menu_item_add( menu, NULL, "Local Player", -2, MENU_COLOR_DEFAULT, (void *)(UINT_PTR) - 2 );
 
 	char	text[64];
 	int		i;
-	for ( i = 0; i < SAMP_PLAYER_MAX; i++ )
+	for ( i = 0; i < SAMP_MAX_PLAYERS; i++ )
 	{
 		if ( g_Players->iIsListed[i] != 1 )
 			continue;
@@ -712,7 +724,7 @@ static void menu_playermute_populate ( struct menu *menu )
 
 	char	text[64];
 	int		i;
-	for ( i = 0; i < SAMP_PLAYER_MAX; i++ )
+	for ( i = 0; i < SAMP_MAX_PLAYERS; i++ )
 	{
 		if ( g_Players->iIsListed[i] != 1 || g_Players->pRemotePlayer[i] == NULL )
 		{
@@ -856,11 +868,9 @@ void menu_run ( void )
 	if ( menu_active == NULL )
 		return;
 
-	if ( KEY_PRESSED(set.key_menu) )
+	if ( KEYCOMBO_PRESSED(set.key_menu) )
 	{
-		cheat_state->_generic.menu ^= 1;
-		if ( cheat_state->_generic.menu )
-			menu_event_activate( menu_active );
+		menu_toggle((cheat_state->_generic.menu ^= 1) != 0);
 	}
 
 	if ( cheat_state->_generic.menu )
@@ -900,7 +910,7 @@ void menu_run ( void )
 			/* pressing left in the main menu, exits the menu */
 			if ( menu_active->parent == NULL )
 			{
-				cheat_state->_generic.menu ^= 1;
+				menu_toggle(false);
 				return;
 			}
 
@@ -954,6 +964,111 @@ void menu_run ( void )
 		KEY_CONSUME( set.key_menu_select );
 		KEY_CONSUME( set.key_menu_dec );
 		KEY_CONSUME( set.key_menu_inc );
+	}
+}
+
+bool menu_wndproc(UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (uMsg)
+	{
+		case WM_MOUSEMOVE:
+		case WM_LBUTTONDOWN:
+		case WM_RBUTTONDOWN:
+		case WM_MOUSEWHEEL:
+		{
+			if (menu_active == NULL || !cheat_state->_generic.menu || !cheat_state->_generic.menu_mousecontrol)
+				break;
+			
+			POINT				point = { LOWORD(lParam), HIWORD(lParam) };
+			const int			ROW_HEIGHT = (int)ceilf(pD3DFont->DrawHeight());
+			const int			MENU_HEIGHT = (int)ceilf(pD3DFont->DrawHeight() * (float)MENU_ROWS) + 2;
+			int					left = pPresentParam.BackBufferWidth / 2 - MENU_WIDTH / 2;
+			int					top = pPresentParam.BackBufferHeight - MENU_HEIGHT - 20;
+			int					pos = 0;
+
+			if (uMsg == WM_MOUSEWHEEL)
+			{
+				// WM_MOUSEWHEEL has global cursor coords
+				ScreenToClient(pPresentParam.hDeviceWindow, &point);
+
+				if (LOWORD(wParam) == MK_SHIFT)
+				{
+					menu_item *item = nullptr;
+					if (menu_active->count > 0)
+						item = &menu_active->item[menu_active->pos];
+
+					int op = short(HIWORD(wParam)) > 0 ? MENU_OP_INC : MENU_OP_DEC;
+					menu_active->callback(op, item);
+				}
+				else
+				{
+					int dir = short(HIWORD(wParam)) > 0 ? -1 : 1;
+					menu_active->pos += dir;
+				}
+			}
+
+			if (point.x > left && point.x < left + MENU_WIDTH && point.y > top && point.y < top + MENU_HEIGHT)
+			{
+				pos = (point.y - top) / ROW_HEIGHT;
+				if (pos > menu_active->count - 1) pos = menu_active->count - 1;
+				if (pos > MENU_ROWS - 1) pos = MENU_ROWS - 1;
+				menu_mouseover = menu_active->top_pos + pos;
+
+				if (uMsg == WM_LBUTTONDOWN)
+				{
+					if (menu_mouseover != -1)
+						menu_active->pos = menu_mouseover;
+					menu_item *item = nullptr;
+					if (menu_active->count > 0)
+						item = &menu_active->item[menu_active->pos];
+
+					if (item != nullptr && item->submenu != nullptr)
+					{
+						menu_active = item->submenu;
+						menu_event_activate(menu_active);
+					}
+					else if (menu_active->callback != nullptr && item != nullptr)
+					{
+						menu_active->callback(MENU_OP_SELECT, item);
+					}
+				}
+			}
+			else
+			{
+				menu_mouseover = -1;
+			}
+			if (uMsg == WM_RBUTTONDOWN)
+			{
+				if (menu_active->parent == NULL)
+				{
+					menu_toggle(false);
+					break;
+				}
+				menu_active = menu_active->parent;
+				menu_event_activate(menu_active);
+			}
+			break;
+		}
+	}
+	return false;
+}
+
+void menu_toggle(bool toggle)
+{
+	cheat_state->_generic.menu = toggle;
+	menu_mouseover = -1;
+	if (toggle)
+	{
+		menu_event_activate(menu_active);
+		if (g_SAMP)
+		{
+			if (cheat_state->_generic.menu_mousecontrol = KEYCOMBO_DOWN(set.key_menu_mousecontrol))
+				toggleSAMPCursor(true);
+		}
+	}
+	else if (cheat_state->_generic.menu_mousecontrol && g_SAMP)
+	{
+		toggleSAMPCursor(false);
 	}
 }
 
@@ -1122,6 +1237,15 @@ static int menu_callback_cheats ( int op, struct menu_item *item )
 
 		case ID_CHEAT_DISABLE_WAVES:
 			return pGameInterface->GetWaterManager()->GetWaveLevel() == 0.0f;
+
+		case ID_CHEAT_MAP_DRAW_LINES:
+			return set.map_draw_lines;
+
+		case ID_CHEAT_SURF:
+			return cheat_state->actor.surf;
+
+		case ID_CHEAT_FREEZEROT:
+			return cheat_state->vehicle.freezerot;
 		}
 		break;
 
@@ -1210,6 +1334,18 @@ static int menu_callback_cheats ( int op, struct menu_item *item )
 				pGameInterface->GetWaterManager()->SetWaveLevel( -1.0f );
 			else
 				pGameInterface->GetWaterManager()->SetWaveLevel( 0.0f );
+			break;
+
+		case ID_CHEAT_MAP_DRAW_LINES:
+			set.map_draw_lines ^= 1;
+			break;
+
+		case ID_CHEAT_SURF:
+			cheat_state->actor.surf ^= 1;
+			break;
+
+		case ID_CHEAT_FREEZEROT:
+			cheat_state->vehicle.freezerot ^= 1;
 			break;
 
 		default:
@@ -1754,8 +1890,11 @@ static int menu_callback_patches ( int op, struct menu_item *item )
 
 static int menu_callback_samppatches ( int op, struct menu_item *item )
 {
-	struct patch_set	*patch = &set.sampPatch[item->id];
+	if (item->id == ID_MENU_NETPATCHES_INPACKET || item->id == ID_MENU_NETPATCHES_INRPC ||
+		item->id == ID_MENU_NETPATCHES_OUTPACKET || item->id == ID_MENU_NETPATCHES_OUTRPC)
+		return 0;
 
+	struct patch_set	*patch = &set.sampPatch[item->id];
 	if ( op == MENU_OP_ENABLED )
 	{
 		return patch->installed;
@@ -2057,7 +2196,7 @@ static int menu_callback_sampmisc ( int op, struct menu_item *item )
 				return cheat_state->_generic.pickuptexts;
 
 			case ID_MENU_SAMPMISC_M0DCOMMANDS:
-				return get_isModCommandsActive();
+				return g_m0dCommands;
 
 			case ID_MENU_SAMPMISC_EXTRAGM:
 				return set.enable_extra_godmode;
@@ -2145,12 +2284,7 @@ static int menu_callback_sampmisc ( int op, struct menu_item *item )
 				break;
 
 			case ID_MENU_SAMPMISC_M0DCOMMANDS:
-				{
-					if ( KEY_PRESSED(VK_RETURN) )
-					{	// i know
-						init_samp_chat_cmds();
-					}
-				}
+				initChatCmds();
 				break;
 
 			case ID_MENU_SAMPMISC_EXTRAGM:
@@ -2165,7 +2299,7 @@ static int menu_callback_sampmisc ( int op, struct menu_item *item )
 		switch ( item->id )
 		{
 		case ID_MENU_SAMPMISC_CHAT_TEXTLINES:
-			set.d3dtext_chat_lines += (int)mod;
+			set.d3dtext_chat_lines += mod;
 			menu_item_name_set( item, "Display chat lines: %d", set.d3dtext_chat_lines );
 			break;
 		}
@@ -2596,75 +2730,63 @@ static int menu_callback_hudindicators ( int op, struct menu_item *item )
 		{
 		case ID_HUDIND_BAR:
 			return set.hud_draw_bar;
-			break;
 
 		case ID_HUDIND_TSHADOWS:
 			return set.render_text_shadows;
-			break;
 
 		case ID_HUDIND_INV:
 			return set.hud_indicator_inv;
-			break;
 
 		case ID_HUDIND_WEAPON:
 			return set.hud_indicator_weapon;
-			break;
 
 		case ID_HUDIND_MONEY:
 			return set.hud_indicator_money;
-			break;
 
 		case ID_HUDIND_FREEZE:
 			return set.hud_indicator_freeze;
-			break;
 
 		case ID_HUDIND_INVEH_AIRBRK:
 			return set.hud_indicator_inveh_airbrk;
-			break;
 
 		case ID_HUDIND_INVEH_STICK:
 			return set.hud_indicator_inveh_stick;
-			break;
 
 		case ID_HUDIND_INVEH_BRKDANCE:
 			return set.hud_indicator_inveh_brkdance;
-			break;
 
 		case ID_HUDIND_INVEH_SPIDER:
 			return set.hud_indicator_inveh_spider;
-			break;
 
 		case ID_HUDIND_ONFOOT_FLY:
 			return set.hud_indicator_onfoot_fly;
-			break;
 
 		case ID_HUDIND_INVEH_FLY:
 			return set.hud_indicator_inveh_fly;
-			break;
 
 		case ID_HUDIND_ONFOOT_AIRBRK:
 			return set.hud_indicator_onfoot_airbrk;
-			break;
 
 		case ID_HUDIND_ONFOOT_STICK:
 			return set.hud_indicator_onfoot_stick;
-			break;
 
 		case ID_HUDIND_ONFOOT_AIM:
 			return set.hud_indicator_onfoot_aim;
-			break;
 
 		case ID_HUDIND_POS:
 			return set.hud_indicator_pos;
-			break;
 
 		case ID_HUDIND_FPS:
 			return set.hud_fps_draw;
-			break;
 
 		case ID_HUDIND_LB_BARS:
 			return set.left_bottom_bars_enable;
-			break;
+
+		case ID_HUDIND_SURF:
+			return set.hud_indicator_surf;
+
+		case ID_HUDIND_FREEZEROT:
+			return set.hud_indicator_freezerot;
 		}
 
 		return 0;
@@ -2746,6 +2868,14 @@ static int menu_callback_hudindicators ( int op, struct menu_item *item )
 			set.left_bottom_bars_enable ^= 1;
 			break;
 
+		case ID_HUDIND_SURF:
+			set.hud_indicator_surf ^= 1;
+			break;
+
+		case ID_HUDIND_FREEZEROT:
+			set.hud_indicator_freezerot ^= 1;
+			break;
+
 		default:
 			return 0;
 		}
@@ -2785,7 +2915,7 @@ static int menu_callback_spec ( int op, struct menu_item *item )
 		}
 
 		if ( g_Players->pRemotePlayer[id]->pPlayerData->bytePlayerState == PLAYER_STATE_WASTED
-			|| ( g_Players->pRemotePlayer[id]->pPlayerData->bytePlayerState == PLAYER_STATE_NONE && !set.send_spec_data ) )
+			|| ( g_Players->pRemotePlayer[id]->pPlayerData->bytePlayerState == PLAYER_STATE_NONE ) )
 		{
 			addMessageToChatWindow( "Could not spectate player" );
 			return 1;
@@ -2809,7 +2939,7 @@ static int menu_callback_playerinfo ( int op, struct menu_item *item )
 	int id = item->id;
 	if ( op == MENU_OP_SELECT )
 	{
-		if ( id == SAMP_PLAYER_MAX + 1 )
+		if ( id == SAMP_MAX_PLAYERS + 1 )
 		{
 			iViewingInfoPlayer = -1;
 			return 1;
@@ -2831,13 +2961,13 @@ static int menu_callback_playermute ( int op, struct menu_item *item )
 	int id = item->id;
 	if ( op == MENU_OP_ENABLED )
 	{
-		if ( id < SAMP_PLAYER_MAX && id >= 0 )
+		if ( id < SAMP_MAX_PLAYERS && id >= 0 )
 			return g_bPlayerMuted[id];
 		return 0;
 	}
 	else if ( op == MENU_OP_SELECT )
 	{
-		if ( id < SAMP_PLAYER_MAX && id >= 0 )
+		if ( id < SAMP_MAX_PLAYERS && id >= 0 )
 		{
 			if ( g_bPlayerMuted[id] )
 				g_iNumPlayersMuted--;
@@ -2854,7 +2984,6 @@ static int menu_callback_playermute ( int op, struct menu_item *item )
 	return 0;
 }
 
-int joining_server = 0;
 static int menu_callback_server_list ( int op, struct menu_item *item )
 {
 	if ( g_SAMP == NULL && g_Players == NULL )
@@ -2950,14 +3079,56 @@ static int menu_callback_gamestate ( int op, struct menu_item *item )
 	return 0;
 }
 
+static int menu_callback_netpatches(int op, struct menu_item *item)
+{
+	if ( g_SAMP == NULL )
+		return 0;
+
+	if (op == MENU_OP_SELECT)
+	{
+		if (item->id == ID_MENU_NETPATCHES_TOGGLE_ALL)
+		{
+			if (item->menu->count > 1)
+			{
+				// hacky method to get patch type of this menu
+				NetPatchType type = set.netPatch[item->menu->item[1].id].type; // omg omg omg
+				
+				// count enabled and disabled patches
+				int enabled = 0, disabled = 0;
+				for (int i = 0; i < iNetPatchesCount; ++i)
+				{
+					if (set.netPatch[i].type != type) continue;
+					if (set.netPatch[i].enabled) ++enabled;
+					else ++disabled;
+				}
+
+				for (int i = 0; i < iNetPatchesCount; ++i)
+				{
+					if (set.netPatch[i].type != type) continue;
+					set.netPatch[i].enabled = disabled > enabled ? true : false;
+				}
+			}
+		}
+		else
+		{
+			set.netPatch[item->id].enabled ^= true;
+		}
+	}
+	if (op == MENU_OP_ENABLED)
+	{
+		if (item->id != ID_MENU_NETPATCHES_TOGGLE_ALL)
+		{
+			return set.netPatch[item->id].enabled;
+		}
+	}
+	return 0;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 ////////////////////////////// FUNCTIONS DONE ///////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 ///////////////////////////// START MENU LAYOUT /////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
-extern int	iGTAPatchesCount;
-extern int	iSAMPPatchesCount;
-extern int	iServersCount;
 void menu_maybe_init ( void )
 {
 	traceLastFunc( "menu_maybe_init()" );
@@ -2974,7 +3145,8 @@ void menu_maybe_init ( void )
 
 	//*menu_cheats_handling,
 	*menu_player_info, *menu_players_mute, *menu_sampmisc, *menu_spoof_weapon, *menu_fake_kill, *menu_vehicles_instant, 
-	*menu_gamestate, *menu_specialaction, *menu_teleobject, *menu_telepickup, *menu_samppatches;
+	*menu_gamestate, *menu_specialaction, *menu_teleobject, *menu_telepickup, *menu_samppatches,
+	*menu_netpatches_inrpc, *menu_netpatches_outrpc, *menu_netpatches_inpacket, *menu_netpatches_outpacket;
 
 	char		name[128];
 	int			i, slot;
@@ -3035,6 +3207,11 @@ void menu_maybe_init ( void )
 		menu_specialaction = menu_new( menu_sampmisc, ID_MENU_SAMPMISC_SPECIALACTION, menu_callback_specialaction );
 		menu_teleobject = menu_new( menu_sampmisc, ID_MENU_SAMPMISC_TELEOBJECT, menu_callback_teleobject );
 		menu_telepickup = menu_new( menu_sampmisc, ID_MENU_SAMPMISC_TELEPICKUP, menu_callback_telepickup );
+		// main menu -> samp patches
+		menu_netpatches_inrpc = menu_new( menu_samppatches, ID_MENU_NETPATCHES_INRPC, menu_callback_netpatches );
+		menu_netpatches_outrpc = menu_new( menu_samppatches, ID_MENU_NETPATCHES_OUTRPC, menu_callback_netpatches );
+		menu_netpatches_inpacket = menu_new( menu_samppatches, ID_MENU_NETPATCHES_INPACKET, menu_callback_netpatches );
+		menu_netpatches_outpacket = menu_new( menu_samppatches, ID_MENU_NETPATCHES_OUTPACKET, menu_callback_netpatches );
 	}
 
 	/** Menu Items **/
@@ -3086,6 +3263,9 @@ void menu_maybe_init ( void )
 	snprintf( name, sizeof(name), "Player Fly Speed: %0.01f", set.fly_player_speed );
 	menu_item_add( menu_cheats, NULL, name, ID_CHEAT_FLY_SPEED, MENU_COLOR_DEFAULT, NULL );
 	menu_item_add( menu_cheats, NULL, "Disable Water Waves", ID_CHEAT_DISABLE_WAVES, MENU_COLOR_DEFAULT, NULL );
+	menu_item_add( menu_cheats, NULL, "Surf", ID_CHEAT_SURF, MENU_COLOR_DEFAULT, NULL );
+	menu_item_add( menu_cheats, NULL, "Freeze vehicle spin", ID_CHEAT_FREEZEROT, MENU_COLOR_DEFAULT, NULL );
+	menu_item_add( menu_cheats, NULL, "Draw map lines", ID_CHEAT_MAP_DRAW_LINES, MENU_COLOR_DEFAULT, NULL );
 
 	/* main menu -> cheats -> invulnerable */
 	menu_item_add( menu_cheats_inv, NULL, "Actor invulnerability", ID_CHEAT_INVULN_ACTOR, MENU_COLOR_DEFAULT, NULL );
@@ -3251,6 +3431,33 @@ void menu_maybe_init ( void )
 		menu_item_add( menu_players, menu_player_info, "Show infos on player", ID_MENU_PLAYERS_INFO, MENU_COLOR_DEFAULT, NULL );
 		menu_item_add( menu_players, menu_players_mute, "Mute player chat (Anti-spam)", ID_MENU_PLAYERS_MUTE, MENU_COLOR_DEFAULT, NULL );
 
+		// net patches
+		menu_item_add( menu_samppatches, menu_netpatches_inrpc, "Disable incoming RPC", ID_MENU_NETPATCHES_INRPC, MENU_COLOR_DEFAULT, NULL );
+		menu_item_add( menu_samppatches, menu_netpatches_outrpc, "Disable outcoming RPC", ID_MENU_NETPATCHES_OUTRPC, MENU_COLOR_DEFAULT, NULL );
+		menu_item_add( menu_samppatches, menu_netpatches_inpacket, "Disable incoming packet", ID_MENU_NETPATCHES_INPACKET, MENU_COLOR_DEFAULT, NULL );
+		menu_item_add( menu_samppatches, menu_netpatches_outpacket, "Disable outcoming packet", ID_MENU_NETPATCHES_OUTPACKET, MENU_COLOR_DEFAULT, NULL );
+		menu_item_add( menu_netpatches_inrpc, NULL, "Toggle all", ID_MENU_NETPATCHES_TOGGLE_ALL, MENU_COLOR_DEFAULT, NULL );
+		menu_item_add( menu_netpatches_outrpc, NULL, "Toggle all", ID_MENU_NETPATCHES_TOGGLE_ALL, MENU_COLOR_DEFAULT, NULL );
+		menu_item_add( menu_netpatches_inpacket, NULL, "Toggle all", ID_MENU_NETPATCHES_TOGGLE_ALL, MENU_COLOR_DEFAULT, NULL );
+		menu_item_add( menu_netpatches_outpacket, NULL, "Toggle all", ID_MENU_NETPATCHES_TOGGLE_ALL, MENU_COLOR_DEFAULT, NULL );
+
+		int netPatchNumber[4] = { 1, 1, 1, 1 };
+		for (i = 0; i < iNetPatchesCount; ++i)
+		{
+			menu *pmenu = nullptr;
+			stNetPatch &patch = set.netPatch[i];
+			sprintf_s(name, "%d. %s", netPatchNumber[patch.type]++, patch.name);
+			switch (patch.type)
+			{
+			case INCOMING_RPC: pmenu = menu_netpatches_inrpc; break;
+			case OUTCOMING_RPC: pmenu = menu_netpatches_outrpc; break;
+			case INCOMING_PACKET: pmenu = menu_netpatches_inpacket; break;
+			case OUTCOMING_PACKET: pmenu = menu_netpatches_outpacket; break;
+			}
+			if (pmenu != nullptr)
+				menu_item_add(pmenu, NULL, name, i, MENU_COLOR_DEFAULT, NULL);
+		}
+
 		// samp patches
 		for ( i = 0; i < INI_SAMPPATCHES_MAX; i++ )
 		{
@@ -3349,6 +3556,9 @@ void menu_maybe_init ( void )
 	menu_item_add( menu_hudindicators, NULL, "On foot Stick", ID_HUDIND_ONFOOT_STICK, MENU_COLOR_DEFAULT, NULL );
 	menu_item_add( menu_hudindicators, NULL, "On foot Fly", ID_HUDIND_ONFOOT_FLY, MENU_COLOR_DEFAULT, NULL );
 	menu_item_add( menu_hudindicators, NULL, "Aim", ID_HUDIND_ONFOOT_AIM, MENU_COLOR_DEFAULT, NULL );
+	menu_item_add( menu_hudindicators, NULL, "Surf", ID_HUDIND_SURF, MENU_COLOR_DEFAULT, NULL );
+	menu_item_add( menu_hudindicators, NULL, "FreezeRot", ID_HUDIND_FREEZEROT, MENU_COLOR_DEFAULT, NULL );
+
 	menu_item_add( menu_hudindicators, NULL, "Position", ID_HUDIND_POS, MENU_COLOR_DEFAULT, NULL );
 	menu_item_add( menu_hudindicators, NULL, "FPS", ID_HUDIND_FPS, MENU_COLOR_DEFAULT, NULL );
 	menu_item_add( menu_hudindicators, NULL, "Toggle left bottom bars", ID_HUDIND_LB_BARS, MENU_COLOR_DEFAULT, NULL );

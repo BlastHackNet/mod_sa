@@ -2,9 +2,9 @@
 
 	PROJECT:		mod_sa
 	LICENSE:		See LICENSE in the top level directory
-	COPYRIGHT:		Copyright we_sux, FYP
+	COPYRIGHT:		Copyright we_sux, BlastHack
 
-	mod_sa is available from http://code.google.com/p/m0d-s0beit-sa/
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
 
 	mod_sa is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ void cheat_handle_actor_autoaim ( struct actor_info *info, double time_diff )
 	traceLastFunc( "cheat_handle_actor_autoaim()" );
 
 	// toggle aimbot on/off
-	if ( KEY_PRESSED(set.key_autoaim_toggle) )
+	if ( KEYCOMBO_PRESSED(set.key_autoaim_toggle) )
 	{
 		cheat_state->actor.autoaim ^= 1;
 		if ( set.use_gta_autoaim )
@@ -115,7 +115,7 @@ void cheat_handle_actor_autoaim ( struct actor_info *info, double time_diff )
 			}
 
 
-/*
+			/*
 			// NEW OLD ASS AIM
 
 			// settings
@@ -162,73 +162,80 @@ void cheat_handle_actor_autoaim ( struct actor_info *info, double time_diff )
 
 			render->DrawLine( CVecToD3DXVEC(vecGunMuzzle), CVecToD3DXVEC(vecRightWrist), D3DCOLOR_ARGB(255, 0, 255, 0) );
 			render->DrawLine( CVecToD3DXVEC(vecGunMuzzle), CVecToD3DXVEC(vecAimEnd), D3DCOLOR_ARGB(255, 255, 0, 0) );
-*/
+			*/
 
-
-			// OLD ASS AIM
-			static int			prev_id;
-			static float		adj_rx, adj_rz, prev_rx, prev_rz;
-			float				rx = *(float *)0x00B6F248;
-			float				rz = *(float *)0x00B6F258;
-
-			int					nearest_id = actor_find_nearest( ACTOR_ALIVE );
+			// NEW ASS AIM
+			
 			struct actor_info	*nearest;
-			float				vect[3], ax, az;
+			float				ax, az;
+			CVector				vect;
+			float				*screenAspectRatio = (float *)0xC3EFA4;
+			float				*crosshairOffset = (float *)0xB6EC10;
+			int					nearest_id = -1;
 
-			if ( nearest_id == -1 )
+			// get the camera
+			CCamera *pCamera = pGame->GetCamera();
+
+			// grab the active cam
+			CCamSAInterface *pCam = (CCamSAInterface *)((CCamSA *)pCamera->GetCam(pCamera->GetActiveCam()))->GetInterface();
+
+			nearest_id = actor_find_nearest_ex(ACTOR_ALIVE, [pCam](actor_info *ainfo)
 			{
-				cheat_state_text( "No players found; auto aim disabled." );
-				cheat_state->actor.autoaim = 0;
+				CVector src = pCam->Source;
+				CPed *ped = pGame->GetPools()->GetPed((DWORD *)ainfo);
+				if (ped == nullptr)
+					return false;
+
+				// get the head position
+				CVector head;
+				ped->GetTransformedBonePosition(BONE_HEAD, &head);
+
+				// check is head in sight
+				return pGame->GetWorld()->IsLineOfSightClear(&src, &head, true, false, false, true, true, false, false);
+			});
+
+			if (nearest_id == -1)
 				return;
-			}
 
-			if ( nearest_id == prev_id )
-			{
-				adj_rx += rx - prev_rx;
-				adj_rz += rz - prev_rz;
-			}
-
-			prev_id = nearest_id;
-
-			if ( (nearest = actor_info_get(nearest_id, ACTOR_ALIVE)) == NULL )
+			if ((nearest = actor_info_get(nearest_id, ACTOR_ALIVE)) == NULL)
 				return; // won't happen
 
-			//cheat_state_text("%.3f %.3f %d %d", adj_rx, adj_rz, nearest->state, nearest->state_running);
+			CPed *ped = pGame->GetPools()->GetPed((DWORD *)nearest);
+			if (ped == nullptr)
+				return;
+
+			// get the head position
+			CVector head;
+			ped->GetTransformedBonePosition(BONE_HEAD, &head);
 
 			// calculate distance vector
-			vect3_vect3_sub( &nearest->base.matrix[4 * 3], &info->base.matrix[4 * 3], vect );
+			vect = pCam->Source - head;
 
-			// z angle
-			az = atan2f( vect[0], vect[1] );
-
-			// rotate around z axis
-			vect[1] = sinf( az ) * vect[0] + cosf( az ) * vect[1];
+			// weird shit
+			float mult = tan(pCam->FOV * 0.5f * 0.017453292f);
+			float fz = atan2(1.0f, mult * ((0.5f - crosshairOffset[0] + 0.5f - crosshairOffset[0]) * (1.0f / *screenAspectRatio)));
+			float fx = atan2(1.0f, mult * (crosshairOffset[1] - 0.5f + crosshairOffset[1] - 0.5f));
 
 			// x angle
-			ax = atan2f( vect[1], vect[2] );
+			float dist = sqrt(vect.fX * vect.fX + vect.fY * vect.fY);
+			az = atan2f(dist, vect.fZ);
 
-			ax = -ax + M_PI / 2.0f + adj_rx;
-			az = -az - M_PI / 2.0f + adj_rz;
+			// z angle
+			ax = atan2f(vect.fY, -vect.fX) - M_PI / 2;
 
-			if ( ax < -M_PI )
-				ax = -M_PI;
-			else if ( ax > M_PI )
-				ax = M_PI;
+			pCam->Alpha = (az - (M_PI - fz));
+			pCam->Beta = -(ax - (M_PI - fx));
+			pCam->AlphaSpeed = 0.0f;
+			pCam->BetaSpeed = 0.0f;
 
-			// XXX make function
-			prev_rx = *(float *)0x00B6F248 = ax;
-			prev_rz = *(float *)0x00B6F258 = az;
-
-			
-			
-/*
-sprintf( buf, "m_fTrueAlpha: %.4f", pSelfWeaponCam1->GetInterface()->m_fTrueAlpha );
-pD3DFontFixed->PrintShadow(450, 50 + lineSpace, D3DCOLOR_XRGB(0, 200, 0), buf);
-lineSpace += 12;
-sprintf( buf, "m_fTrueBeta: %.4f", pSelfWeaponCam1->GetInterface()->m_fTrueBeta );
-pD3DFontFixed->PrintShadow(450, 50 + lineSpace, D3DCOLOR_XRGB(0, 200, 0), buf);
-lineSpace += 12;
-*/
+			/*
+			sprintf( buf, "m_fTrueAlpha: %.4f", pSelfWeaponCam1->GetInterface()->m_fTrueAalpha );
+			pD3DFontFixed->PrintShadow(450, 50 + lineSpace, D3DCOLOR_XRGB(0, 200, 0), buf);
+			lineSpace += 12;
+			sprintf( buf, "m_fTrueBeta: %.4f", pSelfWeaponCam1->GetInterface()->m_fTrueBeta );
+			pD3DFontFixed->PrintShadow(450, 50 + lineSpace, D3DCOLOR_XRGB(0, 200, 0), buf);
+			lineSpace += 12;
+			*/
 
 		} // if ( cheat_state->actor.autoaim )
 	} // if ( !set.use_gta_autoaim )
@@ -244,22 +251,22 @@ void cheat_handle_actor_air_brake ( struct actor_info *info, double time_diff )
 
 	if ( set.air_brake_toggle )
 	{
-		if ( KEY_PRESSED(set.key_air_brake_foot_mod) )
+		if ( KEYCOMBO_PRESSED(set.key_air_brake_foot_mod) )
 			cheat_state->actor.air_brake ^= 1;
 
-		if ( KEY_PRESSED(set.key_air_brake_mod2) && cheat_state->actor.air_brake )
+		if ( KEYCOMBO_PRESSED(set.key_air_brake_mod2) && cheat_state->actor.air_brake )
 			cheat_state->actor.air_brake_slowmo ^= 1;
 	}
 	else
 	{
-		if ( KEY_PRESSED(set.key_air_brake_foot_mod) )
+		if ( KEYCOMBO_PRESSED(set.key_air_brake_foot_mod) )
 			cheat_state->actor.air_brake = 1;
-		else if ( KEY_RELEASED(set.key_air_brake_foot_mod) )
+		else if ( KEYCOMBO_RELEASED(set.key_air_brake_foot_mod) )
 			cheat_state->actor.air_brake = 0;
 
-		if ( KEY_PRESSED(set.key_air_brake_mod2) && cheat_state->actor.air_brake )
+		if ( KEYCOMBO_PRESSED(set.key_air_brake_mod2) && cheat_state->actor.air_brake )
 			cheat_state->actor.air_brake_slowmo = 1;
-		else if ( KEY_RELEASED(set.key_air_brake_mod2) && cheat_state->actor.air_brake )
+		else if ( KEYCOMBO_RELEASED(set.key_air_brake_mod2) && cheat_state->actor.air_brake )
 			cheat_state->actor.air_brake_slowmo = 0;
 	}
 
@@ -296,17 +303,17 @@ void cheat_handle_actor_air_brake ( struct actor_info *info, double time_diff )
 			if ( cheat_state->actor.air_brake_slowmo )
 				d[3] /= 10.0f;
 
-			if ( KEY_DOWN(set.key_air_brake_forward) )
+			if ( KEYCOMBO_DOWN(set.key_air_brake_forward) )
 				d[0] += 1.0f;
-			if ( KEY_DOWN(set.key_air_brake_backward) )
+			if ( KEYCOMBO_DOWN(set.key_air_brake_backward) )
 				d[0] -= 1.0f;
-			if ( KEY_DOWN(set.key_air_brake_left) )
+			if ( KEYCOMBO_DOWN(set.key_air_brake_left) )
 				d[1] += 1.0f;
-			if ( KEY_DOWN(set.key_air_brake_right) )
+			if ( KEYCOMBO_DOWN(set.key_air_brake_right) )
 				d[1] -= 1.0f;
-			if ( KEY_DOWN(set.key_air_brake_up) )
+			if ( KEYCOMBO_DOWN(set.key_air_brake_up) )
 				d[2] += 1.0f;
-			if ( KEY_DOWN(set.key_air_brake_down) )
+			if ( KEYCOMBO_DOWN(set.key_air_brake_down) )
 				d[2] -= 1.0f;
 
 			if ( !near_zero(set.air_brake_accel_time) )
@@ -343,9 +350,9 @@ void cheat_handle_actor_air_brake ( struct actor_info *info, double time_diff )
 		// parachute
 		else
 		{
-			if ( KEY_DOWN(set.key_air_brake_up) )
+			if ( KEYCOMBO_DOWN(set.key_air_brake_up) )
 				fall_speed_mult += time_diff / 2.0f;
-			if ( KEY_DOWN(set.key_air_brake_down) )
+			if ( KEYCOMBO_DOWN(set.key_air_brake_down) )
 				fall_speed_mult -= time_diff / 2.0f;
 
 			if ( fall_speed_mult < 0.0f )
@@ -661,7 +668,7 @@ void cheat_handle_actor_fly ( struct actor_info *ainfo, double time_diff )
 	traceLastFunc( "cheat_handle_actor_fly()" );
 
 	// toggle
-	if ( KEY_PRESSED(set.key_fly_player) )
+	if ( KEYCOMBO_PRESSED(set.key_fly_player) )
 	{
 		if ( !cheat_state->actor.fly_on )
 		{
@@ -1339,5 +1346,22 @@ void cheat_handle_actor_fly ( struct actor_info *ainfo, double time_diff )
 			GTAfunc_PerformAnimation("SHOP", "SHP_Jump_Land ", -1, 0, 1, 0, 0, 0, 0, 0);
 		}
 		playerFly_lastKeySpeedState = speed_none;
+	}
+}
+
+void cheat_handle_actor_surf(struct actor_info *ainfo)
+{
+	if (KEYCOMBO_PRESSED(set.key_surf))
+	{
+		cheat_state->actor.surf ^= true;
+	}
+	if (cheat_state->actor.surf)
+	{
+		// set standing flags...
+		ainfo->pedFlags.bStayInSamePlace = ainfo->pedFlags.bWasStanding = ainfo->pedFlags.bIsStanding = true;
+		// and rotation by camera
+		ainfo->fTargetRotation = ainfo->fCurrentRotation = -pGame->GetCamera()->GetCameraRotation(); 
+		// hack!
+		ainfo->pContactEntity = (CEntitySAInterface *)ainfo;
 	}
 }

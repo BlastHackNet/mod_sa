@@ -2,9 +2,9 @@
 
 	PROJECT:		mod_sa
 	LICENSE:		See LICENSE in the top level directory
-	COPYRIGHT:		Copyright we_sux, FYP
+	COPYRIGHT:		Copyright we_sux, BlastHack
 
-	mod_sa is available from http://code.google.com/p/m0d-s0beit-sa/
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
 
 	mod_sa is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -2100,11 +2100,11 @@ void _declspec ( naked ) HOOK_PedCamEnd ()
 void cheat_hookers_installhooks ( void )
 {
 	// ped cam
-	HookInstall( HOOKPOS_PedCamStart, (DWORD) HOOK_PedCamStart, 6 );
+	/*HookInstall( HOOKPOS_PedCamStart, (DWORD) HOOK_PedCamStart, 6 );
 	HookInstall( HOOKPOS_PedCamLookDir1, (DWORD) HOOK_PedCamLookDir1, 5 );
 	HookInstall( HOOKPOS_PedCamLookDir2, (DWORD) HOOK_PedCamLookDir2, 6 );
 	HookInstall( HOOKPOS_PedCamHistory, (DWORD) HOOK_PedCamHistory, 8 );
-	HookInstallCall( CALL_PedCamUp, (DWORD) HOOK_PedCamUp );
+	HookInstallCall( CALL_PedCamUp, (DWORD) HOOK_PedCamUp );*/
 	//HookInstall( HOOKPOS_PedCamEnd, (DWORD) HOOK_PedCamEnd, 9 );
 
 	// vehicle cam

@@ -2,9 +2,9 @@
 
 	PROJECT:		mod_sa
 	LICENSE:		See LICENSE in the top level directory
-	COPYRIGHT:		Copyright we_sux, FYP
+	COPYRIGHT:		Copyright we_sux, BlastHack
 
-	mod_sa is available from http://code.google.com/p/m0d-s0beit-sa/
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
 
 	mod_sa is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@
 
 #define M0D_FOLDER		"mod_sa\\"
 #define M0D_NAME		"mod_sa"
-#define M0D_VERSION		"4.3.3.3 by FYP // BlastHack.Net"
-#define SAMP_VERSION	"SA:MP 0.3z"
+#define M0D_VERSION		"4.4.0.0 by FYP // BlastHack.Net"
+#define SAMP_VERSION	"SA:MP 0.3.7"
 #define M0D_DEV_ADVANCEDINFO
 
 // Use this to activate the SQLite Vehicle Recording.
@@ -79,6 +79,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <functional>
 
 #include <intrin.h>
 #pragma intrinsic(_ReturnAddress)
@@ -184,6 +185,11 @@
 // WDL includes
 #include "mutex.h"
 
+// RakNet stuff
+#include "BitStream.h"
+#include "RakClient.h"
+#include "HookedRakClient.h"
+
 // normal includes
 #include "patcher.h"
 #include "CDetour.h"
@@ -203,16 +209,12 @@
 #endif
 #include "dumb_menu.h"
 #include "samp.h"
+#include "cheat_samp.h"
 #include "debug_classify.h"
 #include "d3drender.h"
 #include "GTAfuncs.h"
 #include "proxyIDirect3D9.h"
 #include "proxyIDirect3DDevice9.h"
-
-// RakNet stuff
-#include "BitStream.h"
-#include "RakClient.h"
-#include "HookedRakClient.h"
 
 // main.cpp functions
 void							traceLastFunc ( const char *szFunc );

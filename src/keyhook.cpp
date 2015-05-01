@@ -2,9 +2,9 @@
 
 	PROJECT:		mod_sa
 	LICENSE:		See LICENSE in the top level directory
-	COPYRIGHT:		Copyright we_sux, FYP
+	COPYRIGHT:		Copyright we_sux, BlastHack
 
-	mod_sa is available from http://code.google.com/p/m0d-s0beit-sa/
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
 
 	mod_sa is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -53,6 +53,12 @@ static LRESULT CALLBACK wnd_proc ( HWND wnd, UINT umsg, WPARAM wparam, LPARAM lp
 {
 	if (gta_menu_active())
 		goto wnd_proc_original;
+
+	if (g_Input != nullptr && !g_Input->iInputEnabled && GetForegroundWindow() == wnd)
+	{
+		if (menu_wndproc(umsg, wparam, lparam))
+			return 0;
+	}
 
 	switch ( umsg )
 	{
@@ -248,4 +254,52 @@ void keyhook_clear_states ( void )
 			key_table[i].flip = 0;
 		}
 	}
+}
+
+bool keyhook_keycombo_down(const keycombo &comb)
+{
+	if (comb.count == 0)
+		return false;
+	for (unsigned int i = 0; i < comb.count; ++i)
+	{
+		if (!keyhook_key_down(comb.key[i]))
+			return false;
+	}
+	return true;
+}
+
+bool keyhook_keycombo_up(const keycombo &comb)
+{
+	if (comb.count == 0)
+		return false;
+	for (unsigned int i = 0; i < comb.count; ++i)
+	{
+		if (keyhook_key_down(comb.key[i]))
+			return false;
+	}
+	return true;
+}
+
+bool keyhook_keycombo_pressed(const keycombo &comb)
+{
+	if (comb.count == 0)
+		return false;
+	for (unsigned int i = 0; i < comb.count; ++i)
+	{
+		if ((i == comb.count - 1) ? !keyhook_key_pressed(comb.key[i]) : !keyhook_key_down(comb.key[i]))
+			return false;
+	}
+	return true;
+}
+
+bool keyhook_keycombo_released(const keycombo &comb)
+{
+	if (comb.count == 0)
+		return false;
+	for (unsigned int i = 0; i < comb.count; ++i)
+	{
+		if ((i == comb.count - 1) ? !keyhook_key_released(comb.key[i]) : !keyhook_key_down(comb.key[i]))
+			return false;
+	}
+	return true;
 }

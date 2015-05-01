@@ -2,9 +2,9 @@
 
 	PROJECT:		mod_sa
 	LICENSE:		See LICENSE in the top level directory
-	COPYRIGHT:		Copyright we_sux, FYP
+	COPYRIGHT:		Copyright we_sux, BlastHack
 
-	mod_sa is available from http://code.google.com/p/m0d-s0beit-sa/
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
 
 	mod_sa is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -465,6 +465,8 @@ int									actor_find ( int id, int dir, int flags );
 int									vehicle_find_nearest ( int flags );
 int									vehicle_filter_flags ( vehicle_info *info, int flags );
 int									actor_find_nearest ( int flags );
+int									actor_find_nearest_ex(int flags, std::function<bool(actor_info *)> pred);
+
 struct vehicle_info					*actor_vehicle_get ( const struct actor_info *info );
 void								SetCloudsEnabled ( int iEnabled );
 void								loadAllWeaponModels ( void );
@@ -490,6 +492,7 @@ int									vehicle_getColor0 ( vehicle_info *vinfo );
 int									vehicle_getColor1 ( vehicle_info *vinfo );
 void								vehicle_setColor0 ( vehicle_info *vinfo, int new_color );
 void								vehicle_setColor1 ( vehicle_info *vinfo, int new_color );
+RwColor								getVehicleColorRGB(unsigned int index);
 
 // --------------------------------------------------------------------------------------------
 int									memcpy_safe ( void *dest, const void *src, uint32_t len, int check = NULL, const void *checkdata = NULL);
@@ -504,9 +507,11 @@ struct str_split					*str_split ( const char *str, const char *ch );
 size_t								strlcpy ( char *dst, const char *src, size_t size );
 size_t								strlcat ( char *dst, const char *src, size_t size );
 
+bool								findstrinstr ( char *text, char *find );
+
 void								*memdup ( const void *src, int len );
 uint8_t								*hex_to_bin ( const char *str );
-D3DCOLOR							hex_to_color( const char *str, int len );
+bool								hex_is_valid( std::string hex );
 
 extern const struct weapon_entry	weapon_list[];
 extern const struct vehicle_entry	vehicle_list[VEHICLE_LIST_SIZE];

@@ -2,9 +2,9 @@
 
 	PROJECT:		mod_sa
 	LICENSE:		See LICENSE in the top level directory
-	COPYRIGHT:		Copyright we_sux, FYP
+	COPYRIGHT:		Copyright we_sux, BlastHack
 
-	mod_sa is available from http://code.google.com/p/m0d-s0beit-sa/
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
 
 	mod_sa is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ bool vehicleJumper ( int iVehicleID )
 	if ( g_SAMP != NULL )
 	{
 		int iVehicleSAMPID = getSAMPVehicleIDFromGTAVehicle( pVehicle );
-		if ( isBadPtr_SAMP_iVehicleID(iVehicleSAMPID) )
+		if ( isBadSAMPVehicleID(iVehicleSAMPID) )
 			return false;
 	}
 
@@ -113,7 +113,7 @@ bool vehicleJumper ( int iVehicleID )
 	return false;
 }
 
-void cheat_vehicle_teleport ( struct vehicle_info *info, const float pos[3], int interior_id )
+void cheat_vehicle_teleport ( struct vehicle_info *info, const float pos[3], int interior_id, bool keepSpeed )
 {
 	if ( info == NULL )
 		return;
@@ -135,8 +135,11 @@ void cheat_vehicle_teleport ( struct vehicle_info *info, const float pos[3], int
 		vehicle_detachables_teleport( temp, &temp->base.matrix[4 * 3], new_pos );
 		vect3_copy( new_pos, &temp->base.matrix[4 * 3] );
 
-		vect3_zero( temp->speed );
-		vect3_zero( temp->spin );
+		if (!keepSpeed)
+		{
+			vect3_zero(temp->speed);
+			vect3_zero(temp->spin);
+		}
 
 		gta_interior_id_set( interior_id );
 		temp->base.interior_id = ( uint8_t ) interior_id;
@@ -154,7 +157,7 @@ void cheat_handle_vehicle_unflip ( struct vehicle_info *info, float time_diff )
 	//if ( KEY_PRESSED(set.key_unflip) )
 	//{ }
 	/* Rotate vehicle while the unflip key is held down */
-	if ( KEY_DOWN(set.key_unflip) )
+	if ( KEYCOMBO_DOWN(set.key_unflip) )
 	{
 		traceLastFunc( "cheat_handle_vehicle_unflip()" );
 
@@ -225,22 +228,22 @@ void cheat_handle_vehicle_air_brake ( struct vehicle_info *info, double time_dif
 	// handle key presses
 	if ( set.air_brake_toggle )
 	{
-		if ( KEY_PRESSED(set.key_air_brake_mod) )
+		if ( KEYCOMBO_PRESSED(set.key_air_brake_mod) )
 			cheat_state->vehicle.air_brake ^= 1;
 
-		if ( KEY_PRESSED(set.key_air_brake_mod2) && cheat_state->vehicle.air_brake )
+		if ( KEYCOMBO_PRESSED(set.key_air_brake_mod2) && cheat_state->vehicle.air_brake )
 			cheat_state->vehicle.air_brake_slowmo ^= 1;
 	}
 	else
 	{
-		if ( KEY_PRESSED(set.key_air_brake_mod) )
+		if ( KEYCOMBO_PRESSED(set.key_air_brake_mod) )
 			cheat_state->vehicle.air_brake = 1;
-		else if ( KEY_RELEASED(set.key_air_brake_mod) )
+		else if ( KEYCOMBO_RELEASED(set.key_air_brake_mod) )
 			cheat_state->vehicle.air_brake = 0;
 
-		if ( KEY_PRESSED(set.key_air_brake_mod2) && cheat_state->vehicle.air_brake )
+		if ( KEYCOMBO_PRESSED(set.key_air_brake_mod2) && cheat_state->vehicle.air_brake )
 			cheat_state->vehicle.air_brake_slowmo = 1;
-		else if ( KEY_RELEASED(set.key_air_brake_mod2) && cheat_state->vehicle.air_brake )
+		else if ( KEYCOMBO_RELEASED(set.key_air_brake_mod2) && cheat_state->vehicle.air_brake )
 			cheat_state->vehicle.air_brake_slowmo = 0;
 	}
 
@@ -258,7 +261,7 @@ void cheat_handle_vehicle_air_brake ( struct vehicle_info *info, double time_dif
 			orig_matrix_set = 1;
 		}
 
-		if ( !KEY_DOWN(set.key_unflip) )	/* allow the unflip rotation feature to work */
+		if ( !KEYCOMBO_DOWN(set.key_unflip) )	/* allow the unflip rotation feature to work */
 			matrix_copy( orig_matrix, info->base.matrix );
 
 		/* XXX allow some movement */
@@ -287,17 +290,17 @@ void cheat_handle_vehicle_air_brake ( struct vehicle_info *info, double time_dif
 			theta /= 2.0f;
 		}
 
-		if ( KEY_DOWN(set.key_air_brake_forward) )
+		if ( KEYCOMBO_DOWN(set.key_air_brake_forward) )
 			d[0] += 1.0f;
-		if ( KEY_DOWN(set.key_air_brake_backward) )
+		if ( KEYCOMBO_DOWN(set.key_air_brake_backward) )
 			d[0] -= 1.0f;
-		if ( KEY_DOWN(set.key_air_brake_left) )
+		if ( KEYCOMBO_DOWN(set.key_air_brake_left) )
 			d[1] += 1.0f;
-		if ( KEY_DOWN(set.key_air_brake_right) )
+		if ( KEYCOMBO_DOWN(set.key_air_brake_right) )
 			d[1] -= 1.0f;
-		if ( KEY_DOWN(set.key_air_brake_up) )
+		if ( KEYCOMBO_DOWN(set.key_air_brake_up) )
 			d[2] += 1.0f;
-		if ( KEY_DOWN(set.key_air_brake_down) )
+		if ( KEYCOMBO_DOWN(set.key_air_brake_down) )
 			d[2] -= 1.0f;
 
 		if ( !near_zero(set.air_brake_accel_time) )
@@ -317,21 +320,21 @@ void cheat_handle_vehicle_air_brake ( struct vehicle_info *info, double time_dif
 		}
 
 		/* pitch (x-axis) */
-		if ( KEY_DOWN(set.key_air_brake_rot_pitch1) )
+		if ( KEYCOMBO_DOWN(set.key_air_brake_rot_pitch1) )
 			xyvect[0] += 1.0f;
-		if ( KEY_DOWN(set.key_air_brake_rot_pitch2) )
+		if ( KEYCOMBO_DOWN(set.key_air_brake_rot_pitch2) )
 			xyvect[0] -= 1.0f;
 
 		/* roll (y-axis) */
-		if ( KEY_DOWN(set.key_air_brake_rot_roll1) )
+		if ( KEYCOMBO_DOWN(set.key_air_brake_rot_roll1) )
 			xyvect[1] += 1.0f;
-		if ( KEY_DOWN(set.key_air_brake_rot_roll2) )
+		if ( KEYCOMBO_DOWN(set.key_air_brake_rot_roll2) )
 			xyvect[1] -= 1.0f;
 
 		/* yaw (z-axis) */
-		if ( KEY_DOWN(set.key_air_brake_rot_yaw1) )
+		if ( KEYCOMBO_DOWN(set.key_air_brake_rot_yaw1) )
 			zvect[2] -= 1.0f;
-		if ( KEY_DOWN(set.key_air_brake_rot_yaw2) )
+		if ( KEYCOMBO_DOWN(set.key_air_brake_rot_yaw2) )
 			zvect[2] += 1.0f;
 
 		if ( !vect3_near_zero(xyvect) )
@@ -520,7 +523,7 @@ void cheat_handle_vehicle_warp ( struct vehicle_info *info, float time_diff )
 	}
 
 	/* warp factor: fuck you */
-	if ( KEY_PRESSED(set.key_warp_mod) )
+	if ( KEYCOMBO_PRESSED(set.key_warp_mod) )
 	{
 		struct vehicle_info *temp;
 		float				dir[4] = { 0.0f, 1.0f, 0.0f, 0.0f };
@@ -555,10 +558,10 @@ void cheat_handle_vehicle_warp ( struct vehicle_info *info, float time_diff )
 		}
 	}
 
-	if ( KEY_DOWN(set.key_warp_mod) && info->vehicle_type == VEHICLE_TYPE_TRAIN )
+	if ( KEYCOMBO_DOWN(set.key_warp_mod) && info->vehicle_type == VEHICLE_TYPE_TRAIN )
 		info->m_fTrainSpeed = set.warp_speed;
 
-	if ( KEY_RELEASED(set.key_warp_mod) )
+	if ( KEYCOMBO_RELEASED(set.key_warp_mod) )
 	{
 		struct vehicle_info *temp;
 
@@ -582,7 +585,7 @@ void cheat_handle_vehicle_hop ( struct vehicle_info *info, float time_diff )
 {
 	traceLastFunc( "cheat_handle_vehicle_hop()" );
 
-	if ( KEY_DOWN(set.key_vehicle_hop) )
+	if ( KEYCOMBO_DOWN(set.key_vehicle_hop) )
 	{
 		CVehicle	*cveh = pGameInterface->GetPools()->GetVehicle( (DWORD *)info );
 		CVector		vecSpeedAdd, vecMoveSpeed;
@@ -625,7 +628,7 @@ void cheat_handle_vehicle_brake ( struct vehicle_info *info, double time_diff )
 	float				speed;
 	struct vehicle_info *temp;
 
-	if ( KEY_DOWN(set.key_brake_mod) && !cheat_state->vehicle.air_brake )
+	if ( KEYCOMBO_DOWN(set.key_brake_mod) && !cheat_state->vehicle.air_brake )
 	{
 		for ( temp = info; temp != NULL; temp = temp->trailer )
 		{
@@ -687,10 +690,10 @@ void cheat_handle_vehicle_nitro ( struct vehicle_info *info, float time_diff )
 	float				pre_speed[3];
 	struct vehicle_info *temp;
 
-	if ( KEY_DOWN(set.key_warp_mod) )
+	if ( KEYCOMBO_DOWN(set.key_warp_mod) )
 		vect3_copy( info->speed, pre_speed );
 
-	if ( KEY_PRESSED(set.key_nitro_mod) )
+	if ( KEYCOMBO_PRESSED(set.key_nitro_mod) )
 	{
 		speed_off = vect3_length( info->speed );
 		decelerating = 0;
@@ -698,7 +701,7 @@ void cheat_handle_vehicle_nitro ( struct vehicle_info *info, float time_diff )
 	}
 
 	/* "nitro" acceleration mod */
-	if ( KEY_DOWN(set.key_nitro_mod) && !vect3_near_zero(info->speed) )
+	if ( KEYCOMBO_DOWN(set.key_nitro_mod) && !vect3_near_zero(info->speed) )
 	{
 		float	etime = TIME_TO_FLOAT( time_get() - timer ) / set.nitro_accel_time;
 		float	speed = set.nitro_high;
@@ -750,7 +753,7 @@ void cheat_handle_vehicle_nitro ( struct vehicle_info *info, float time_diff )
 		info->m_SpeedVec.fY += strife;
 	}
 
-	if ( KEY_RELEASED(set.key_nitro_mod) )
+	if ( KEYCOMBO_RELEASED(set.key_nitro_mod) )
 	{
 		if ( vect3_length(info->speed) > set.nitro_low )
 		{
@@ -795,7 +798,7 @@ void cheat_handle_vehicle_nitro ( struct vehicle_info *info, float time_diff )
 	}
 
 	/* actual NOS of the game, toggle infinite NOS, w00t! */
-	if ( KEY_PRESSED(set.key_nitro) )
+	if ( KEYCOMBO_PRESSED(set.key_nitro) )
 	{
 		if ( !cheat_state->vehicle.infNOS_toggle_on )
 		{
@@ -833,7 +836,7 @@ void cheat_handle_vehicle_quick_turn ( struct vehicle_info *info, float time_dif
 {
 	traceLastFunc( "cheat_handle_vehicle_quick_turn()" );
 
-	if ( KEY_PRESSED(set.key_quick_turn_180) )
+	if ( KEYCOMBO_PRESSED(set.key_quick_turn_180) )
 	{
 		/* simply invert the X and Y axis.. */
 		for ( struct vehicle_info * temp = info; temp != NULL; temp = temp->trailer )
@@ -872,7 +875,7 @@ void cheat_handle_vehicle_quick_turn ( struct vehicle_info *info, float time_dif
 		}
 	}
 
-	if ( KEY_PRESSED(set.key_quick_turn_left) )
+	if ( KEYCOMBO_PRESSED(set.key_quick_turn_left) )
 	{
 		struct vehicle_info *temp;
 		for ( temp = info; temp != NULL; temp = temp->trailer )
@@ -902,7 +905,7 @@ void cheat_handle_vehicle_quick_turn ( struct vehicle_info *info, float time_dif
 		}
 	}
 
-	if ( KEY_PRESSED(set.key_quick_turn_right) )
+	if ( KEYCOMBO_PRESSED(set.key_quick_turn_right) )
 	{
 		struct vehicle_info *temp;
 		for ( temp = info; temp != NULL; temp = temp->trailer )
@@ -942,10 +945,10 @@ void cheat_handle_vehicle_protection ( struct vehicle_info *info, float time_dif
 	static float		last_spin[3];
 	struct vehicle_info *temp;
 
-	if ( KEY_PRESSED(set.key_protection) )
+	if ( KEYCOMBO_PRESSED(set.key_protection) )
 		cheat_state->vehicle.protection ^= 1;
 
-	if ( KEY_DOWN(set.key_warp_mod) )
+	if ( KEYCOMBO_DOWN(set.key_warp_mod) )
 		return;
 
 	if ( cheat_state->vehicle.protection )
@@ -998,7 +1001,7 @@ void cheat_handle_vehicle_engine ( struct vehicle_info *vehicle_info, float time
 	if ( veh_self == NULL )
 		return;
 
-	if ( KEY_PRESSED(set.key_engine) )
+	if ( KEYCOMBO_PRESSED(set.key_engine) )
 	{
 		if ( veh_self->m_nVehicleFlags.bEngineOn )
 		{
@@ -1024,7 +1027,7 @@ void cheat_handle_vehicle_brakedance ( struct vehicle_info *vehicle_info, float 
 
 	static float	velpos, velneg;
 
-	if ( KEY_PRESSED(set.key_brkd_toggle) )
+	if ( KEYCOMBO_PRESSED(set.key_brkd_toggle) )
 	{
 		cheat_state->vehicle.brkdance ^= 1;
 	}
@@ -1046,27 +1049,27 @@ void cheat_handle_vehicle_brakedance ( struct vehicle_info *vehicle_info, float 
 		velpos = set.brkdance_velocity * fTimeStep;
 		velneg = -set.brkdance_velocity * fTimeStep;
 
-		if ( KEY_DOWN(set.key_brkd_forward) )
+		if ( KEYCOMBO_DOWN(set.key_brkd_forward) )
 		{
 			GTAfunc_ApplyRotoryPulseAboutAnAxis(velneg, 0.0f, 0.0f);
 		}
-		else if ( KEY_DOWN(set.key_brkd_backward) )
+		else if ( KEYCOMBO_DOWN(set.key_brkd_backward) )
 		{
 			GTAfunc_ApplyRotoryPulseAboutAnAxis(velpos, 0.0f, 0.0f);
 		}
-		else if ( KEY_DOWN(set.key_brkd_right) )
+		else if ( KEYCOMBO_DOWN(set.key_brkd_right) )
 		{
 			GTAfunc_ApplyRotoryPulseAboutAnAxis(0.0f, velpos, 0.0f);
 		}
-		else if ( KEY_DOWN(set.key_brkd_left) )
+		else if ( KEYCOMBO_DOWN(set.key_brkd_left) )
 		{
 			GTAfunc_ApplyRotoryPulseAboutAnAxis(0.0f, velneg, 0.0f);
 		}
-		else if ( KEY_DOWN(set.key_brkd_rightward) )
+		else if ( KEYCOMBO_DOWN(set.key_brkd_rightward) )
 		{
 			GTAfunc_ApplyRotoryPulseAboutAnAxis(0.0f, 0.0f, velneg);
 		}
-		else if ( KEY_DOWN(set.key_brkd_leftward) )
+		else if ( KEYCOMBO_DOWN(set.key_brkd_leftward) )
 		{
 			GTAfunc_ApplyRotoryPulseAboutAnAxis(0.0f, 0.0f, velpos);
 		}
@@ -1096,7 +1099,7 @@ void cheat_handle_vehicle_blinking_carlights ( struct vehicle_info *vinfo, float
 	 ||	 class_id == VEHICLE_CLASS_HELI
 	 ||	 class_id == VEHICLE_CLASS_BIKE ) return;
 
-	if ( KEY_PRESSED(set.key_blinking_car_lights) )
+	if ( KEYCOMBO_PRESSED(set.key_blinking_car_lights) )
 	{
 		// reset lights damage
 		vinfo->lights_status_rear = false;
@@ -1295,10 +1298,10 @@ void cheat_handle_vehicle_fly ( struct vehicle_info *vehicle_info, float time_di
 	if ( pGameInterface == NULL )
 		return;
 
-	if ( KEY_PRESSED(set.key_fly_vehicle_modeChange) )
+	if ( KEYCOMBO_PRESSED(set.key_fly_vehicle_modeChange) )
 		set.fly_vehicle_heliMode = !set.fly_vehicle_heliMode;
 
-	if ( KEY_PRESSED(set.key_fly_vehicle) )
+	if ( KEYCOMBO_PRESSED(set.key_fly_vehicle) )
 		cheat_state->vehicle.fly ^= 1;
 
 	// ignore hydra, RC Baron and RC Goblin (they seem to use some special functions to fly)
@@ -1340,12 +1343,10 @@ void cheat_handle_vehicle_fly ( struct vehicle_info *vehicle_info, float time_di
 		}
 
 		struct vehicle_info *temp;
-		DWORD				func = 0x006D85F0;
 		for ( temp = vehicle_info; temp != NULL; temp = temp->trailer )
 		{
 			if(temp == NULL) return;
 
-			DWORD	mecar = ( DWORD ) temp;
 			class_id = gta_vehicle_get_by_id( temp->base.model_alt_id )->class_id;
 
 			// fly physics heli Mode / Bike
@@ -1394,71 +1395,33 @@ void cheat_handle_vehicle_fly ( struct vehicle_info *vehicle_info, float time_di
 			//  steering  //
 			float	one = 0.9997f;
 			float	min = -0.9997f;
-			if ( *(uint8_t *) (GTA_KEYS + 0x1C) == 0xFF )		//accel
-			{
-				__asm push min
-			}
-			else if ( *(uint8_t *) (GTA_KEYS + 0x20) == 0xFF )	//brake
-			{
-				__asm push one
-			}
-			else
-			{
-				__asm push 0
-			}
+			float	f[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+			uint8_t	*gtakeys = (uint8_t *)GTA_KEYS;
 
-			if ( *(uint8_t *) (GTA_KEYS + 0x1) == 0xFF )		//left
-			{
-				__asm push min
-			}
-			else if ( *(uint8_t *) (GTA_KEYS + 0x0) == 0x80 )	//right
-			{
-				__asm push one
-			}
-			else
-			{
-				__asm push 0
-			}
+			if (gtakeys[0xE] == 0xFF)		//look left
+				f[0] = one;
+			else if (gtakeys[0xA] == 0xFF)	//Look right
+				f[0] = min;
 
-			if ( *(uint8_t *) (GTA_KEYS + 0x3) == 0xFF )		//steer forward
-			{
-				__asm push min
-			}
-			else if ( *(uint8_t *) (GTA_KEYS + 0x2) == 0x80 )	//steer down
-			{
-				__asm push one
-			}
-			else
-			{
-				__asm push 0
-			}
+			if (gtakeys[3] == 0xFF)		//steer forward
+				f[1] = min;
+			else if (gtakeys[2] == 0x80)	//steer down
+				f[1] = one;
+			
+			if (gtakeys[1] == 0xFF)		//left
+				f[2] = min;
+			else if (gtakeys[0] == 0x80)	//right
+				f[2] = one;
 
-			if ( *(uint8_t *) (GTA_KEYS + 0xE) == 0xFF )		//look left
-			{
-				__asm push one
-			}
-			else if ( *(uint8_t *) (GTA_KEYS + 0xA) == 0xFF )	//Look right
-			{
-				__asm push min
-			}
-			else
-			{
-				__asm push 0
-			}
+			if (gtakeys[0x1C] == 0xFF)		//accel
+				f[3] = min;
+			else if (gtakeys[0x20] == 0xFF)	//brake
+				f[3] = one;
+
 			//   steering end    //
 
-			// 1 fast plane, 2 heli, 6 heli, 8 airbreak alike
-			if ( set.fly_vehicle_heliMode )
-			{
-				__asm push 6
-			}
-			else
-			{
-				__asm push 1
-			}
-
-			__asm mov ecx, mecar
-			__asm call func
+			// mode = 1 fast plane, 2 heli, 6 heli, 8 airbreak alike
+			((void(__thiscall *)(void *, int mode, float, float, float, float))(0x006D85F0))(temp, set.fly_vehicle_heliMode ? 6 : 1, f[0], f[1], f[2], f[3]);
 
 			// no trailer support
 			if ( !set.trailer_support )
@@ -1485,7 +1448,7 @@ void cheat_handle_vehicle_keepTrailer ( struct vehicle_info *vinfo, float time_d
 	traceLastFunc( "cheat_handle_vehicle_keepTrailer()" );
 
 	// toggle state from key press
-	if ( KEY_PRESSED(set.key_keep_trailer) )
+	if ( KEYCOMBO_PRESSED(set.key_keep_trailer) )
 		cheat_state->vehicle.keep_trailer_attached ^= 1;
 
 	// return if disabled or not driving
@@ -1617,7 +1580,7 @@ void cheat_handle_vehicle_fast_exit ( struct vehicle_info *vehicle_info, float t
 {
 	traceLastFunc( "cheat_handle_fast_exit()" );
 
-	if ( KEY_PRESSED(set.key_fast_exit) )
+	if ( KEYCOMBO_PRESSED(set.key_fast_exit) )
 	{
 		float *coord = new float[3];
 
@@ -1625,8 +1588,8 @@ void cheat_handle_vehicle_fast_exit ( struct vehicle_info *vehicle_info, float t
 		CVehicle *pVehicle = pPedSelf->GetVehicle();
 		if (pVehicle)
 		{
-			CColPoint			*pCollision = NULL;
-			CEntitySAInterface	*pCollisionEntity = NULL;
+			CColPoint			*pCollision = nullptr;
+			CEntitySAInterface	*pCollisionEntity = nullptr;
 			CVector vecPedAbove = (g_vecUpNormal * 15.0f) + *pVehicle->GetPosition(); // up multiplier should be enough to get above most vehicles, but not enough to jump above things over it
 			bool bCollision = GTAfunc_ProcessLineOfSight( &vecPedAbove, pVehicle->GetPosition(), &pCollision, &pCollisionEntity,
 				0, 1, 0, 1, 0, 0, 0, 0 );
@@ -1636,6 +1599,9 @@ void cheat_handle_vehicle_fast_exit ( struct vehicle_info *vehicle_info, float t
 				coord[0] = pCollision->GetPosition()->fX;
 				coord[1] = pCollision->GetPosition()->fY;
 				coord[2] = pCollision->GetPosition()->fZ + 0.5f; // should be enough so we're surfing properly
+			}
+			if (pCollision != nullptr)
+			{
 				// destroy the collision object
 				pCollision->Destroy();
 			}
@@ -1656,7 +1622,7 @@ void cheat_handle_vehicle_repair_car ( struct vehicle_info *vehicle_info, float 
 {
 	traceLastFunc( "cheat_handle_repair_car()" );
 
-	if ( KEY_PRESSED(set.key_repair_car) )
+	if ( KEYCOMBO_PRESSED(set.key_repair_car) )
 	{
 		// get info
 		struct vehicle_info *veh_self = vehicle_info_get( VEHICLE_SELF, 0 );
@@ -1757,7 +1723,7 @@ void cheat_handle_vehicle_spiderWheels ( struct vehicle_info *vinfo, float time_
 	traceLastFunc( "cheat_handle_spiderWheels()" );
 
 	// 3:07:16 PM how you going
-	if ( KEY_PRESSED(set.key_spiderwheels) )
+	if ( KEYCOMBO_PRESSED(set.key_spiderwheels) )
 	{
 		// init variables used to toggle patch
 		init_patchBikeFalloff();
@@ -1783,9 +1749,9 @@ void cheat_handle_vehicle_spiderWheels ( struct vehicle_info *vinfo, float time_
 		}
 
 		// loop through the vehicle and any trailers
-		for ( vehicle_info * temp = vinfo; temp != NULL; temp = temp->trailer )
+		for ( vehicle_info * temp = vinfo; temp != nullptr; temp = temp->trailer )
 		{
-			if(temp == NULL) return;
+			if(temp == nullptr) return;
 
 			// get CVehicle
 			CVehicle			*cveh = pGameInterface->GetPools()->GetVehicle( (DWORD *)temp );
@@ -1795,8 +1761,8 @@ void cheat_handle_vehicle_spiderWheels ( struct vehicle_info *vinfo, float time_
 
 			// setup variables
 			CVector				vecOrigin, vecTarget;
-			CColPoint			*pCollision = NULL;
-			CEntitySAInterface	*pCollisionEntity = NULL;
+			CColPoint			*pCollision = nullptr;
+			CEntitySAInterface	*pCollisionEntity = nullptr;
 			int					checkDistanceMeters = 20;
 
 			// get CEntitySAInterface pointer
@@ -1824,8 +1790,6 @@ void cheat_handle_vehicle_spiderWheels ( struct vehicle_info *vinfo, float time_
 				newRotVector *= 0.05f * fTimeStep;
 				offsetVector = vehGravTemp + newRotVector;
 
-				// destroy the collision object
-				pCollision->Destroy();
 			}
 			else
 			{
@@ -1840,7 +1804,11 @@ void cheat_handle_vehicle_spiderWheels ( struct vehicle_info *vinfo, float time_
 				newRotVector *= 0.05f * fTimeStep;
 				offsetVector = vehGravTemp + newRotVector;
 			}
-
+			if (pCollision != nullptr)
+			{
+				// destroy the collision object
+				pCollision->Destroy();
+			}
 			// set the gravity/camera
 			offsetVector.ZeroNearZero();
 			cheat_vehicle_setGravity( cveh, offsetVector );
@@ -1876,5 +1844,28 @@ void cheat_handle_vehicle_spiderWheels ( struct vehicle_info *vinfo, float time_
 
 		// set spider wheels disabled
 		cheat_state->vehicle.spiderWheels_Enabled = false;
+	}
+}
+
+void cheat_handle_freezerot(vehicle_info *vinfo, float time_diff)
+{
+	if (KEYCOMBO_PRESSED(set.key_freezerot))
+	{
+		cheat_state->vehicle.freezerot ^= true;
+	}
+	if (cheat_state->vehicle.freezerot)
+	{
+		for (vehicle_info * temp = vinfo; temp != NULL; temp = temp->trailer)
+		{
+			if (temp == NULL) return;
+
+			if ((temp->collision_flags & 0x0000FF00) >> 8 == 0)
+			{
+				vect3_zero(temp->spin);
+			}
+
+			if (!set.trailer_support)
+				break;
+		}
 	}
 }

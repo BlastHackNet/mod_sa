@@ -2,9 +2,9 @@
 
 	PROJECT:		mod_sa
 	LICENSE:		See LICENSE in the top level directory
-	COPYRIGHT:		Copyright we_sux, FYP
+	COPYRIGHT:		Copyright we_sux, BlastHack
 
-	mod_sa is available from http://code.google.com/p/m0d-s0beit-sa/
+	mod_sa is available from https://github.com/BlastHackNet/mod_s0beit_sa/
 
 	mod_sa is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 #include "main.h"
 #include <psapi.h>
 
-/* Note that this is 100% C code, not C++. :p */
+/* Note that this is not 100% C code anymore. :< */
 #ifndef MIN
 #define MIN( a, b ) ( (a) > (b) ? (b) : (a) )
 #endif
@@ -38,7 +38,7 @@ struct pool					*pool_actor;
 struct pool					*pool_vehicle;
 
 static struct cheat_state	__cheat_state;
-struct cheat_state			*cheat_state = NULL;
+struct cheat_state			*cheat_state = nullptr;
 
 
 
@@ -90,28 +90,27 @@ static void cheat_main_actor ( double time_diff )
 	traceLastFunc( "cheat_main_actor()" );
 
 	struct actor_info	*info = actor_info_get( ACTOR_SELF, 0 );
-	if ( info == NULL )
+	if ( info == nullptr )
 	{
 		Log( "wtf, actor_info_get() returned NULL." );
 		return;
 	}
 
-	cheat_handle_antiHijack( info, NULL, time_diff );
-
 	vect3_copy( &info->base.matrix[4 * 3], cheat_state->actor.coords );
-	cheat_handle_freeze_vehicles( NULL, info );
-	cheat_handle_hp( NULL, info, time_diff );
-	cheat_handle_teleport( NULL, info, time_diff );
-	cheat_handle_unfreeze( NULL, info, time_diff );
-	cheat_handle_emo( NULL, info, time_diff );
+	cheat_handle_freeze_vehicles( nullptr, info );
+	cheat_handle_hp( nullptr, info, time_diff );
+	cheat_handle_teleport( nullptr, info, time_diff );
+	cheat_handle_unfreeze( nullptr, info, time_diff );
+	cheat_handle_emo( nullptr, info, time_diff );
 
 	// the following functions can be found in cheat_actor.cpp
 	cheat_handle_actor_air_brake( info, time_diff );
-	cheat_handle_stick( NULL, info, time_diff );
+	cheat_handle_stick( nullptr, info, time_diff );
 	cheat_handle_actor_autoaim( info, time_diff );
 
 	// cheat_handle_SpiderFeet(info, time_diff);
 	cheat_handle_actor_fly(info, time_diff);
+	cheat_handle_actor_surf(info);
 
 	if ( set.custom_runanimation_enabled )
 		pPedSelf_setMoveAnimation__array( set.custom_runanimation_id );
@@ -119,8 +118,9 @@ static void cheat_main_actor ( double time_diff )
 
 	// these NEED to stay last, because they can remove the player from the vehicle
 	if ( info->pedFlags.bInVehicle )
-		cheat_handle_vehicle_fast_exit( NULL, time_diff );
-	cheat_handle_exit_vehicle ( NULL, info );
+		cheat_handle_vehicle_fast_exit( nullptr, time_diff );
+	cheat_handle_exit_vehicle ( nullptr, info );
+	cheat_handle_fastwarp(nullptr, info);
 }
 
 static void cheat_main_vehicle ( double time_diff )
@@ -128,21 +128,19 @@ static void cheat_main_vehicle ( double time_diff )
 	traceLastFunc( "cheat_main_vehicle()" );
 
 	struct vehicle_info *info = vehicle_info_get( VEHICLE_SELF, 0 );
-	if ( info == NULL )
+	if ( info == nullptr )
 		return;
-
-	cheat_handle_antiHijack( NULL, info, time_diff );
-
+	
 	// copy vehicle coords to cheat_state storage
 	vect3_copy( &info->base.matrix[4 * 3], cheat_state->vehicle.coords );
 
 	// the following functions can be found in cheat_generic.cpp
-	cheat_handle_unfreeze( info, NULL, time_diff );
-	cheat_handle_teleport( info, NULL, time_diff );
-	cheat_handle_stick( info, NULL, time_diff );
-	cheat_handle_freeze_vehicles( info, NULL );
-	cheat_handle_hp( info, NULL, time_diff );
-	cheat_handle_emo( info, NULL, time_diff );
+	cheat_handle_unfreeze( info, nullptr, time_diff );
+	cheat_handle_teleport( info, nullptr, time_diff );
+	cheat_handle_stick( info, nullptr, time_diff );
+	cheat_handle_freeze_vehicles( info, nullptr );
+	cheat_handle_hp( info, nullptr, time_diff );
+	cheat_handle_emo( info, nullptr, time_diff );
 
 	// the following functions can be found in cheat_vehicle.cpp
 	cheat_handle_vehicle_protection( info, time_diff );
@@ -160,6 +158,7 @@ static void cheat_main_vehicle ( double time_diff )
 	cheat_handle_vehicle_keepTrailer( info, time_diff );
 	cheat_handle_vehicle_repair_car( info, time_diff );
 	cheat_handle_vehicle_spiderWheels( info, time_diff );
+	cheat_handle_freezerot(info, time_diff);
 	//cheat_handle_vehicle_slowTeleport( info, time_diff );
 #ifdef __CHEAT_VEHRECORDING_H__
 	cheat_handle_vehicle_recording( info, time_diff );
@@ -167,7 +166,8 @@ static void cheat_main_vehicle ( double time_diff )
 
 	// these NEED to stay last, because they can remove the player from the vehicle
 	cheat_handle_vehicle_fast_exit( info, time_diff );
-	cheat_handle_exit_vehicle ( info, NULL );
+	cheat_handle_exit_vehicle ( info, nullptr );
+	cheat_handle_fastwarp(info, nullptr);
 }
 
 // the main daddyo
@@ -192,7 +192,7 @@ void cheat_hook ( HWND wnd )
 	traceLastFunc( "cheat_hook()" );
 
 	/* initialize state */
-	if ( cheat_state == NULL )
+	if ( cheat_state == nullptr )
 	{
 		// set default cheat_state variables
 		cheat_state = &__cheat_state;
@@ -218,7 +218,7 @@ void cheat_hook ( HWND wnd )
 		/* install patches from the .ini file */
 		for ( i = 0; i < INI_PATCHES_MAX; i++ )
 		{
-			if ( set.patch[i].name != NULL && set.patch[i].ini_auto )
+			if ( set.patch[i].name != nullptr && set.patch[i].ini_auto )
 				patcher_install( &set.patch[i] );
 		}
 
@@ -226,7 +226,7 @@ void cheat_hook ( HWND wnd )
 		{
 			for ( i = 0; i < INI_SAMPPATCHES_MAX; i++ )
 			{
-				if ( set.sampPatch[i].name != NULL && set.sampPatch[i].ini_auto )
+				if ( set.sampPatch[i].name != nullptr && set.sampPatch[i].ini_auto )
 					patcher_install( &set.sampPatch[i] );
 			}
 		}
@@ -237,12 +237,12 @@ void cheat_hook ( HWND wnd )
 
 	/* setup & refresh actor pool */
 	pool_actor = *(struct pool **)ACTOR_POOL_POINTER;
-	if ( pool_actor == NULL || pool_actor->start == NULL || pool_actor->size <= 0 )
+	if ( pool_actor == nullptr || pool_actor->start == nullptr || pool_actor->size <= 0 )
 		return;
 
 	/* setup & refresh vehicle pool */
 	pool_vehicle = *(struct pool **)VEHICLE_POOL_POINTER;
-	if ( pool_vehicle == NULL || pool_vehicle->start == NULL || pool_vehicle->size <= 0 )
+	if ( pool_vehicle == nullptr || pool_vehicle->start == nullptr || pool_vehicle->size <= 0 )
 		return;
 
 	//////////////////////////////////////////
@@ -253,7 +253,7 @@ void cheat_hook ( HWND wnd )
 	vehicle_info = vehicle_info_get( VEHICLE_SELF, 0 );
 
 	/* no vehicle, and no actor. exit. */
-	if ( vehicle_info == NULL && actor_info == NULL )
+	if ( vehicle_info == nullptr && actor_info == nullptr )
 	{
 		if ( cheat_state->actor.air_brake
 		 ||	 cheat_state->actor.stick
@@ -269,7 +269,7 @@ void cheat_hook ( HWND wnd )
 	}
 	else
 	{
-		if ( vehicle_info == NULL )
+		if ( vehicle_info == nullptr )
 		{
 			if ( cheat_state->vehicle.air_brake || cheat_state->vehicle.stick )
 			{
@@ -344,7 +344,7 @@ void cheat_hook ( HWND wnd )
 	static bool chat_set_once = false;
 	if ( !chat_set_once && set.d3dtext_chat )
 	{
-		if ( g_Chat != NULL && g_Chat->iChatWindowMode )
+		if ( g_Chat != nullptr && g_Chat->iChatWindowMode )
 		{
 			//Log("Disabling SA:MP chat text.");
 			g_Chat->iChatWindowMode = 0;
@@ -356,7 +356,7 @@ void cheat_hook ( HWND wnd )
 	static bool kill_set_once = false;
 	if ( !kill_set_once && set.d3dtext_kill )
 	{
-		if ( g_DeathList != NULL && g_DeathList->iEnabled )
+		if ( g_DeathList != nullptr && g_DeathList->iEnabled )
 		{
 			g_DeathList->iEnabled = 0;
 			kill_set_once = true;
@@ -380,7 +380,7 @@ void cheat_hook ( HWND wnd )
 	// install volatile patches from the .ini file
 	for ( i = 0; i < INI_PATCHES_MAX; i++ )
 	{
-		if ( set.patch[i].name != NULL && set.patch[i].has_volatile && set.patch[i].installed )
+		if ( set.patch[i].name != nullptr && set.patch[i].has_volatile && set.patch[i].installed )
 			patcher_install( &set.patch[i] );
 	}
 
@@ -416,7 +416,7 @@ void cheat_hook ( HWND wnd )
 			cheat_main_actor( g_timeDiff );
 		}
 
-		if ( KEY_PRESSED(set.key_disable_Wall_Collisions) )
+		if ( KEYCOMBO_PRESSED(set.key_disable_Wall_Collisions) )
 		{
 			cheat_state->_generic.nocols_walls_enabled ^= 1;
 			if ( cheat_state->_generic.nocols_walls_enabled )
@@ -427,7 +427,7 @@ void cheat_hook ( HWND wnd )
 
 		for ( i = 0; i < INI_PATCHES_MAX; i++ )
 		{
-			if ( set.patch[i].name != NULL && KEY_PRESSED(set.patch[i].ini_hotkey) )
+			if ( set.patch[i].name != nullptr && KEY_PRESSED(set.patch[i].ini_hotkey) )
 			{
 				if ( set.patch[i].installed || set.patch[i].failed )
 					patcher_remove( &set.patch[i] );
@@ -438,7 +438,7 @@ void cheat_hook ( HWND wnd )
 
 		for ( i = 0; i < INI_SAMPPATCHES_MAX; i++ )
 		{
-			if ( set.sampPatch[i].name != NULL && KEY_PRESSED(set.sampPatch[i].ini_hotkey) )
+			if ( set.sampPatch[i].name != nullptr && KEY_PRESSED(set.sampPatch[i].ini_hotkey) )
 			{
 				if ( set.sampPatch[i].installed || set.sampPatch[i].failed )
 					patcher_remove( &set.sampPatch[i] );
@@ -447,13 +447,21 @@ void cheat_hook ( HWND wnd )
 			}
 		}
 
-		if ( KEY_PRESSED(set.key_vehicle_jumper) )
+		for ( i = 0; i < INI_NETPATCHES_MAX; i++ )
+		{
+			if ( set.netPatch[i].name != nullptr && KEY_PRESSED(set.netPatch[i].hotkey) )
+			{
+				set.netPatch[i].enabled ^= true;
+			}
+		}
+
+		if ( KEYCOMBO_PRESSED(set.key_vehicle_jumper) )
 		{
 			int iVehicleID = vehicle_find_nearest( VEHICLE_ALIVE + VEHICLE_NOTBURNING );
 			vehicleJumper( iVehicleID );
 		}
 
-		if ( KEY_PRESSED(set.key_vehicle_occupied_jumper) )
+		if ( KEYCOMBO_PRESSED(set.key_vehicle_occupied_jumper) )
 		{
 			int iVehicleID = vehicle_find_nearest( VEHICLE_ALIVE + VEHICLE_NOTBURNING + VEHICLE_OCCUPIED );
 			vehicleJumper( iVehicleID );
@@ -461,8 +469,10 @@ void cheat_hook ( HWND wnd )
 	}	// cheat_state->state != CHEAT_STATE_NONE
 
 	// hack some SA:MP, shall we?
-	if ( g_SAMP && g_renderSAMP_initSAMPstructs )
+	if (g_SAMP && g_renderSAMP_initSAMPstructs)
+	{
 		sampMainCheat();
+	}
 
 out: ;
 	if ( gta_menu_active() )
