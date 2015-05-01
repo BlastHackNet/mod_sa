@@ -68,7 +68,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3dx9.lib;gdiplus.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>D:\GTASA\d3d9.dll</OutputFile>
+      <OutputFile>../bin/d3d9.dll</OutputFile>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>mod_sa.def</ModuleDefinitionFile>
       <SubSystem>Windows</SubSystem>

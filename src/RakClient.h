@@ -229,7 +229,6 @@ enum PacketEnumeration
 	ID_RCON_RESPONCE,
 	ID_WEAPONS_UPDATE,
 	ID_STATS_UPDATE,
-	ID_BULLET_SYNC,
 };
 
 /// These enumerations are used to describe when packets are delivered.

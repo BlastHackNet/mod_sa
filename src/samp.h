@@ -644,7 +644,7 @@ struct stSAMPEntity
 	T			*pGTAEntity;
 	uint32_t	ulGTAEntityHandle;
 };
-const int asd = sizeof(stSAMPEntity<void>);
+
 struct stSAMPPed : public stSAMPEntity < actor_info >
 {
 	int					usingCellPhone;
