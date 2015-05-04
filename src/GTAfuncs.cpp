@@ -814,3 +814,56 @@ void GTAfunc_showStyledText( const char *text, int time, int style )
 	( ( void ( __cdecl * ) ( uint32_t something ) ) ( 0x0069DCD0 ) ) ( 0 );
 	( ( void ( __cdecl * ) ( const char *text, int time, int style ) ) ( 0x0069F2B0 ) ) ( text, time, style );
 }
+
+int GTAfunc_gtaKeyToVirtualKey(int key)
+{
+	if (key >= GTA_KEY_COMMA && key <= GTA_KEY_RBRACKET)
+		return key;
+	if (key >= GTA_KEY_F1 && key <= GTA_KEY_F12)
+		return VK_F1 + key - GTA_KEY_F1;
+	if (key >= GTA_KEY_NUMPAD1 && key <= GTA_KEY_NUMPAD9)
+		return VK_NUMPAD1 + key - GTA_KEY_NUMPAD1;
+	switch (key)
+	{
+	case GTA_KEY_MMOUSE: return VK_MBUTTON;
+	case GTA_KEY_RMOUSE: return VK_RBUTTON;
+	case GTA_KEY_MXB1: return VK_XBUTTON1;
+	case GTA_KEY_MXB2: return VK_XBUTTON2;
+	case GTA_KEY_INSERT: return VK_INSERT;
+	case GTA_KEY_DELETE: return VK_DELETE;
+	case GTA_KEY_HOME: return VK_HOME;
+	case GTA_KEY_END: return VK_END;
+	case GTA_KEY_PGUP: return VK_PRIOR;
+	case GTA_KEY_PGDN: return VK_NEXT;
+	case GTA_KEY_UP: return VK_UP;
+	case GTA_KEY_DOWN: return VK_DOWN;
+	case GTA_KEY_LEFT: return VK_LEFT;
+	case GTA_KEY_RIGHT: return VK_RIGHT;
+	case GTA_KEY_DIVIDE: return VK_DIVIDE;
+	case GTA_KEY_MULTIPLY: return VK_MULTIPLY;
+	case GTA_KEY_ADD: return VK_ADD;
+	case GTA_KEY_SUBTRACT: return VK_SUBTRACT;
+	case GTA_KEY_DECIMAL: return VK_DECIMAL;
+	case GTA_KEY_NUMPAD0: return VK_NUMPAD0;
+	case GTA_KEY_SCROLL: return VK_SCROLL;
+	case GTA_KEY_PAUSE: return VK_PAUSE;
+	case GTA_KEY_BACK: return VK_BACK;
+	case GTA_KEY_TAB: return VK_TAB;
+	case GTA_KEY_CAPSLOCK: return VK_CAPITAL;
+	case GTA_KEY_RETURN: return VK_RETURN;
+	case GTA_KEY_LSHIFT: return VK_LSHIFT;
+	case GTA_KEY_RSHIFT: return VK_RSHIFT;
+	case GTA_KEY_LCONTROL: return VK_LCONTROL;
+	case GTA_KEY_RCONTROL: return VK_RCONTROL;
+	case GTA_KEY_LMENU: return VK_LMENU;
+	case GTA_KEY_RMENU: return VK_RMENU;
+	case GTA_KEY_LWIN: return VK_LWIN;
+	case GTA_KEY_RWIN: return VK_RWIN;
+	case GTA_KEY_LMOUSE:
+	case GTA_KEY_SPACE:
+	case GTA_KEY_HASH:
+	case GTA_KEY_APOSTROPHE:
+	case GTA_KEY_GRAVE: return key;
+	}
+	return 0;
+}

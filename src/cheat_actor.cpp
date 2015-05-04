@@ -65,33 +65,40 @@ void cheat_handle_actor_autoaim ( struct actor_info *info, double time_diff )
 	if ( !set.use_gta_autoaim )
 	{
 		// should we be trying to aim or not?
-		bool						isAimKeyDown = false;
+		bool						isAimKeyFire = false, isAimKeyAimWeapon = false;
 		CControllerConfigManager	*pPadConfig = pGameInterface->GetControllerConfigManager();
 
 		// doesnt seem to work in single player with pPadConfig and keyboard input?
 		if ( pPadConfig->GetInputType() )
 		{
 			// mouse + keyboard
-			if ( KEY_DOWN(pPadConfig->GetControllerKeyAssociatedWithAction(FIRE, MOUSE)) )
-			{
-				isAimKeyDown = true;
-			}
-			else if ( KEY_DOWN(pPadConfig->GetControllerKeyAssociatedWithAction(FIRE, KEYBOARD)) )
-			{
-				isAimKeyDown = true;
-			}
+			if ( KEY_DOWN(GTAfunc_gtaKeyToVirtualKey(pPadConfig->GetControllerKeyAssociatedWithAction(FIRE, MOUSE))) )
+				isAimKeyFire = true;
+			else if ( KEY_DOWN(GTAfunc_gtaKeyToVirtualKey(pPadConfig->GetControllerKeyAssociatedWithAction(FIRE, KEYBOARD))) )
+				isAimKeyFire = true;
+
+			if ( KEY_DOWN(GTAfunc_gtaKeyToVirtualKey(pPadConfig->GetControllerKeyAssociatedWithAction(AIM_WEAPON, MOUSE))) )
+				isAimKeyAimWeapon = true;
+			else if ( KEY_DOWN(GTAfunc_gtaKeyToVirtualKey(pPadConfig->GetControllerKeyAssociatedWithAction(AIM_WEAPON, KEYBOARD))) )
+				isAimKeyAimWeapon = true;
 		}
 		else
 		{
 			// gamepad
-			if ( KEY_DOWN(pPadConfig->GetControllerKeyAssociatedWithAction(FIRE, JOYSTICK)) )
-			{
-				isAimKeyDown = true;
-			}
+			if ( KEY_DOWN(GTAfunc_gtaKeyToVirtualKey(pPadConfig->GetControllerKeyAssociatedWithAction(FIRE, JOYSTICK))) )
+				isAimKeyFire = true;
+
+			if ( KEY_DOWN(GTAfunc_gtaKeyToVirtualKey(pPadConfig->GetControllerKeyAssociatedWithAction(AIM_WEAPON, JOYSTICK))) )
+				isAimKeyAimWeapon = true;
+		}
+		static int nearest_id = -1;
+		if (!isAimKeyAimWeapon)
+		{
+			nearest_id = -1;
 		}
 
 		// let's aim, shall we?
-		if ( cheat_state->actor.autoaim && isAimKeyDown )
+		if ( cheat_state->actor.autoaim && isAimKeyFire )
 		{
 			// only for certain weapons
 			eWeaponSlot selfSlot = pPedSelf->GetCurrentWeaponSlot();
@@ -106,103 +113,52 @@ void cheat_handle_actor_autoaim ( struct actor_info *info, double time_diff )
 			case WEAPONSLOT_TYPE_DETONATOR:
 				// we don't want to aim for these weapons
 				return;
-			//case WEAPONSLOT_TYPE_HANDGUN:
-			//case WEAPONSLOT_TYPE_SHOTGUN:
-			//case WEAPONSLOT_TYPE_SMG:
-			//case WEAPONSLOT_TYPE_MG:
-			//case WEAPONSLOT_TYPE_RIFLE:
-			//case WEAPONSLOT_TYPE_HEAVY:
 			}
 
-
-			/*
-			// NEW OLD ASS AIM
-
-			// settings
-			float fRange = 300.0f;
-
-			// variables
-			CVector vecStart, vecTarget;
-
-			// get the camera
-			CCamera* pCamera = pGame->GetCamera ();
-
-			//// Grab the active cam
-			//CCam* pActive = pCamera->GetCam ( pCamera->GetActiveCam () );
-
-			//// Grab the camera matrix
-			//CMatrix matCamera;
-			//pCamera->GetMatrix ( &matCamera );
-			//ecStart = matCamera.vPos;
-
-			//// Find the target position
-			//CVector vecFront = *pActive->GetFront ();
-			//vecFront.Normalize ();
-			//vecTarget = *pActive->GetSource () + vecFront * fRange;
-
-			// BONE_RIGHTHAND, BONE_RIGHTWRIST
-			// Grab the gun muzzle position
-			// this needs to also have the Z and left-right axis corrected and rotated
-			// so the rear of the barrel is matched too
-			eWeaponSlot eSlot = pPedSelf->GetCurrentWeaponSlot();
-			CWeapon* pPlayerWeapon = pPedSelf->GetWeapon( eSlot );
-			CWeaponInfo* pCurrentWeaponInfo = pPlayerWeapon->GetInfo();
-			CVector vecGunMuzzle = *pCurrentWeaponInfo->GetFireOffset();
-			pPedSelf->GetTransformedBonePosition( BONE_RIGHTWRIST, &vecGunMuzzle );
-
-			// Grab the target point
-			//pCamera->Find3rdPersonCamTargetVector( fRange, &vecGunMuzzle, &vecStart, &vecTarget );
-
-			CVector vecRightWrist;
-			pPedSelf->GetBonePosition( BONE_RIGHTWRIST, &vecRightWrist );
-
-			CVector vecAimMult = vecGunMuzzle - vecRightWrist;
-			vecAimMult.Normalize();
-			CVector vecAimEnd = vecGunMuzzle + (vecAimMult * 40.0f);
-
-			render->DrawLine( CVecToD3DXVEC(vecGunMuzzle), CVecToD3DXVEC(vecRightWrist), D3DCOLOR_ARGB(255, 0, 255, 0) );
-			render->DrawLine( CVecToD3DXVEC(vecGunMuzzle), CVecToD3DXVEC(vecAimEnd), D3DCOLOR_ARGB(255, 255, 0, 0) );
-			*/
-
-			// NEW ASS AIM
-			
 			struct actor_info	*nearest;
-			float				ax, az;
+			float				ax, az, fz, fx;
 			CVector				vect;
 			float				*screenAspectRatio = (float *)0xC3EFA4;
 			float				*crosshairOffset = (float *)0xB6EC10;
-			int					nearest_id = -1;
-
+			
 			// get the camera
 			CCamera *pCamera = pGame->GetCamera();
 
 			// grab the active cam
 			CCamSAInterface *pCam = (CCamSAInterface *)((CCamSA *)pCamera->GetCam(pCamera->GetActiveCam()))->GetInterface();
 
-			nearest_id = actor_find_nearest_ex(ACTOR_ALIVE, [pCam](actor_info *ainfo)
+			if (nearest_id == -1)
 			{
-				CVector src = pCam->Source;
-				CPed *ped = pGame->GetPools()->GetPed((DWORD *)ainfo);
-				if (ped == nullptr)
-					return false;
+				nearest_id = actor_find_nearest_ex(ACTOR_ALIVE, [pCam](actor_info *ainfo)
+				{
+					CVector src = pCam->Source;
+					CPed *ped = pGame->GetPools()->GetPed((DWORD *)ainfo);
+					if (ped == nullptr)
+						return false;
 
-				// get the head position
-				CVector head;
-				ped->GetTransformedBonePosition(BONE_HEAD, &head);
+					// get the head position
+					CVector head;
+					ped->GetTransformedBonePosition(BONE_HEAD, &head);
 
-				// check is head in sight
-				return pGame->GetWorld()->IsLineOfSightClear(&src, &head, true, false, false, true, true, false, false);
-			});
-
+					// check is head in sight
+					return pGame->GetWorld()->IsLineOfSightClear(&src, &head, true, false, false, true, true, false, false);
+				});
+			}
 			if (nearest_id == -1)
 				return;
 
-			if ((nearest = actor_info_get(nearest_id, ACTOR_ALIVE)) == NULL)
-				return; // won't happen
+			if ((nearest = actor_info_get(nearest_id, ACTOR_ALIVE)) == nullptr)
+			{
+				nearest_id = -1;
+				return;
+			}
 
 			CPed *ped = pGame->GetPools()->GetPed((DWORD *)nearest);
 			if (ped == nullptr)
+			{
+				nearest_id = -1;
 				return;
+			}
 
 			// get the head position
 			CVector head;
@@ -210,12 +166,18 @@ void cheat_handle_actor_autoaim ( struct actor_info *info, double time_diff )
 
 			// calculate distance vector
 			vect = pCam->Source - head;
-
-			// weird shit
-			float mult = tan(pCam->FOV * 0.5f * 0.017453292f);
-			float fz = atan2(1.0f, mult * ((0.5f - crosshairOffset[0] + 0.5f - crosshairOffset[0]) * (1.0f / *screenAspectRatio)));
-			float fx = atan2(1.0f, mult * (crosshairOffset[1] - 0.5f + crosshairOffset[1] - 0.5f));
-
+			
+			if (pCam->Mode == 53 || pCam->Mode == 55) // 3rd person mode
+			{
+				// weird shit
+				float mult = tan(pCam->FOV * 0.5f * 0.017453292f);
+				fz = M_PI - atan2(1.0f, mult * ((0.5f - crosshairOffset[0] + 0.5f - crosshairOffset[0]) * (1.0f / *screenAspectRatio)));
+				fx = M_PI - atan2(1.0f, mult * (crosshairOffset[1] - 0.5f + crosshairOffset[1] - 0.5f));
+			}
+			else
+			{
+				fx = fz = M_PI / 2;
+			}
 			// x angle
 			float dist = sqrt(vect.fX * vect.fX + vect.fY * vect.fY);
 			az = atan2f(dist, vect.fZ);
@@ -223,8 +185,8 @@ void cheat_handle_actor_autoaim ( struct actor_info *info, double time_diff )
 			// z angle
 			ax = atan2f(vect.fY, -vect.fX) - M_PI / 2;
 
-			pCam->Alpha = (az - (M_PI - fz));
-			pCam->Beta = -(ax - (M_PI - fx));
+			pCam->Alpha = (az - fz);
+			pCam->Beta = -(ax - fx);
 			pCam->AlphaSpeed = 0.0f;
 			pCam->BetaSpeed = 0.0f;
 

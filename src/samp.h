@@ -204,7 +204,7 @@ struct stServerPresets
 	float	fGravity;
 	uint8_t byteDisableInteriorEnterExits;
 	uint32_t ulVehicleFriendlyFire;
-	uint8_t byteUnk2[3];
+	uint8_t byteUnk2[4];
 	int		iClassesAvailable;
 	float	fNameTagsDistance;
 	uint8_t byteUnk3;
@@ -606,9 +606,10 @@ struct stRemotePlayerData
 	struct stOnFootData		onFootData;
 	struct stTrailerData	trailerData;
 	struct stPassengerData	passengerData;
-	uint32_t				ulUnk4[4];
-	float					fActorHealth;
+	uint32_t				ulUnk4[3];
 	float					fActorArmor;
+	float					fActorHealth;
+	uint32_t				ulUnk10;
 	uint8_t					byteUnk9;
 	uint32_t				dwTick;
 	uint32_t				dwLastStreamedInTick;	// is 0 when currently streamed in

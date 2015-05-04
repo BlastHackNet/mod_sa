@@ -224,7 +224,7 @@ CD3DFont::CD3DFont ( const char *szFontName, int fontHeight, DWORD dwCreateFlags
 	m_pD3Dbuf = NULL;
 	m_pRender = NULL;
 
-	m_maxTriangles = 224 * 2;
+	m_maxTriangles = 224 * 4;
 
 	m_texWidth = m_texHeight = 0;
 	m_chrSpacing = 0;
@@ -251,7 +251,7 @@ HRESULT CD3DFont::Initialize ( IDirect3DDevice9 *pD3Ddev )
 	if ( FAILED(m_pRender->Initialize(pD3Ddev)) )
 		return E_FAIL;
 
-	m_texWidth = m_texHeight = 512;
+	m_texWidth = m_texHeight = 1024;
 
 	if ( FAILED(m_pD3Ddev->CreateTexture(m_texWidth, m_texHeight, 1, 0, D3DFMT_A4R4G4B4, D3DPOOL_MANAGED, &m_pD3Dtex,
 				 NULL)) )
@@ -563,7 +563,7 @@ HRESULT CD3DFont::Print( const char *text, D3DCOLOR color, float x, float y, boo
 
 HRESULT CD3DFont::PrintShadow ( float x, float y, DWORD color, const char *szText )
 {
-	return Print(szText, color, x, y, true, false);
+	return Print(szText, color, x, y, set.render_text_shadows != 0, false);
 }
 
 float CD3DFont::DrawLength ( const char *szText, bool noColorFormat ) const

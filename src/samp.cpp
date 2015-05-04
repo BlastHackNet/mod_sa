@@ -935,7 +935,7 @@ void sampPatchDisableAnticheat(void)
 		{
 			{ 1, (void *) (g_dwSAMP_Addr + 0x99250), NULL, (uint8_t *)"\xC3", 0 },
 			{ 8, (void *) (g_dwSAMP_Addr + 0xB2F70), NULL, (uint8_t *)"\xB8\x45\x00\x00\x00\xC2\x1C\x00", 0 },
-			{ 6, (void *) (g_dwSAMP_Addr + 0xB30F0), NULL, (uint8_t *)"\xB8\x01\x00\x00\x00\xC3", 0 }
+			// { 6, (void *) (g_dwSAMP_Addr + 0xB30F0), NULL, (uint8_t *)"\xB8\x01\x00\x00\x00\xC3", 0 }
 		}
 	};
 	patcher_install(&fuckAC);

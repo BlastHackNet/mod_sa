@@ -175,3 +175,4 @@ void GTAfunc_PerformAnimation(const char *szBlockName, const char *szAnimName, i
 void GTAfunc_DisembarkInstantly();
 void GTAfunc_ApplyRotoryPulseAboutAnAxis(float fX, float fY, float fZ);
 void GTAfunc_showStyledText( const char *text, int time, int style );
+int GTAfunc_gtaKeyToVirtualKey(int key);
