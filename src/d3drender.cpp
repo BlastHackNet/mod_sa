@@ -464,7 +464,7 @@ stColorTag GetColorTag( const char *text, size_t maxLen )
 	return color;
 }
 
-HRESULT CD3DFont::Print( const char *text, D3DCOLOR color, float x, float y, bool shadow, bool noColorFormat )
+HRESULT CD3DFont::Print( const char *text, D3DCOLOR color, float x, float y, bool skipColorTags, bool noColorFormat )
 {
 	if ( !m_isReady || text == nullptr || *text == '\0' )
 		return E_FAIL;
@@ -493,67 +493,59 @@ HRESULT CD3DFont::Print( const char *text, D3DCOLOR color, float x, float y, boo
 	}
 
 	size_t len = strlen( text );
-	for ( int shdw = !shadow; shdw < 2; shdw++ ) // for shadow :D
+	for ( size_t cpos = 0; cpos < len; cpos++ )
 	{
-		xp = x;
-		if ( !shdw )
-			xp += 1.0f, yp += 1.0f, clr = D3DCOLOR_ARGB( ( byte ) HIBYTE( HIWORD( clr ) ), 0, 0, 0 );
-		else
-			xp = x, yp = y, clr = color;
-		for ( size_t cpos = 0; cpos < len; cpos++ )
+		if ( text[cpos] == '\n' )
 		{
-			if ( text[cpos] == '\n' )
-			{
-				xp = x;
-				yp += DrawHeight();
-				continue;
-			}
-			int c = ( byte ) ( text[cpos] ) - 32;
-			if ( !( c >= 0 && c < 224 ) )
-				continue;
+			xp = x;
+			yp += DrawHeight();
+			continue;
+		}
+		int c = ( byte ) ( text[cpos] ) - 32;
+		if ( !( c >= 0 && c < 224 ) )
+			continue;
 
-			if ( text[cpos] == '{' && !noColorFormat )
+		if ( text[cpos] == '{' && !noColorFormat )
+		{
+			stColorTag tag = GetColorTag( &text[cpos], len - cpos );
+			if ( tag._valid )
 			{
-				stColorTag tag = GetColorTag( &text[cpos], len - cpos );
-				if ( tag._valid )
+				if ( skipColorTags )
 				{
-					if ( shdw )
-					{
-						clr = tag._color;
-						if ( !tag._alpha )
-							clr |= 0xFF000000;
-					}
-					cpos += tag._alpha ? 9 : 7;
-					continue;
+					clr = tag._color;
+					if ( !tag._alpha )
+						clr |= 0xFF000000;
 				}
+				cpos += tag._alpha ? 9 : 7;
+				continue;
 			}
-
-			float	tx1 = m_fTexCoords[c][0];
-			float	tx2 = m_fTexCoords[c][2];
-			float	ty1 = m_fTexCoords[c][1];
-			float	ty2 = m_fTexCoords[c][3];
-			float	dx = xp, dy = yp;
-			float	w = ( tx2 - tx1 ) * m_texWidth, h = ( ty2 - ty1 ) * m_texHeight;
-
-			*pVertex++ = Init2DVertex( dx - 0.5f, dy - 0.5f, clr, tx1, ty1 );			//topleft
-			*pVertex++ = Init2DVertex( dx + w - 0.5f, dy - 0.5f, clr, tx2, ty1 );		//topright
-			*pVertex++ = Init2DVertex( dx - 0.5f, dy + h - 0.5f, clr, tx1, ty2 );		//bottomleft
-			*pVertex++ = Init2DVertex( dx + w - 0.5f, dy - 0.5f, clr, tx2, ty1 );		//topright
-			*pVertex++ = Init2DVertex( dx + w - 0.5f, dy + h - 0.5f, clr, tx2, ty2 );	//bottomright
-			*pVertex++ = Init2DVertex( dx - 0.5f, dy + h - 0.5f, clr, tx1, ty2 );		//bottomleft
-			if ( m_dwCreateFlags & FCR_BORDER )
-				w -= 2.0f;
-
-			xp += w - ( m_chrSpacing * 2 );
-			usedTriangles += 2;
-			if ( usedTriangles >= m_maxTriangles )
-				break;
 		}
-		m_pD3Dbuf->Unlock();
-		if ( usedTriangles > 0 )
-		{
-			m_pD3Ddev->DrawPrimitive( D3DPT_TRIANGLELIST, 0, usedTriangles );
-		}
+
+		float	tx1 = m_fTexCoords[c][0];
+		float	tx2 = m_fTexCoords[c][2];
+		float	ty1 = m_fTexCoords[c][1];
+		float	ty2 = m_fTexCoords[c][3];
+		float	w = ( tx2 - tx1 ) * m_texWidth;
+		float	h = ( ty2 - ty1 ) * m_texHeight;
+
+		*pVertex++ = Init2DVertex( xp - 0.5f, yp - 0.5f, clr, tx1, ty1 );			//topleft
+		*pVertex++ = Init2DVertex( xp + w - 0.5f, yp - 0.5f, clr, tx2, ty1 );		//topright
+		*pVertex++ = Init2DVertex( xp - 0.5f, yp + h - 0.5f, clr, tx1, ty2 );		//bottomleft
+		*pVertex++ = Init2DVertex( xp + w - 0.5f, yp - 0.5f, clr, tx2, ty1 );		//topright
+		*pVertex++ = Init2DVertex( xp + w - 0.5f, yp + h - 0.5f, clr, tx2, ty2 );	//bottomright
+		*pVertex++ = Init2DVertex( xp - 0.5f, yp + h - 0.5f, clr, tx1, ty2 );		//bottomleft
+		if ( m_dwCreateFlags & FCR_BORDER )
+			w -= 2.0f;
+
+		xp += w - ( m_chrSpacing * 2 );
+		usedTriangles += 2;
+		if ( usedTriangles >= m_maxTriangles )
+			break;
+	}
+	m_pD3Dbuf->Unlock();
+	if ( usedTriangles > 0 )
+	{
+		m_pD3Ddev->DrawPrimitive( D3DPT_TRIANGLELIST, 0, usedTriangles );
 	}
 	m_pD3Ddev->SetFVF( fvf );
 	this->EndRender();
@@ -563,7 +555,9 @@ HRESULT CD3DFont::Print( const char *text, D3DCOLOR color, float x, float y, boo
 
 HRESULT CD3DFont::PrintShadow ( float x, float y, DWORD color, const char *szText )
 {
-	return Print(szText, color, x, y, set.render_text_shadows != 0, false);
+	if (set.render_text_shadows)
+		Print(szText, D3DCOLOR_ARGB( ( byte ) HIBYTE( HIWORD( color ) ), 0, 0, 0 ), x + 1, y + 1, true, false);
+	return Print(szText, color, x, y, false, false);
 }
 
 float CD3DFont::DrawLength ( const char *szText, bool noColorFormat ) const

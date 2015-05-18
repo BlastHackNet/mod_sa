@@ -28,7 +28,7 @@
 
 #define M0D_FOLDER		"mod_sa\\"
 #define M0D_NAME		"mod_sa"
-#define M0D_VERSION		"4.4.0.0 by FYP // BlastHack.Net"
+#define M0D_VERSION		"4.4.0.2 by FYP // BlastHack.Net"
 #define SAMP_VERSION	"SA:MP 0.3.7"
 #define M0D_DEV_ADVANCEDINFO
 
