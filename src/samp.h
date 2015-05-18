@@ -488,6 +488,7 @@ struct stBulletData
 	float		fOrigin[3];
 	float		fTarget[3];
 	float		fCenter[3];
+	uint8_t		byteWeaponID;
 };
 
 struct stSpectatorData
@@ -601,12 +602,12 @@ struct stRemotePlayerData
 	short					sShowNameTag;
 	int						iHasJetPack;
 	uint8_t					byteSpecialAction;
-	struct stAimData		aimData;
-	struct stInCarData		inCarData;
+	uint32_t				ulUnk4[3];
 	struct stOnFootData		onFootData;
+	struct stInCarData		inCarData;
 	struct stTrailerData	trailerData;
 	struct stPassengerData	passengerData;
-	uint32_t				ulUnk4[3];
+	struct stAimData		aimData;
 	float					fActorArmor;
 	float					fActorHealth;
 	uint32_t				ulUnk10;
@@ -777,7 +778,9 @@ struct stChatInfo
 	uint8_t				bTimestamps;
 	uint32_t			ulUnk0;
 	char				logFilePathChatLog[MAX_PATH + 1];
-	void				*pChatbox_unknown[3];	// probably classes that handle fonts/sprites
+	void				*pGameUI; // CDXUTDialog
+	void				*pEditBackground; // CDXUTEditBox
+	void				*pDXUTScrollBar;
 	D3DCOLOR			clTextColor;
 	D3DCOLOR			clInfoColor;
 	D3DCOLOR			clDebugColor;
