@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(va_copy)
     #define va_copy(dest, orig) (dest) = (orig)
 #endif
 

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
@@ -18,6 +18,7 @@
     <CharacterSet>MultiByte</CharacterSet>
     <CLRSupport>false</CLRSupport>
     <WholeProgramOptimization>false</WholeProgramOptimization>
+    <PlatformToolset>v140_xp</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -89,6 +90,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BitStream.h" />
+    <ClInclude Include="cheat_samp.h" />
     <ClInclude Include="game_sa\game\C3DMarker.h" />
     <ClInclude Include="game_sa\game\C3DMarkers.h" />
     <ClInclude Include="game_sa\game\CAERadioTrackManager.h" />
@@ -347,6 +349,7 @@
     <ClInclude Include="math_stuff.h" />
     <ClInclude Include="patcher.h" />
     <ClInclude Include="RakClient.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="samp.h" />
     <ClInclude Include="CDirect3DData.h" />
     <ClInclude Include="d3drender.h" />
@@ -371,6 +374,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BitStream.cpp" />
+    <ClCompile Include="cheat_samp.cpp" />
     <ClCompile Include="game_sa\C3DMarkerSA.cpp" />
     <ClCompile Include="game_sa\C3DMarkersSA.cpp" />
     <ClCompile Include="game_sa\CAERadioTrackManagerSA.cpp" />

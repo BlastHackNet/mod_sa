@@ -2026,7 +2026,7 @@ void renderScoreList ()
 	int			rendered_players = 0;
 	static int	current_player = 0;
 	static int	current_player_id = 0;
-	float		loc[2] = { ( pPresentParam.BackBufferWidth / 4 ), 100.0f };
+	float		loc[2] = { (float) ( pPresentParam.BackBufferWidth / 4 ), 100.0f };
 
 	if ( amount_players < max_amount_players )
 	{

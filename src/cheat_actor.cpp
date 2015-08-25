@@ -260,7 +260,7 @@ void cheat_handle_actor_air_brake ( struct actor_info *info, double time_diff )
 			info->pedFlags.bStayInSamePlace = true;
 
 			static uint32_t time_start;
-			float			d[4] = { 0.0f, 0.0f, 0.0f, time_diff * set.air_brake_speed };
+			float			d[4] = { 0.0f, 0.0f, 0.0f, (float) time_diff * set.air_brake_speed };
 
 			if ( cheat_state->actor.air_brake_slowmo )
 				d[3] /= 10.0f;

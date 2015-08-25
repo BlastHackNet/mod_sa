@@ -279,10 +279,10 @@ void cheat_handle_vehicle_air_brake ( struct vehicle_info *info, double time_dif
 
 		static uint32_t time_start;
 		float			*matrix = info->base.matrix;
-		float			d[4] = { 0.0f, 0.0f, 0.0f, time_diff * set.air_brake_speed };
+		float			d[4] = { 0.0f, 0.0f, 0.0f, (float) time_diff * set.air_brake_speed };
 		float			xyvect[4] = { 0.0f, 0.0f, 0.0f, 0.0f }; /* rotation vector */
 		float			zvect[4] = { 0.0f, 0.0f, 0.0f, 0.0f };	/* rotation vector */
-		float			theta = set.air_brake_rot_speed * time_diff * M_PI * 2.0f;
+		float			theta = set.air_brake_rot_speed * (float) time_diff * M_PI * 2.0f;
 
 		if ( cheat_state->vehicle.air_brake_slowmo )
 		{

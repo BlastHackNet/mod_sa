@@ -6,10 +6,10 @@
 #define GOOGLE_NAMESPACE	::google
 
 /* the location of <hash_fun.h>/<stl_hash_fun.h> */
-#define HASH_FUN_H	<hash_map>
+#define HASH_FUN_H	<unordered_map>
 
 /* the location of <hash_map> */
-#define HASH_MAP_H	<hash_map>
+#define HASH_MAP_H	<unordered_map>
 
 /* the namespace of hash_map/hash_set */
 #define HASH_NAMESPACE	stdext

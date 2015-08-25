@@ -35,7 +35,7 @@
       <UniqueIdentifier>{e1ca4ea8-1116-4a7c-ba48-4440a7bdb7c3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Cheat\RakNet">
-      <UniqueIdentifier>{f9e570bc-b15c-46fa-8a39-a7d32d47d821}</UniqueIdentifier>
+      <UniqueIdentifier>{4fca762a-c0e6-4c1a-b4e7-ea6d3aa07b72}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -864,15 +864,19 @@
     <ClInclude Include="WDL\wdltypes.h">
       <Filter>WDL</Filter>
     </ClInclude>
-    <ClInclude Include="RakClient.h">
+    <ClInclude Include="BitStream.h">
       <Filter>Cheat\RakNet</Filter>
     </ClInclude>
-    <ClInclude Include="BitStream.h">
+    <ClInclude Include="RakClient.h">
       <Filter>Cheat\RakNet</Filter>
     </ClInclude>
     <ClInclude Include="HookedRakClient.h">
       <Filter>Cheat\RakNet</Filter>
     </ClInclude>
+    <ClInclude Include="cheat_samp.h">
+      <Filter>Cheat</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game_sa\C3DMarkerSA.cpp">
@@ -1293,14 +1297,17 @@
       <Filter>D3D9</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="RakClient.cpp">
+    <ClCompile Include="BitStream.cpp">
       <Filter>Cheat\RakNet</Filter>
     </ClCompile>
-    <ClCompile Include="BitStream.cpp">
+    <ClCompile Include="RakClient.cpp">
       <Filter>Cheat\RakNet</Filter>
     </ClCompile>
     <ClCompile Include="HookedRakClient.cpp">
       <Filter>Cheat\RakNet</Filter>
+    </ClCompile>
+    <ClCompile Include="cheat_samp.cpp">
+      <Filter>Cheat</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
