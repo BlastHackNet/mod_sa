@@ -53,7 +53,8 @@ int cheat_panic ( void )
 
 			if ( actor_info )
 			{
-				actor_info->flags &= ~ACTOR_FLAGS_INVULNERABLE;
+				if (cheat_state->_generic.hp_cheat)
+					actor_info->flags &= ~ACTOR_FLAGS_INVULNERABLE;
 				actor_info->weapon_slot = 0;
 			}
 
@@ -232,9 +233,9 @@ void cheat_teleport_nearest_car ( void )
 	cheat_teleport( &info->base.matrix[4 * 3], info->base.interior_id );
 }
 
-void cheat_handle_fastwarp(struct vehicle_info *vehicle_info, struct actor_info *actor_info)
+void cheat_handle_quickwarp(struct vehicle_info *vehicle_info, struct actor_info *actor_info)
 {
-	if (KEYCOMBO_PRESSED(set.key_fastwarp))
+	if (KEYCOMBO_PRESSED(set.key_quickwarp))
 	{
 		CCam *pCam = pGame->GetCamera()->GetCam(pGame->GetCamera()->GetActiveCam());
 		CVector camsrc(*pCam->GetSource()), src, target, tppos;
@@ -655,8 +656,15 @@ void cheat_handle_hp ( struct vehicle_info *vehicle_info, struct actor_info *act
 
 	static float	prev_pos[3];
 
-	if ( KEYCOMBO_PRESSED(set.key_hp_cheat) )
+	if (KEYCOMBO_PRESSED(set.key_hp_cheat))
+	{
 		cheat_state->_generic.hp_cheat ^= 1;	/* toggle hp cheat */
+		if (!cheat_state->_generic.hp_cheat)
+		{
+			struct actor_info *self = actor_info_get(ACTOR_SELF, 0);
+			self->flags &= ~ACTOR_FLAGS_INVULNERABLE;
+		}
+	}
 
 	// this will make SP enemies invulnerable
 	// now checking for a valid SAMP game
@@ -786,8 +794,6 @@ void cheat_handle_hp ( struct vehicle_info *vehicle_info, struct actor_info *act
 				info->flags |= 128;
 			//info->flags |= ACTOR_FLAGS_INVULNERABLE;
 		}
-		else
-			info->flags &= ~ACTOR_FLAGS_INVULNERABLE;
 	}
 }
 

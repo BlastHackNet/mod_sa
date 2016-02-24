@@ -873,3 +873,4 @@ extern struct cheat_state	*cheat_state;
 extern float				*cam_matrix;
 
 void						cheat_hook ( HWND wnd );
+bool						isCheatPanicEnabled();

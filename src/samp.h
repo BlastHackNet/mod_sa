@@ -37,7 +37,7 @@
 
 #define SAMP_FUNC_ADDTOCHATWND						0x64010
 #define SAMP_FUNC_SPAWN								0x3AD0
-#define SAMP_FUNC_REQUEST_SPAWN						0x3A20
+#define SAMP_FUNC_REQUEST_SPAWN						0x3EC0
 #define SAMP_FUNC_REQUEST_CLASS						0x56A0
 #define SAMP_FUNC_DEATH								0x55E0
 #define SAMP_FUNC_SETSPECIALACTION					0x30C0
@@ -52,6 +52,7 @@
 #define SAMP_FUNC_UPDATESCOREBOARDDATA				0x8A10
 #define SAMP_FUNC_CNETGAMEDESTRUCTOR				0x9380
 #define SAMP_FUNC_SENDINTERIOR						0x5740
+#define SAMP_FUNC_DISABLE_SCOREBOARD				0x6A320
 
 #define SAMP_HOOKENTER_STATECHANGE					0x12B82
 #define SAMP_HOOKENTER_HANDLE_RPC					0x3743D
@@ -69,7 +70,6 @@
 #define SAMP_PATCH_SCOREBOARDTOGGLEONKEYLOCK		0x6AD30
 #define SAMP_PATCH_CHATINPUTADJUST_Y				0x63FE6
 #define SAMP_PATCH_CHATINPUTADJUST_X				0x65855
-#define SAMP_PATCH_NOCARCOLORRESETTING				0xB0DE0
 
 enum DialogStyle
 {
@@ -598,8 +598,7 @@ struct stRemotePlayerData
 	uint16_t				sPlayerID;
 	uint16_t				sVehicleID;
 	uint32_t				ulUnk5;
-	uint8_t					byteUnk6[2];
-	short					sShowNameTag;
+	int						iShowNameTag;
 	int						iHasJetPack;
 	uint8_t					byteSpecialAction;
 	uint32_t				ulUnk4[3];
@@ -692,7 +691,7 @@ struct stSAMPVehicle : public stSAMPEntity < vehicle_info >
 	int					iIsLocked;
 	uint8_t				byteIsObjective;
 	int					iObjectiveBlipCreated;
-	uint8_t				byteUnk2[20];
+	uint8_t				byteUnk2[16];
 	uint8_t				byteColor[2];
 	int					iColorSync;
 	int					iColor_something;
@@ -703,10 +702,13 @@ struct stObject : public stSAMPEntity < object_info >
 	uint8_t				byteUnk0[2];
 	uint32_t			ulUnk1;
 	int					iModel;
-	uint8_t				byteUnk2;
+	uint16_t			byteUnk2;
 	float				fDrawDistance;
 	float				fUnk;
 	float				fPos[3];
+	uint8_t				byteUnk3[68];
+	uint8_t				byteUnk4;
+	float				fRot[3];
 	// ...
 };
 
@@ -987,6 +989,7 @@ void											toggleSAMPCursor(int iToggle);
 void											sendDeath(void);
 void											changeServer(const char *pszIp, unsigned ulPort, const char *pszPassword);
 void											updateScoreboardData(void);
+void											toggleOffScoreboard(void);
 
 void											installSAMPHooks();
 void											setSAMPCustomSendRates(int iOnFoot, int iInCar, int iAim, int iHeadSync);

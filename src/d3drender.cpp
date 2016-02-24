@@ -510,7 +510,7 @@ HRESULT CD3DFont::Print( const char *text, D3DCOLOR color, float x, float y, boo
 			stColorTag tag = GetColorTag( &text[cpos], len - cpos );
 			if ( tag._valid )
 			{
-				if ( skipColorTags )
+				if ( !skipColorTags )
 				{
 					clr = tag._color;
 					if ( !tag._alpha )

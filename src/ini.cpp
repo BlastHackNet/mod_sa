@@ -963,8 +963,8 @@ static void ini_init ( void )
 		ini_register_data( ent, &set.key_map_teleport, "rbutton" );
 	if ( (ent = ini_register_entry("map_must_be_open", TYPE_BOOL)) != NULL )
 		ini_register_data( ent, &set.map_must_be_open, "true" );
-	if ( (ent = ini_register_entry("key_fastwarp", TYPE_KEYCOMBO)) != NULL )
-		ini_register_data( ent, &set.key_fastwarp, "rbutton r" );
+	if ( (ent = ini_register_entry("key_quickwarp", TYPE_KEYCOMBO)) != NULL )
+		ini_register_data( ent, &set.key_quickwarp, "rbutton r" );
 	if ( (ent = ini_register_entry("key_surf", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_surf, "k" );
 	if ( (ent = ini_register_entry("key_freezerot", TYPE_KEYCOMBO)) != NULL )

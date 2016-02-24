@@ -32,7 +32,8 @@ proxyIDirect3D9::proxyIDirect3D9 ( IDirect3D9 *pOriginal )
 
 	// to allow computers with Aero to disable so the window doesn't get minimized by
 	// other windows switching off Aero.
-	Sleep(1000);
+	// we don't need this since there is fix for windows aero
+	// Sleep(1000);
 }
 
 proxyIDirect3D9::~proxyIDirect3D9 ( void )

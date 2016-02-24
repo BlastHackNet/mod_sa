@@ -386,7 +386,7 @@ struct settings
 	int						map_must_be_open;
 	int						map_draw_lines;
 	
-	keycombo				key_fastwarp;
+	keycombo				key_quickwarp;
 	keycombo				key_surf;
 	keycombo				key_freezerot;
 

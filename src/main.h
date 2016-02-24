@@ -28,7 +28,7 @@
 
 #define M0D_FOLDER		"mod_sa\\"
 #define M0D_NAME		"mod_sa"
-#define M0D_VERSION		"4.4.0.3 by FYP // blast.hk"
+#define M0D_VERSION		"4.4.1.0 // blast.hk"
 #define SAMP_VERSION	"SA:MP 0.3.7"
 #define M0D_DEV_ADVANCEDINFO
 
@@ -181,9 +181,6 @@
 
 // selected MTA class includes
 #include "CDirect3DData.h"
-
-// WDL includes
-#include "mutex.h"
 
 // RakNet stuff
 #include "BitStream.h"

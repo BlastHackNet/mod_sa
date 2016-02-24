@@ -476,7 +476,7 @@ int isBadPtr_GTA_pVehicle ( vehicle_info *p_VehicleInfo )
 			)
 		)
 		return 1;
-	return ( p_VehicleInfo->base.matrix == NULL );
+	return ( p_VehicleInfo->base.matrix == NULL ) || (p_VehicleInfo->base.nType != ENTITY_TYPE_VEHICLE);
 }
 
 int isBadPtr_GTA_pVehicle ( CVehicle *p_CVehicle )
@@ -493,7 +493,7 @@ int isBadPtr_GTA_pVehicle ( CVehicle *p_CVehicle )
 			)
 		)
 		return 1;
-	return ( p_CVehicleSAInterface->Placeable.matrix == NULL );
+	return ( p_CVehicleSAInterface->Placeable.matrix == NULL ) || (p_CVehicleSAInterface->nType != ENTITY_TYPE_VEHICLE);
 }
 
 int isBadPtr_GTA_pVehicle ( CVehicleSA *p_CVehicleSA )
@@ -510,7 +510,7 @@ int isBadPtr_GTA_pVehicle ( CVehicleSA *p_CVehicleSA )
 			)
 		)
 		return 1;
-	return ( p_CVehicleSAInterface->Placeable.matrix == NULL );
+	return ( p_CVehicleSAInterface->Placeable.matrix == NULL ) || (p_CVehicleSAInterface->nType != ENTITY_TYPE_VEHICLE);
 }
 
 int isBadPtr_GTA_pVehicle ( CVehicleSAInterface *p_CVehicleSAInterface )
@@ -524,7 +524,7 @@ int isBadPtr_GTA_pVehicle ( CVehicleSAInterface *p_CVehicleSAInterface )
 			)
 		)
 		return 1;
-	return ( p_CVehicleSAInterface->Placeable.matrix == NULL );
+	return ( p_CVehicleSAInterface->Placeable.matrix == NULL ) || (p_CVehicleSAInterface->nType != ENTITY_TYPE_VEHICLE);
 }
 
 int isBadPtr_GTA_pPed ( actor_info *pActorInfo )
@@ -538,7 +538,7 @@ int isBadPtr_GTA_pPed ( actor_info *pActorInfo )
 			)
 		)
 		return 1;
-	return ( pActorInfo->base.matrix == NULL );
+	return (pActorInfo->base.matrix == NULL) || (pActorInfo->base.nType != ENTITY_TYPE_PED);
 }
 
 int isBadPtr_GTA_pPed ( CPed *pCPed )
@@ -553,7 +553,7 @@ int isBadPtr_GTA_pPed ( CPed *pCPed )
 			)
 		)
 		return 1;
-	return ( pCPedSAInterface->Placeable.matrix == NULL );
+	return ( pCPedSAInterface->Placeable.matrix == NULL ) || (pCPedSAInterface->nType != ENTITY_TYPE_PED);
 }
 
 int isBadPtr_GTA_pPed ( CPedSAInterface *pCPedSAInterface )
@@ -567,7 +567,7 @@ int isBadPtr_GTA_pPed ( CPedSAInterface *pCPedSAInterface )
 			)
 		)
 		return 1;
-	return ( pCPedSAInterface->Placeable.matrix == NULL );
+	return ( pCPedSAInterface->Placeable.matrix == NULL ) || (pCPedSAInterface->nType != ENTITY_TYPE_PED);
 }
 
 int isBadPtr_GTA_pBuildingInfo ( DWORD p_BuildingInfo )
@@ -784,13 +784,16 @@ void gta_weapon_set ( struct actor_info *info, int slot, int id, int ammo, int a
 		Log( "invalid weapon slot %d!", slot );
 		return;
 	}
+	if (id < WEAPONTYPE_UNARMED || id >= WEAPONTYPE_LAST_WEAPONTYPE)
+	{
+		Log("invalid weapon id %d!", id);
+		return;
+	}
 
-	if ( id >= 0 )
-		info->weapon[slot].id = id;
-	if ( ammo >= 0 )
-		info->weapon[slot].ammo = ammo;
-	if ( ammo_clip >= 0 )
-		info->weapon[slot].ammo_clip = ammo_clip;
+	// less optimized, but more secure way
+	CWeapon *weap = pPedSelf->GiveWeapon(eWeaponType(id), 1);
+	weap->SetAmmoTotal(ammo);
+	weap->SetAmmoInClip(ammo_clip);
 }
 
 int gta_weapon_ammo_set ( struct actor_info *info, int slot, int ammo )
@@ -2849,7 +2852,15 @@ void vehicle_setColor0 ( vehicle_info *vinfo, int new_color )
 	vinfo->color[0] = new_color;
 	if ( g_SAMP != NULL )
 	{
-		sendSCMEvent( 3, g_Players->pLocalPlayer->sCurrentVehicleID, new_color, vinfo->color[1] );
+		uint16_t sampVeh = g_Players->pLocalPlayer->sCurrentVehicleID;
+		if (!isBadSAMPVehicleID(sampVeh))
+		{
+			sendSCMEvent(3, sampVeh, new_color, vinfo->color[1]);
+			if (g_Vehicles->pSAMP_Vehicle[sampVeh] != nullptr)
+			{
+				g_Vehicles->pSAMP_Vehicle[sampVeh]->byteColor[0] = new_color;
+			}
+		}
 	}
 }
 
@@ -2862,7 +2873,15 @@ void vehicle_setColor1 ( vehicle_info *vinfo, int new_color )
 	vinfo->color[1] = new_color;
 	if ( g_SAMP != NULL )
 	{
-		sendSCMEvent( 3, g_Players->pLocalPlayer->sCurrentVehicleID, vinfo->color[0], new_color );
+		uint16_t sampVeh = g_Players->pLocalPlayer->sCurrentVehicleID;
+		if (!isBadSAMPVehicleID(sampVeh))
+		{
+			sendSCMEvent(3, sampVeh, vinfo->color[0], new_color);
+			if (g_Vehicles->pSAMP_Vehicle[sampVeh] != nullptr)
+			{
+				g_Vehicles->pSAMP_Vehicle[sampVeh]->byteColor[1] = new_color;
+			}
+		}
 	}
 }
 
@@ -2901,7 +2920,7 @@ static int __page_write ( void *_dest, const void *_src, uint32_t len )
 	const uint8_t	*src = (const uint8_t *)_src;
 	DWORD			prot_prev = 0;
 	int				prot_changed = 0;
-	SIZE_T			write_len;
+	/*SIZE_T			write_len;*/
 	int				ret = 1;
 
 	while ( len > 0 )
@@ -2921,8 +2940,9 @@ static int __page_write ( void *_dest, const void *_src, uint32_t len )
 				prot_changed = 1;
 		}
 
-		if ( !WriteProcessMemory(GetCurrentProcess(), dest, (void *)src, this_len, &write_len) )
-			write_len = 0;
+		/*if ( !WriteProcessMemory(GetCurrentProcess(), dest, (void *)src, this_len, &write_len) )
+			write_len = 0;*/
+		memcpy(dest, src, this_len);
 
 		if ( prot_changed )
 		{
@@ -2931,8 +2951,8 @@ static int __page_write ( void *_dest, const void *_src, uint32_t len )
 				Log( "__page_write() could not restore original permissions for ptr %p", dest );
 		}
 
-		if ( (int)write_len != this_len )
-			ret = 0;
+		/*if ( (int)write_len != this_len )
+			ret = 0;*/
 
 		dest += this_len;
 		src += this_len;
@@ -2949,7 +2969,7 @@ static int __page_read ( void *_dest, const void *_src, uint32_t len )
 	uint8_t		*src = (uint8_t *)_src;
 	DWORD		prot_prev = 0;
 	int			prot_changed = 0;
-	SIZE_T		read_len;
+	/*SIZE_T		read_len;*/
 	int			ret = 1;
 
 	while ( len > 0 )
@@ -2969,8 +2989,9 @@ static int __page_read ( void *_dest, const void *_src, uint32_t len )
 				prot_changed = 1;
 		}
 
-		if ( !ReadProcessMemory(GetCurrentProcess(), src, dest, this_len, &read_len) )
-			read_len = 0;
+		/*if ( !ReadProcessMemory(GetCurrentProcess(), src, dest, this_len, &read_len) )
+			read_len = 0;*/
+		memcpy(dest, src, this_len);
 
 		if ( prot_changed )
 		{
@@ -2979,11 +3000,11 @@ static int __page_read ( void *_dest, const void *_src, uint32_t len )
 				Log( "__page_read() could not restore original permissions for ptr %p", src );
 		}
 
-		if ( (int)read_len != this_len )
+		/*if ( (int)read_len != this_len )
 		{
 			memset( dest + read_len, 0, this_len - read_len );
 			ret = 0;
-		}
+		}*/
 
 		dest += this_len;
 		src += this_len;
@@ -3358,11 +3379,11 @@ uint8_t *hex_to_bin ( const char *str )
 	return sbuf;
 }
 
-bool hex_is_valid( std::string hex )
+bool hex_is_valid( const std::string& hex )
 {
 	if ( hex.empty() )
 		return false;
-	for ( size_t i = 0; i < hex.length(); i++ )
+	for ( size_t i = 0, len = hex.length(); i < len; i++ )
 	{
 		if ( hex_to_dec( hex[i] ) == -1 )
 			return false;

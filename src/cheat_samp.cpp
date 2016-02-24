@@ -274,15 +274,18 @@ void sampAntiHijack(void)
 
 void HandleRPCPacketFunc(unsigned char id, RPCParameters *rpcParams, void(*callback) (RPCParameters *))
 {
-	if (set.netPatchAssoc[id][INCOMING_RPC] != nullptr && set.netPatchAssoc[id][INCOMING_RPC]->enabled)
-		return;
+	if (!isCheatPanicEnabled())
+	{
+		if (set.netPatchAssoc[id][INCOMING_RPC] != nullptr && set.netPatchAssoc[id][INCOMING_RPC]->enabled)
+			return;
+	}
 	if (rpcParams != nullptr && rpcParams->numberOfBitsOfData >= 8)
 	{
 		switch (id)
 		{
 			case RPC_SetPlayerHealth:
 			{
-				if (!set.enable_extra_godmode || !cheat_state->_generic.hp_cheat) break;
+				if (isCheatPanicEnabled() || !set.enable_extra_godmode || !cheat_state->_generic.hp_cheat) break;
 
 				actor_info *self = actor_info_get(ACTOR_SELF, NULL);
 				if (self)
@@ -300,7 +303,7 @@ void HandleRPCPacketFunc(unsigned char id, RPCParameters *rpcParams, void(*callb
 			}
 			case RPC_SetVehicleHealth:
 			{
-				if (!set.enable_extra_godmode || !cheat_state->_generic.hp_cheat) break;
+				if (isCheatPanicEnabled() || !set.enable_extra_godmode || !cheat_state->_generic.hp_cheat) break;
 
 				vehicle_info *vself = vehicle_info_get(VEHICLE_SELF, NULL);
 				if (vself)
@@ -320,7 +323,7 @@ void HandleRPCPacketFunc(unsigned char id, RPCParameters *rpcParams, void(*callb
 			}
 			case RPC_ClientMessage:
 			{
-				if (!set.anti_spam && !set.chatbox_logging) break;
+				if (isCheatPanicEnabled() || !set.anti_spam && !set.chatbox_logging) break;
 
 				BitStream		bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
 				uint32_t		dwStrLen, dwColor;
@@ -375,7 +378,7 @@ void HandleRPCPacketFunc(unsigned char id, RPCParameters *rpcParams, void(*callb
 			}
 			case RPC_Chat:
 			{
-				if (!set.anti_spam && !set.chatbox_logging) break;
+				if (isCheatPanicEnabled() || !set.anti_spam && !set.chatbox_logging) break;
 
 				BitStream		bsData(rpcParams->input, rpcParams->numberOfBitsOfData / 8, false);
 				static char		last_clientmsg[SAMP_MAX_PLAYERS][256];
@@ -413,8 +416,11 @@ void HandleRPCPacketFunc(unsigned char id, RPCParameters *rpcParams, void(*callb
 
 bool OnSendRPC(int uniqueID, BitStream *parameters, PacketPriority priority, PacketReliability reliability, char orderingChannel, bool shiftTimestamp)
 {
-	if (set.netPatchAssoc[uniqueID][OUTCOMING_RPC] != nullptr && set.netPatchAssoc[uniqueID][OUTCOMING_RPC]->enabled)
-		return false;
+	if (!isCheatPanicEnabled())
+	{
+		if (set.netPatchAssoc[uniqueID][OUTCOMING_RPC] != nullptr && set.netPatchAssoc[uniqueID][OUTCOMING_RPC]->enabled)
+			return false;
+	}
 	if (uniqueID == RPC_Chat && g_Players != nullptr)
 	{
 		uint8_t byteTextLen;
@@ -427,15 +433,41 @@ bool OnSendRPC(int uniqueID, BitStream *parameters, PacketPriority priority, Pac
 		if (set.chatbox_logging)
 			LogChatbox(false, "%s: %s", getPlayerName(g_Players->sLocalPlayerID), szText);
 	}
+
+	// prevent invulnerability detection
+	if (uniqueID == RPC_ClientCheck && cheat_state && cheat_state->_generic.hp_cheat)
+	{
+		uint8_t type = 0;
+		parameters->Read(type);
+		if (type == 2)
+		{
+			uint32_t arg = 0;
+			uint8_t response = 0;
+			parameters->Read(arg);
+			parameters->Read(response);
+
+			// remove invulnerability flags from our real flags
+			uint32_t fakeFlags = arg & (0xFF00FFFF | ((~ACTOR_FLAGS_INVULNERABLE) << 16));
+
+			// reform packet data
+			parameters->SetWriteOffset(0);
+			parameters->Write(type);
+			parameters->Write(fakeFlags);
+			parameters->Write(response);
+		}
+	}
 	return true;
 }
 
 bool OnSendPacket(BitStream *parameters, PacketPriority priority, PacketReliability reliability, char orderingChannel)
 {
-	uint8_t packetId;
-	parameters->Read(packetId);
-	if (set.netPatchAssoc[packetId][OUTCOMING_PACKET] != nullptr && set.netPatchAssoc[packetId][OUTCOMING_PACKET]->enabled)
-		return false;
+	if (!isCheatPanicEnabled())
+	{
+		uint8_t packetId;
+		parameters->Read(packetId);
+		if (set.netPatchAssoc[packetId][OUTCOMING_PACKET] != nullptr && set.netPatchAssoc[packetId][OUTCOMING_PACKET]->enabled)
+			return false;
+	}
 	return true;
 }
 
@@ -443,8 +475,11 @@ bool OnReceivePacket(Packet *p)
 {
 	if (p->data == nullptr || p->length == 0)
 		return true;
-	if (set.netPatchAssoc[p->data[0]][INCOMING_PACKET] != nullptr && set.netPatchAssoc[p->data[0]][INCOMING_PACKET]->enabled)
-		return false;
+	if (!isCheatPanicEnabled())
+	{
+		if (set.netPatchAssoc[p->data[0]][INCOMING_PACKET] != nullptr && set.netPatchAssoc[p->data[0]][INCOMING_PACKET]->enabled)
+			return false;
+	}
 	if (p->data[0] == ID_MARKERS_SYNC) // packetId
 	{
 		BitStream	bs(p->data, p->length, false);

@@ -68,8 +68,12 @@ void update_translateGTASAMP_vehiclePool(void)
 	{
 		if (g_Vehicles->iIsListed[i] != 1)
 			continue;
-		if (isBadPtr_writeAny(g_Vehicles->pSAMP_Vehicle[i], sizeof(stSAMPVehicle)))
+		if (g_Vehicles->pSAMP_Vehicle[i] == nullptr)
 			continue;
+		if (g_Vehicles->pSAMP_Vehicle[i]->pGTA_Vehicle == nullptr)
+			continue;
+		/*if (isBadPtr_writeAny(g_Vehicles->pSAMP_Vehicle[i], sizeof(stSAMPVehicle)))
+			continue;*/
 		iGTAID = getVehicleGTAIDFromInterface((DWORD *) g_Vehicles->pSAMP_Vehicle[i]->pGTA_Vehicle);
 		if (iGTAID <= SAMP_MAX_VEHICLES && iGTAID >= 0)
 		{
@@ -93,15 +97,24 @@ void update_translateGTASAMP_pedPool(void)
 			translateGTASAMP_pedPool.iSAMPID[0] = i;
 			continue;
 		}
-
+		if (g_Players->pRemotePlayer[i] == nullptr)
+			continue;
+		if (g_Players->pRemotePlayer[i]->pPlayerData == nullptr)
+			continue;
+		if (g_Players->pRemotePlayer[i]->pPlayerData->pSAMP_Actor == nullptr)
+			continue;
+		if (g_Players->pRemotePlayer[i]->pPlayerData->pSAMP_Actor->pGTAEntity == nullptr)
+			continue;
+		/*
 		if (isBadPtr_writeAny(g_Players->pRemotePlayer[i], sizeof(stRemotePlayer)))
 			continue;
 		if (isBadPtr_writeAny(g_Players->pRemotePlayer[i]->pPlayerData, sizeof(stRemotePlayerData)))
 			continue;
 		if (isBadPtr_writeAny(g_Players->pRemotePlayer[i]->pPlayerData->pSAMP_Actor, sizeof(stSAMPPed)))
 			continue;
+		*/
 
-		iGTAID = getPedGTAIDFromInterface((DWORD *) g_Players->pRemotePlayer[i]->pPlayerData->pSAMP_Actor->pGTA_Ped);
+		iGTAID = getPedGTAIDFromInterface((DWORD *) g_Players->pRemotePlayer[i]->pPlayerData->pSAMP_Actor->pGTAEntity);
 		if (iGTAID <= SAMP_MAX_PLAYERS && iGTAID >= 0)
 		{
 			translateGTASAMP_pedPool.iSAMPID[iGTAID] = i;
@@ -835,6 +848,11 @@ void changeServer(const char *pszIp, unsigned ulPort, const char *pszPassword)
 void updateScoreboardData(void)
 {
 	((void(__thiscall *) (void *_this)) (g_dwSAMP_Addr + SAMP_FUNC_UPDATESCOREBOARDDATA)) (g_SAMP);
+}
+
+void toggleOffScoreboard(void)
+{
+	((void(__thiscall *) (void *_this, bool hideCursor)) (g_dwSAMP_Addr + SAMP_FUNC_DISABLE_SCOREBOARD)) (g_Scoreboard, true);
 }
 
 void setSAMPCustomSendRates(int iOnFoot, int iInCar, int iAim, int iHeadSync)

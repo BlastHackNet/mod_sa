@@ -120,7 +120,7 @@ static void cheat_main_actor ( double time_diff )
 	if ( info->pedFlags.bInVehicle )
 		cheat_handle_vehicle_fast_exit( nullptr, time_diff );
 	cheat_handle_exit_vehicle ( nullptr, info );
-	cheat_handle_fastwarp(nullptr, info);
+	cheat_handle_quickwarp(nullptr, info);
 }
 
 static void cheat_main_vehicle ( double time_diff )
@@ -167,7 +167,7 @@ static void cheat_main_vehicle ( double time_diff )
 	// these NEED to stay last, because they can remove the player from the vehicle
 	cheat_handle_vehicle_fast_exit( info, time_diff );
 	cheat_handle_exit_vehicle ( info, nullptr );
-	cheat_handle_fastwarp(info, nullptr);
+	cheat_handle_quickwarp(info, nullptr);
 }
 
 // the main daddyo
@@ -321,17 +321,6 @@ void cheat_hook ( HWND wnd )
 			// increment stage
 			m_InitStages++;
 		}
-		else if ( m_InitStages == 1 )
-		{
-			// load all the weapon models
-			loadAllWeaponModels();
-
-			// get funky
-			//pGameInterface->GetAudio()->PlayBeatTrack(2);
-
-			// increment stage
-			m_InitStages++;
-		}
 	}
 
 	if ( cheat_state->state != CHEAT_STATE_NONE )
@@ -480,4 +469,9 @@ out: ;
 	else
 		keyhook_run();
 	time_last = time_get();
+}
+
+bool isCheatPanicEnabled()
+{
+	return cheat_state && cheat_state->_generic.cheat_panic_enabled;
 }

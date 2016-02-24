@@ -31,9 +31,6 @@
     <Filter Include="sparshash\windows\google\sparsehash">
       <UniqueIdentifier>{d3f13339-400e-4391-bb01-447f6644f256}</UniqueIdentifier>
     </Filter>
-    <Filter Include="WDL">
-      <UniqueIdentifier>{e1ca4ea8-1116-4a7c-ba48-4440a7bdb7c3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Cheat\RakNet">
       <UniqueIdentifier>{4fca762a-c0e6-4c1a-b4e7-ea6d3aa07b72}</UniqueIdentifier>
     </Filter>
@@ -858,12 +855,6 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="stddefs.h" />
     <ClInclude Include="stdtypes.h" />
-    <ClInclude Include="WDL\mutex.h">
-      <Filter>WDL</Filter>
-    </ClInclude>
-    <ClInclude Include="WDL\wdltypes.h">
-      <Filter>WDL</Filter>
-    </ClInclude>
     <ClInclude Include="BitStream.h">
       <Filter>Cheat\RakNet</Filter>
     </ClInclude>

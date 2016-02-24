@@ -7,7 +7,7 @@
 !define NAME 'mod_sa'
 !define MP 'SA-MP'
 !define MP_VERSION 'v0.3.7 R1'
-!define VERSION 'v4.4.0.0'
+!define VERSION 'v4.4.1.0'
 
 ; create output directory if it doesn't exist
 !system 'mkdir "..\_distro_installers\"'
@@ -16,7 +16,7 @@ Name "${NAME} ${VERSION}"
 OutFile "..\_distro_installers\${NAME}.${VERSION}.${MP}.${MP_VERSION}.Setup.exe"
 SetCompressor /SOLID lzma
 CRCCheck force
-BrandingText "Visit ${NAME} at Google Code, Click Here"
+BrandingText "Visit ${NAME} at GitHub, Click Here"
 CompletedText "${NAME} ${VERSION} for ${MP} ${MP_VERSION} setup finished"
 ShowInstDetails show
 ShowUninstDetails show
@@ -51,7 +51,7 @@ FunctionEnd
 
 ; main installation screen variables
 Page directory
-DirText "Welcome to the installer for ${NAME} ${VERSION} for ${MP} ${MP_VERSION}.$\r$\n$\r$\nCheck out ${NAME} at Google Code for the lastest versions and information.  Just click the link on the bottom left." "Please select your GTA San Andreas directory."
+DirText "Welcome to the installer for ${NAME} ${VERSION} for ${MP} ${MP_VERSION}.$\r$\n$\r$\nCheck out ${NAME} at GitHub for the lastest versions and information.  Just click the link on the bottom left." "Please select your GTA San Andreas directory."
 InstallDir "$PROGRAMFILES\Rockstar Games\GTA San Andreas\"
 InstallDirRegKey HKLM "SOFTWARE\Rockstar Games\GTA San Andreas\Installation" ExePath
 Function .onVerifyInstDir

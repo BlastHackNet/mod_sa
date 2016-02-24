@@ -511,7 +511,7 @@ bool								findstrinstr ( char *text, char *find );
 
 void								*memdup ( const void *src, int len );
 uint8_t								*hex_to_bin ( const char *str );
-bool								hex_is_valid( std::string hex );
+bool								hex_is_valid( const std::string& hex );
 
 extern const struct weapon_entry	weapon_list[];
 extern const struct vehicle_entry	vehicle_list[VEHICLE_LIST_SIZE];

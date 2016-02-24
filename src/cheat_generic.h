@@ -45,4 +45,4 @@ void	cheat_handle_checkpoint ( void );
 void	cheat_handle_unfreeze ( struct vehicle_info *vehicle_info, struct actor_info *actor_info, float time_diff );
 void	cheat_handle_emo ( struct vehicle_info *vehicle_info, struct actor_info *actor_info, float time_diff );
 void	cheat_handle_exit_vehicle ( struct vehicle_info *vehicle_info, struct actor_info *actor_info );
-void	cheat_handle_fastwarp(struct vehicle_info *vehicle_info, struct actor_info *actor_info);
+void	cheat_handle_quickwarp(struct vehicle_info *vehicle_info, struct actor_info *actor_info);

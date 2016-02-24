@@ -447,12 +447,28 @@ LONG WINAPI unhandledExceptionFilter ( struct _EXCEPTION_POINTERS *ExceptionInfo
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
+void EnableWindowsAero()
+{
+	typedef HRESULT (WINAPI *DwmEnableComposition_t)(UINT uCompositionAction);
+	HMODULE dwmapi = LoadLibrary("dwmapi.dll");
+	if (dwmapi == NULL)
+		return;
+
+	DwmEnableComposition_t dwmEnableComposition = (DwmEnableComposition_t)GetProcAddress(dwmapi, "DwmEnableComposition");
+	if (dwmEnableComposition != NULL)
+		dwmEnableComposition(1);
+
+	FreeLibrary(dwmapi);
+}
+
 BOOL APIENTRY DllMain ( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved )
 {
 	switch ( ul_reason_for_call )
 	{
 	case DLL_PROCESS_ATTACH:
 		DisableThreadLibraryCalls( hModule );
+		// windows aero fix for windows 7 and vista
+		EnableWindowsAero();
 		g_hDllModule = hModule;
 		SetUnhandledExceptionFilter( unhandledExceptionFilter );
 		break;

@@ -3,6 +3,31 @@ by notaplane, jflm, nuckfuts, FYP and the game modification community
 https://github.com/BlastHackNet/mod_s0beit_sa/
 http://blasthack.net
 
+Version 4.4.1.0
+* Common optimization
+* Prevented 5 detection ways:
+ - Added custom ClientCheck handler to prevent invulnerability detection
+ - Disabled loading all weapon models on game start
+ - Disabled Free paint and spray patch by default
+ - Disabled Anti Derail patch by default
+ - Removed built-in samp-patch "no car color resetting"
+* Added cheat-panic check in network patch handlers
+* Renamed FastWarp to QuickWarp
+* Improved weapon hack stability
+* Extra SA-MP invulnerability is now disabled by default
+* Request spawn function was replaced with more correct method (fixes possible detection)
+* Fixed camera glitching on scoreboard activation when cursor is active
+* Fixed SA-MP structures: stRemotePlayerData, stSAMPVehicle, stObject
+* Fixed 3D-map sigle player crash
+* Fixed player tags position calculation
+
+Version 4.4.0.3
+* Added VS2013 and VS2015 compatibility
+
+Version 4.4.0.2
+* Fixed PrintShadow function
+* Updated SA-MP structures: stBulletData, stRemotePlayerData, stChatInfo
+
 Version 4.4.0.1
 * Improved aimbot
 * Fixed stServerPresets and stRemotePlayerData structs

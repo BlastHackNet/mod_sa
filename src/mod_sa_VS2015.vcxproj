@@ -369,8 +369,6 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="stddefs.h" />
     <ClInclude Include="stdtypes.h" />
-    <ClInclude Include="WDL\mutex.h" />
-    <ClInclude Include="WDL\wdltypes.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BitStream.cpp" />

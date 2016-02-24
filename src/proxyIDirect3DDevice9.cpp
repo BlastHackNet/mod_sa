@@ -664,13 +664,16 @@ void RenderMap ( void )
 		}
 		else
 		{
-			for ( i = 0; i < pool_actor->size; i++ )
+			CPoolsSA::pedPool_t::mapType::iterator it = ((CPoolsSA *)pGameInterface->GetPools())->m_pedPool.map.begin();
+			for (; it.pos < it.end; it++)
 			{
-				struct actor_info	*info = actor_info_get( i, ACTOR_ALIVE );
-				if ( info == NULL )
+				CPedSA *ped = it.pos->second;
+				if (ped == nullptr)
 					continue;
-				_snprintf_s( buf, sizeof(buf)-1, "%d", i );
-				RenderMapDot( &self->base.matrix[4 * 3], &info->base.matrix[4 * 3], D3DCOLOR_XRGB(255, 255, 255), buf );
+				if (ped == pPedSelf)
+					continue;
+				_snprintf_s(buf, sizeof(buf)-1, "%d", ped->GetArrayID());
+				RenderMapDot(&self->base.matrix[4 * 3], &ped->GetPosition()->fX, D3DCOLOR_XRGB(255, 255, 255), buf);
 			}
 		}
 	}
@@ -756,8 +759,7 @@ void RenderPedHPBar ( void )
 	render->D3DBoxi( 0, bottom - 20, 101, 10, D3DCOLOR_ARGB(127, 0, 0, 0), NULL );
 	if ( info->armor == NULL )
 	{
-		_snprintf_s( text, sizeof(text)-1, "No armor" );
-		pD3DFontFixed->PrintShadow( (float)(2), (float)(bottom - (fontHeight*2)), D3DCOLOR_XRGB(255, 255, 255), text );
+		pD3DFontFixed->PrintShadow( (float)(2), (float)(bottom - (fontHeight*2)), D3DCOLOR_XRGB(255, 255, 255), "No armor" );
 	}
 	else
 	{
@@ -1326,60 +1328,54 @@ void renderPlayerTags ( void )
 			va = iterPed->GetArmor();
 		}
 
-		if ( vh > 100.0f )
-			vh = 100.0f;
-		vh *= 70.0f / 100.0f;
 
+		float hpbar = vh;
+		if ( hpbar > 100.0f )
+			hpbar = 100.0f;
+		hpbar *= 70.0f / 100.0f;
+
+		float offY = ESP_tag_player_D3DBox_pixelOffsetY;
 		if ( va > 0.0f )
 		{
-			if ( va > 100.0f )
-				va = 100.0f;
-			va *= 70.0f / 100.0f;
+			float armbar = va;
+			if ( armbar > 100.0f )
+				armbar = 100.0f;
+			armbar *= 70.0f / 100.0f;
 			render->D3DBoxBorder( g_playerTagInfo[iGTAID].tagPosition.fX + ESP_tag_player_D3DBox_pixelOffsetX,
-							playerBaseY + ESP_tag_player_D3DBox_pixelOffsetY, 70.0f, 10.0f, D3DCOLOR_ARGB(255, 0, 0, 0), D3DCOLOR_ARGB(128, 50, 50, 50) );
+							playerBaseY + offY, 70.0f, 10.0f, D3DCOLOR_ARGB(255, 0, 0, 0), D3DCOLOR_ARGB(128, 50, 50, 50) );
 			render->D3DBox( g_playerTagInfo[iGTAID].tagPosition.fX + 1.0f + ESP_tag_player_D3DBox_pixelOffsetX,
-							playerBaseY + 1.0f + ESP_tag_player_D3DBox_pixelOffsetY, va - 2.0f, 8.0f,
+							playerBaseY + 1.0f + offY, armbar - 2.0f, 8.0f,
 							D3DCOLOR_ARGB(128, 250, 250, 250) );
-			ESP_tag_player_D3DBox_pixelOffsetY += 11.0f;
+			offY += 11.0f;
 		}
 
 		render->D3DBoxBorder( g_playerTagInfo[iGTAID].tagPosition.fX + ESP_tag_player_D3DBox_pixelOffsetX,
-						playerBaseY + ESP_tag_player_D3DBox_pixelOffsetY, 70.0f, 10.0f, D3DCOLOR_ARGB(255, 0, 0, 0), D3DCOLOR_ARGB(128, 80, 0, 0) );
+						playerBaseY + offY, 70.0f, 10.0f, D3DCOLOR_ARGB(255, 0, 0, 0), D3DCOLOR_ARGB(128, 80, 0, 0) );
 		render->D3DBox( g_playerTagInfo[iGTAID].tagPosition.fX + 1.0f + ESP_tag_player_D3DBox_pixelOffsetX,
-						playerBaseY + 1.0f + ESP_tag_player_D3DBox_pixelOffsetY, vh - 2.0f, 8.0f, D3DCOLOR_ARGB(128, 255, 0, 0) );
+						playerBaseY + 1.0f + offY, hpbar - 2.0f, 8.0f, D3DCOLOR_ARGB(128, 255, 0, 0) );
 
 		// this should also calculate the anti-aliasing top edge somehow
 		h = pD3DFontFixedSmall->DrawHeight() + 1;
 
-		// already check if player is ok before
-		// so now we only need to check if samp is running
-		if ( !g_Players )
-		{
-			_snprintf_s( buf, sizeof(buf)-1, "%d {E00000}%d", (int)iterPed->GetArmor(), (int)iterPed->GetHealth() );
-			float w = pD3DFontFixedSmall->DrawLength(buf);
-			pD3DFontFixedSmall->PrintShadow( g_playerTagInfo[iGTAID].tagPosition.fX + 70.0f - w - 1.0f, playerBaseY + 10.0f + ESP_tag_player_D3DBox_pixelOffsetY,
-										 D3DCOLOR_ARGB(0xFF, 0xF0, 0xF0, 0xF0), buf );
-		}
+		if (va > 0.0f)
+			sprintf_s(buf, "%d {E00000}%d", (int)va, (int)vh);
 		else
+			sprintf_s(buf, "{E00000}%d", (int)vh);
+		float w = pD3DFontFixedSmall->DrawLength(buf);
+		pD3DFontFixedSmall->PrintShadow(g_playerTagInfo[iGTAID].tagPosition.fX + 70.0f - w - 1.0f, playerBaseY + 10.0f + offY,
+										D3DCOLOR_ARGB(0xFF, 0xF0, 0xF0, 0xF0), buf);
+		if ( g_Players )
 		{
 			// render the main nametag last so it's on top
 			// this should calculate the anti-aliasing top edge somehow
 			h = pD3DFont_sampStuff->DrawHeight() - 1;
-			_snprintf_s( buf, sizeof(buf)-1, "%s (%d)", getPlayerName(iSAMPID), iSAMPID );
+			sprintf_s( buf, "%s (%d)", getPlayerName(iSAMPID), iSAMPID );
 			pD3DFont_sampStuff->PrintShadow( g_playerTagInfo[iGTAID].tagPosition.fX, playerBaseY - h,
 			samp_color_get( iSAMPID, 0xDD000000 ), buf );
 
-
-			_snprintf_s( buf, sizeof(buf)-1, "%d {E00000}%d",
-						 (int)g_Players->pRemotePlayer[iSAMPID]->pPlayerData->fActorArmor,
-						 (int)g_Players->pRemotePlayer[iSAMPID]->pPlayerData->fActorHealth );
-			float w = pD3DFontFixedSmall->DrawLength(buf);
-			pD3DFontFixedSmall->PrintShadow( g_playerTagInfo[iGTAID].tagPosition.fX + 70.0f - w - 1.0f, playerBaseY + 10.0f + ESP_tag_player_D3DBox_pixelOffsetY,
-										 D3DCOLOR_ARGB(0xFF, 0xF0, 0xF0, 0xF0), buf );
-
 			if (g_Players->pRemotePlayer[iSAMPID]->pPlayerData->iAFKState == 2)
 			{
-				pD3DFontFixedSmall->PrintShadow(g_playerTagInfo[iGTAID].tagPosition.fX + 1.0f, playerBaseY + 10.0f + ESP_tag_player_D3DBox_pixelOffsetY,
+				pD3DFontFixedSmall->PrintShadow(g_playerTagInfo[iGTAID].tagPosition.fX + 1.0f, playerBaseY + 10.0f + offY,
 												D3DCOLOR_ARGB(0xFF, 0xF0, 0xF0, 0xF0), "AFK");
 			}
 		}
@@ -1989,10 +1985,6 @@ void renderScoreList ()
 	if ( cheat_state->_generic.cheat_panic_enabled && patched )
 	{
 		patched = !sampPatchDisableScoreboardToggleOn( 0 );
-		if ( KEY_DOWN(VK_TAB) )
-			g_Scoreboard->iIsEnabled = 1;
-		else
-			g_Scoreboard->iIsEnabled = 0;
 		return;
 	}
 	else if ( cheat_state->_generic.cheat_panic_enabled )
@@ -2003,11 +1995,13 @@ void renderScoreList ()
 		patched = 1;
 	}
 
+	if (g_Scoreboard->iIsEnabled)
+		toggleOffScoreboard();
+
 	if ( !KEY_DOWN(VK_TAB) )
 		return;
 
-	//// Close SAMP Scoreboard, SAMP Chat and Textdraws
-	g_Scoreboard->iIsEnabled = 0;
+	// disable SAMP chat
 	g_Chat->iChatWindowMode = 0;
 	//memcpy_safe( (void *)(g_dwSAMP_Addr + SAMP_GAMEPROCESSHOOK), "\xEB", 1 );
 
@@ -2115,13 +2109,6 @@ void renderScoreList ()
 		if ( rendered_players >= max_amount_players )
 			return;
 	}
-
-	// Hide the cursor
-	memcpy_safe((void *)0xB73424, "\x00\x00\x00\x00", 4);
-	memcpy_safe((void *)0xB73428, "\x00\x00\x00\x00", 4);
-	memcpy_safe((void *)0x53F41F, "\x85\xC0\x0F\x8C", 4);
-	memcpy_safe((void *)0x6194A0, "\xE9", 1);
-	SetCursor(NULL);
 }
 
 void renderKillList ( void )
@@ -3178,11 +3165,11 @@ void renderSAMP ( void )
 		if ( set.mod_commands_activated )
 			initChatCmds();
 
-		memcpy_safe((void *)(g_dwSAMP_Addr + SAMP_PATCH_NOCARCOLORRESETTING), "\xC3", 1);
 		memcpy_safe((void *)0x004B35A0, (uint8_t *)"\x83\xEC\x0C\x56\x8B\xF1", 6 ); // godmode patch
 		
 		// 0x: Set's the Frame Sleeping to 0 so you get more performance (sa:mp init is so far a good place ;d) .
-		*(BYTE*)0xBAB318 = 0;  *(BYTE*)0x53E94C = 0;
+		*(BYTE*)0xBAB318 = 0;
+		memset_safe((void *)0x53E94C, 0, 1);
 
 		g_renderSAMP_initSAMPstructs = 1;
 	}
@@ -3619,7 +3606,7 @@ void renderHandler()
 	traceLastFunc( "renderHandler()" );
 
 	// set FPS limit for vsync mode
-	memcpy_safe( (void *)0xC1704C, &set.fps_limit, sizeof(int) );
+	*(int*)0xC1704C = set.fps_limit;
 
 	// we should already be initialized, but what the hell why not
 	while ( !bD3DRenderInit )
