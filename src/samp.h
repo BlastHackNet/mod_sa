@@ -869,13 +869,40 @@ struct stChatPlayer
 	DWORD	dwUnknown;
 };
 
-struct stMiscInfo
+struct stGameInfo
 {
-	void	*pUnk0[3];
-	uint8_t	byteSpace1[73];
-	int		iCursorMode;
-	int		iSomething[5];
-	// ...
+	struct stCamera
+	{
+		class CMatrix_Padded* matrix;
+	};
+	void*		pUnk0;
+	stCamera*	pCamera;
+	stSAMPPed*	pLocalPlayerPed;
+	float		fCheckpointPos[3];
+	float		fCheckpointExtent[3];
+	int			bCheckpointsEnabled;
+
+	// not tested
+	DWORD		dwCheckpointMarker;
+	float		fRaceCheckpointPos[3];
+	float		fRaceCheckpointNext[3];
+	float		m_fRaceCheckpointSize;
+	uint8_t		byteRaceType;
+
+	int			bRaceCheckpointsEnabled;
+
+	// not tested
+	DWORD		dwRaceCheckpointMarker;
+	DWORD		dwRaceCheckpointHandle;
+
+	int			iCursorMode;
+	uint32_t	ulUnk1;
+	int			bClockEnabled;
+	uint32_t	ulUnk2;
+	uint32_t	ulUnk3;
+	int			bHeadMove;
+	uint8_t		byteUnk4;
+	uint8_t		byteVehicleModels[212];
 };
 
 struct stScoreboardInfo
