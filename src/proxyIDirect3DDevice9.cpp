@@ -2509,7 +2509,7 @@ void renderChat ( void )
 
 		// two different locations because of the way the patch is working
 		g_Input->pDXUTEditBox->dwPosChatInput[0] = chatInput_pos[0];
-		g_Chat->dwChatboxOffset = chatInput_pos[1];
+		g_Chat->m_lChatWindowBottom = chatInput_pos[1];
 	}
 	// Input field repositioning end
 

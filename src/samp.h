@@ -321,7 +321,7 @@ struct stPickupPool
 
 struct stPlayerPool
 {
-	uint32_t				ulUnk0;
+	uint32_t				ulMaxPlayerID;
 	uint16_t				sLocalPlayerID;
 	void					*pVTBL_txtHandler;
 	union
@@ -336,7 +336,7 @@ struct stPlayerPool
 	int						iLocalPlayerScore;
 	struct stRemotePlayer	*pRemotePlayer[SAMP_MAX_PLAYERS];
 	int						iIsListed[SAMP_MAX_PLAYERS];
-	uint32_t				ulUnk1[SAMP_MAX_PLAYERS];
+	DWORD						dwPlayerIP[SAMP_MAX_PLAYERS]; // always 0
 };
 
 struct stSAMPKeys
@@ -768,7 +768,7 @@ struct stFontRenderer
 	ID3DXFont	*m_pLittleShadowFont;
 	ID3DXFont	*m_pCarNumberFont;
 	ID3DXSprite *m_pTempSprite;
-	int			field_18;
+	IDirect3DDevice9		*m_pD3DDevice;
 	char		*m_pszTextBuffer;
 };
 
@@ -778,7 +778,7 @@ struct stChatInfo
 	char				*pLastMsgText;
 	int					iChatWindowMode;
 	uint8_t				bTimestamps;
-	uint32_t			ulUnk0;
+	uint32_t			m_iLogFileExist;
 	char				logFilePathChatLog[MAX_PATH + 1];
 	void				*pGameUI; // CDXUTDialog
 	void				*pEditBackground; // CDXUTEditBox
@@ -786,19 +786,23 @@ struct stChatInfo
 	D3DCOLOR			clTextColor;
 	D3DCOLOR			clInfoColor;
 	D3DCOLOR			clDebugColor;
-	DWORD				dwChatboxOffset;
+	DWORD				m_lChatWindowBottom;
 	struct stChatEntry	chatEntry[100];
 	stFontRenderer		*m_pFontRenderer;
 	ID3DXSprite			*m_pChatTextSprite;
 	ID3DXSprite			*m_pSprite;
 	IDirect3DDevice9	*m_pD3DDevice;
-	uint32_t			ulUnk1[2];
+	int				m_iRenderMode; // 0 - Direct Mode (slow), 1 - Normal mode
+	ID3DXRenderToSurface	*pID3DXRenderToSurface;
 	IDirect3DTexture9	*m_pTexture;
-	uint32_t			ulUnk2[7];
+	IDirect3DSurface9	*pSurface;
+	D3DDISPLAYMODE		*pD3DDisplayMode;
+	int					iUnk1[3];
+	int					iUnk2; // smth related to drawing in direct mode
 	int					m_iRedraw;
 	int					m_nPrevScrollBarPosition;
-	int					m_iDistanceAfterTimestamp;
-	uint32_t			ulUnk3;
+	int					m_iFontSizeY;
+	int					m_iTimestampWidth;
 };
 
 struct stInputBox
