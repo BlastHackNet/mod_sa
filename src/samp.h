@@ -180,11 +180,12 @@ struct stSAMPPools
 
 struct stSAMP
 {
-	void					*pUnk0[2];
+	void					*pUnk0;
+	struct stServerInfo			*pServerInfo;
 	uint8_t					byteSpace[24];
 	char					szIP[257];
 	char					szHostname[259];
-	uint8_t					byteUnk1;
+	bool					bNametagStatus; // changes by /nametagstatus
 	uint32_t				ulPort;
 	uint32_t				ulMapIcons[100];
 	int						iLanMode;
@@ -193,6 +194,14 @@ struct stSAMP
 	struct stServerPresets	*pSettings;
 	void					*pRakClientInterface;
 	struct stSAMPPools		*pPools;
+};
+
+struct stServerInfo{
+	uint32_t 			uiIP;
+	uint16_t 			usPort;
+
+	// ...
+
 };
 
 struct stServerPresets
