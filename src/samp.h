@@ -852,14 +852,18 @@ struct stKillInfo
 {
 	int					iEnabled;
 	struct stKillEntry	killEntry[5];
-	int					iXOffset[2];
-	int					iYSpacing;
-	// not tested
-	ID3DXFont		    *pD3DFont;
-	ID3DXFont			*pWeaponFont;
-	ID3DXSprite			*pSprite;
+	int 			iLongestNickLength;
+  	int 			iOffsetX;
+  	int 			iOffsetY;
+	
+	ID3DXFont		*pD3DFont;
+	ID3DXFont		*pWeaponFont1;
+	ID3DXFont		*pWeaponFont2;
+	ID3DXSprite		*pSprite;
 	IDirect3DDevice9	*pD3DDevice;
-	// ...
+	int 			iAuxFontInited;
+  	ID3DXFont 		*pAuxFont1;
+  	ID3DXFont 		*pAuxFont2;
 };
 
 struct stChatPlayer
