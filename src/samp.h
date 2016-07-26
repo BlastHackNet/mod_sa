@@ -886,13 +886,18 @@ struct stChatPlayer
 	DWORD	dwUnknown;
 };
 
+struct stAudio{
+	int	iSoundState; // 0 - Finished, 1 - Loaded, 2 - Playing
+}
+
 struct stGameInfo
 {
 	struct stCamera
 	{
 		class CMatrix_Padded* matrix;
 	};
-	void*		pUnk0;
+
+	stAudio*	pAudio;
 	stCamera*	pCamera;
 	stSAMPPed*	pLocalPlayerPed;
 	float		fCheckpointPos[3];
