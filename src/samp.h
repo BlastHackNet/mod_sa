@@ -916,8 +916,8 @@ struct stGameInfo
 	uint32_t	ulUnk1;
 	int			bClockEnabled;
 	uint32_t	ulUnk2;
-	uint32_t	ulUnk3;
 	int			bHeadMove;
+	uint32_t	ulUnk3;
 	uint8_t		byteUnk4;
 	uint8_t		byteVehicleModels[212];
 };
