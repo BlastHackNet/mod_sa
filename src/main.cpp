@@ -47,6 +47,9 @@ CPedSAInterface			*pPedSelfSA = NULL;
 // to store information about the Windows OS
 t_WindowsInfo			WindowsInfo;
 
+// Orig exception filter
+LPTOP_LEVEL_EXCEPTION_FILTER OrigExceptionFilter;
+
 void traceLastFunc ( const char *szFunc )
 {
 	_snprintf_s( g_szLastFunc, sizeof(g_szLastFunc)-1, szFunc );
@@ -444,6 +447,9 @@ LONG WINAPI unhandledExceptionFilter ( struct _EXCEPTION_POINTERS *ExceptionInfo
 
 	Log( " ---------------------------------------------------------------------" );
 
+	if (OrigExceptionFilter)
+		return OrigExceptionFilter(ExceptionInfo);
+
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
@@ -470,7 +476,7 @@ BOOL APIENTRY DllMain ( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpRese
 		// windows aero fix for windows 7 and vista
 		EnableWindowsAero();
 		g_hDllModule = hModule;
-		SetUnhandledExceptionFilter( unhandledExceptionFilter );
+		OrigExceptionFilter = SetUnhandledExceptionFilter( unhandledExceptionFilter );
 		break;
 
 	case DLL_PROCESS_DETACH:
