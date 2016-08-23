@@ -951,12 +951,18 @@ void sampPatchDisableAnticheat(void)
 	{
 		"kyenub patch", 0, 0,
 		{
-			{ 1, (void *) (g_dwSAMP_Addr + 0x99250), NULL, (uint8_t *)"\xC3", 0 },
-			{ 8, (void *) (g_dwSAMP_Addr + 0xB2F70), NULL, (uint8_t *)"\xB8\x45\x00\x00\x00\xC2\x1C\x00", 0 },
+			{ 1, (void *)(g_dwSAMP_Addr + 0x99250), NULL, (uint8_t *)"\xC3", 0 },
+			{ 8, (void *)(g_dwSAMP_Addr + 0x286923), NULL, (uint8_t *)"\xB8\x45\x00\x00\x00\xC2\x1C\x00", 0 },
+			{ 8, (void *)(g_dwSAMP_Addr + 0x298116), NULL, (uint8_t *)"\xB8\x45\x00\x00\x00\xC2\x1C\x00", 0 },
 			// { 6, (void *) (g_dwSAMP_Addr + 0xB30F0), NULL, (uint8_t *)"\xB8\x01\x00\x00\x00\xC3", 0 }
 		}
 	};
 	patcher_install(&fuckAC);
+
+	static uint32_t anticheat = 1;
+	byte acpatch[] = { 0xFF, 0x05, 0x00, 0x00, 0x00, 0x00, 0xA1, 0x00, 0x00, 0x00, 0x00, 0xC3 };
+	*(uint32_t**)&acpatch[2] = *(uint32_t**)&acpatch[7] = &anticheat;
+	memcpy_safe((void *)(g_dwSAMP_Addr + 0x2B9EE4), acpatch, 12);
 }
 
 uint16_t	anticarjacked_vehid;
