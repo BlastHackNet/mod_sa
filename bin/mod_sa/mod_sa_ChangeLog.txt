@@ -6,7 +6,7 @@ http://blasthack.net
 Version 4.4.1.2
 * Fixed SA-MP anticheat patch
 
-Version 4.4.1.10
+Version 4.4.1.1
 * Fixed SA-MP incoming packet hook
 
 Version 4.4.1.0
