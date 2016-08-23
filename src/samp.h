@@ -888,7 +888,7 @@ struct stChatPlayer
 
 struct stAudio{
 	int	iSoundState; // 0 - Finished, 1 - Loaded, 2 - Playing
-}
+};
 
 struct stGameInfo
 {
