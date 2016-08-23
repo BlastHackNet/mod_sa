@@ -3,6 +3,12 @@ by notaplane, jflm, nuckfuts, FYP and the game modification community
 https://github.com/BlastHackNet/mod_s0beit_sa/
 http://blasthack.net
 
+Version 4.4.1.2
+* Fixed SA-MP anticheat patch
+
+Version 4.4.1.10
+* Fixed SA-MP incoming packet hook
+
 Version 4.4.1.0
 * Common optimization
 * Prevented 5 detection ways:
