@@ -333,13 +333,7 @@ struct stPlayerPool
 	uint32_t				ulMaxPlayerID;
 	uint16_t				sLocalPlayerID;
 	void					*pVTBL_txtHandler;
-	union
-	{
-		char	szLocalPlayerName[16];
-		char	*pszLocalPlayerName;
-	};
-	int						iLocalPlayerNameLen;
-	int						iLocalPlayerNameAllocated;
+	std::string				strLocalPlayerName;
 	struct stLocalPlayer	*pLocalPlayer;
 	int						iLocalPlayerPing;
 	int						iLocalPlayerScore;
@@ -635,13 +629,7 @@ struct stRemotePlayer
 	stRemotePlayerData	*pPlayerData;
 	int					iIsNPC;
 	void				*pVTBL_txtHandler;
-	union
-	{
-		char			szPlayerName[16];
-		char			*pszPlayerName;
-	};
-	int					iNameLen;
-	int					iNameAllocated;
+	std::string			strPlayerName;
 	int					iScore;
 	int					iPing;
 };

@@ -400,19 +400,12 @@ const char *getPlayerName(int iPlayerID)
 		return NULL;
 
 	if (iPlayerID == g_Players->sLocalPlayerID)
-	{
-		if (g_Players->iLocalPlayerNameAllocated <= 0xF)
-			return g_Players->szLocalPlayerName;
-		return g_Players->pszLocalPlayerName;
-	}
+		return g_Players->strLocalPlayerName.c_str();
 
 	if (g_Players->pRemotePlayer[iPlayerID] == NULL)
 		return NULL;
 
-	if (g_Players->pRemotePlayer[iPlayerID]->iNameAllocated <= 0xF)
-		return g_Players->pRemotePlayer[iPlayerID]->szPlayerName;
-
-	return g_Players->pRemotePlayer[iPlayerID]->pszPlayerName;
+	return g_Players->pRemotePlayer[iPlayerID]->strPlayerName.c_str();
 }
 
 int getPlayerState(int iPlayerID)
