@@ -227,6 +227,27 @@ struct stServerPresets
 	uint8_t byteShowNameTags;
 };
 
+struct stDialogInfo
+{
+	IDirect3DDevice9	*m_pD3DDevice;
+	int	iTextPoxX;
+	int	iTextPoxY;
+	uint32_t	uiDialogSizeX;
+	uint32_t	uiDialogSizeY;
+	int	iBtnOffsetX;
+	int	iBtnOffsetY;
+	class _CDXUTDialog						*pDialog;
+	class _CDXUTIMEListBox						*pList;
+	class _CDXUTEditBox						*pEditBox;
+	int	iIsActive;
+	int	iType;
+	uint32_t	DialogID;
+	char		*pText;
+	uint32_t	uiTextWidth;
+	uint32_t	uiTextHeight;
+	char		szCaption[65];
+	int		bServerside;
+
 struct stTextDrawTransmit
 {
 	union
