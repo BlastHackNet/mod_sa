@@ -237,8 +237,8 @@ struct stDialogInfo
 	int	iBtnOffsetX;
 	int	iBtnOffsetY;
 	class _CDXUTDialog						*pDialog;
-	class _CDXUTIMEListBox						*pList;
-	class _CDXUTEditBox						*pEditBox;
+	class _CDXUTListBox						*pList;
+	class _CDXUTIMEEditBox						*pEditBox;
 	int	iIsActive;
 	int	iType;
 	uint32_t	DialogID;
