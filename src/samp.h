@@ -247,6 +247,7 @@ struct stDialogInfo
 	uint32_t	uiTextHeight;
 	char		szCaption[65];
 	int		bServerside;
+};
 
 struct stTextDrawTransmit
 {
