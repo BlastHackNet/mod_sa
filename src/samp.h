@@ -207,25 +207,30 @@ struct stServerInfo{
 struct stServerPresets
 {
 	uint8_t byteCJWalk;
-	uint8_t byteUnk0[4];
+	int m_iDeathDropMoney;
 	float	fWorldBoundaries[4];
-	uint8_t byteUnk1;
+	bool m_bAllowWeapons;
 	float	fGravity;
 	uint8_t byteDisableInteriorEnterExits;
 	uint32_t ulVehicleFriendlyFire;
-	uint8_t byteUnk2[4];
+	bool m_byteHoldTime;
+  	bool m_bInstagib;
+  	bool m_bZoneNames;
+  	bool m_byteFriendlyFire;
 	int		iClassesAvailable;
 	float	fNameTagsDistance;
-	uint8_t byteUnk3;
+	 bool m_bManualVehicleEngineAndLight;
 	uint8_t byteWorldTime_Hour;
 	uint8_t byteWorldTime_Minute;
 	uint8_t byteWeather;
 	uint8_t byteNoNametagsBehindWalls;
-	uint8_t bytePlayerMarkersMode;
-	uint8_t byteUnk4[3];
+	int iPlayerMarkersMode;
 	float	fGlobalChatRadiusLimit;
 	uint8_t byteShowNameTags;
+ 	bool m_bLimitGlobalChatRadius;
 };
+
+
 
 struct stDialogInfo
 {
