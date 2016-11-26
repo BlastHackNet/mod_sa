@@ -909,6 +909,7 @@ struct stGameInfo
 {
 	struct stCamera
 	{
+		void*	pEntity; // attached entity
 		class CMatrix_Padded* matrix;
 	};
 
