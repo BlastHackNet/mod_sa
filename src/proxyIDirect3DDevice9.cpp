@@ -3182,8 +3182,8 @@ void renderSAMP ( void )
 			g_SAMP->pSettings->byteShowNameTags = 1;
 		if ( g_SAMP->pSettings->byteNoNametagsBehindWalls && set.disable_line_of_sight )
 			g_SAMP->pSettings->byteNoNametagsBehindWalls = 0;
-		if ( !g_SAMP->pSettings->bytePlayerMarkersMode && set.markers_show )
-			g_SAMP->pSettings->bytePlayerMarkersMode = PLAYER_MARKERS_MODE_GLOBAL;
+		if ( !g_SAMP->pSettings->iPlayerMarkersMode && set.markers_show )
+			g_SAMP->pSettings->iPlayerMarkersMode = PLAYER_MARKERS_MODE_GLOBAL;
 
 		g_SAMP->pSettings->fNameTagsDistance = set.line_of_sight_dist;
 		if ( cheat_state->_generic.pickuptexts )
