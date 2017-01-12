@@ -4058,7 +4058,8 @@ HRESULT proxyIDirect3DDevice9::Reset ( D3DPRESENT_PARAMETERS *pPresentationParam
 		}
 
 		// init our window mode
-		proxyID3DDevice9_InitWindowMode( pPresentationParameters );
+		if (set.window_mode)
+			proxyID3DDevice9_InitWindowMode( pPresentationParameters );
 
 		// update the global Present Param struct AFTER original reset, only if it's ok
 		pPresentParam = *pPresentationParameters;
