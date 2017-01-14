@@ -153,8 +153,9 @@ HRESULT __stdcall proxyIDirect3D9::CreateDevice ( UINT Adapter, D3DDEVTYPE Devic
 	HRESULT hRes;
 
 	ulFullScreenRefreshRate = pPresentationParameters->FullScreen_RefreshRateInHz;
+	set.window_mode_sided = *(byte*)0x746225 == 0x90;
 
-	if ( set.window_mode )
+	if ( set.window_mode && !set.window_mode_sided)
 	{
 		int x, y;
 		x = GetSystemMetrics( SM_CXSCREEN );
