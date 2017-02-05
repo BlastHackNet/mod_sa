@@ -3383,7 +3383,7 @@ void proxyID3DDevice9_InitWindowMode ( D3DPRESENT_PARAMETERS *pPresentationParam
 {
 	traceLastFunc( "proxyID3DDevice9_InitWindowMode()" );
 
-	if (set.window_mode_sided) {
+	if (*(byte*)0x746225 == 0x90) {
 		g_isRequestingWindowModeToggle = false;
 		g_isRequesting_RwD3D9ChangeVideoMode = false;
 		return;

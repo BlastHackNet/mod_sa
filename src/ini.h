@@ -304,7 +304,6 @@ struct settings
 	// ignored because of the function being removed
 	int						window_mode;
 	int						window_mode_titlebar;
-	int						window_mode_sided;
 
 	int						flickering_problem;
 
