@@ -3383,6 +3383,12 @@ void proxyID3DDevice9_InitWindowMode ( D3DPRESENT_PARAMETERS *pPresentationParam
 {
 	traceLastFunc( "proxyID3DDevice9_InitWindowMode()" );
 
+	if (*(byte*)0x746225 == 0x90) {
+		g_isRequestingWindowModeToggle = false;
+		g_isRequesting_RwD3D9ChangeVideoMode = false;
+		return;
+	}
+
 	// window mode toggle, flips set.window_mode bit
 	if ( g_isRequestingWindowModeToggle )
 	{
@@ -4058,8 +4064,7 @@ HRESULT proxyIDirect3DDevice9::Reset ( D3DPRESENT_PARAMETERS *pPresentationParam
 		}
 
 		// init our window mode
-		if (set.window_mode)
-			proxyID3DDevice9_InitWindowMode( pPresentationParameters );
+		proxyID3DDevice9_InitWindowMode( pPresentationParameters );
 
 		// update the global Present Param struct AFTER original reset, only if it's ok
 		pPresentParam = *pPresentationParameters;
