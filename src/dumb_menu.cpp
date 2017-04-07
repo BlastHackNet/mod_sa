@@ -1254,6 +1254,11 @@ static int menu_callback_cheats ( int op, struct menu_item *item )
 		{
 		case ID_CHEAT_INVULN:
 			cheat_state->_generic.hp_cheat ^= 1;
+			if( !cheat_state->_generic.hp_cheat )
+			{
+				struct actor_info *self = actor_info_get( ACTOR_SELF, 0 );
+				self->flags &= ~ACTOR_FLAGS_INVULNERABLE;
+			}
 			break;
 
 		case ID_CHEAT_MONEY:
