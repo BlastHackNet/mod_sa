@@ -96,6 +96,8 @@ extern int				iClickWarpEnabled;
 // Function taken from the MTA:SA source code (MTA10/core/CGraphics.cpp)
 void CalcScreenCoors ( D3DXVECTOR3 *vecWorld, D3DXVECTOR3 *vecScreen )
 {
+	traceLastFunc( "CalcScreenCoors()" );
+
 	/** C++-ifyed function 0x71DA00, formerly called by CHudSA::CalcScreenCoors **/
 	// Get the static view matrix as D3DXMATRIX
 	D3DXMATRIX	m ( (float *)(0xB6FA2C) );
@@ -119,6 +121,8 @@ void CalcScreenCoors ( D3DXVECTOR3 *vecWorld, D3DXVECTOR3 *vecScreen )
 
 void CalcWorldCoors ( D3DXVECTOR3 *vecScreen, D3DXVECTOR3 *vecWorld )
 {
+	traceLastFunc( "CalcWorldCoors()" );
+
 	// Get the static view matrix as D3DXMATRIX
 	D3DXMATRIX	m ( (float *)(0xB6FA2C) );
 
@@ -144,6 +148,8 @@ void CalcWorldCoors ( D3DXVECTOR3 *vecScreen, D3DXVECTOR3 *vecWorld )
 
 static WCHAR *ToWChar ( char *str )
 {
+	traceLastFunc( "ToWChar()" );
+
 	static WCHAR	buffer[1024];
 	_wcsset( buffer, 0 );
 	MultiByteToWideChar( CP_ACP, 0, str, strlen(str), buffer, 1024 );
@@ -175,6 +181,8 @@ HRESULT GenerateShader ( IDirect3DDevice9 *Device, IDirect3DPixelShader9 **pShad
 
 void LoadSpriteTexture ( void )
 {
+	traceLastFunc( "LoadSpriteTexture()" );
+
 	char			filename[MAX_PATH];
 	D3DLOCKED_RECT	d3dlr;
 	FILE			*fd = NULL;
@@ -241,6 +249,8 @@ out: ;
 
 static void mmm_yummy_poop ( const void *info, int *enabled, int *prev_enabled, int *render, const char *teh_name )
 {
+	traceLastFunc( "mmm_yummy_poop()" );
+
 	if ( info == NULL )
 	{
 		*prev_enabled = -1;
@@ -278,6 +288,8 @@ static void mmm_yummy_poop ( const void *info, int *enabled, int *prev_enabled, 
 
 void RenderDebug ( void )
 {
+	traceLastFunc( "RenderDebug()" );
+
 	static const int	ROW_HEIGHT = (int)ceilf( pD3DFontDebugWnd->DrawHeight() );
 	static const int	CHAR_WIDTH = (int)ceilf( pD3DFontDebugWnd->DrawLength("W") );
 	static const int	ROWS = DEBUG_DATA_SIZE / 16;
@@ -424,6 +436,8 @@ void RenderDebug ( void )
 
 void RenderMenu ( void )
 {
+	traceLastFunc( "RenderMenu()" );
+
 	static const int	ROW_HEIGHT = (int)ceilf( pD3DFont->DrawHeight() );
 	static const int	MENU_HEIGHT = (int)ceilf( pD3DFont->DrawHeight() * (float)MENU_ROWS ) + 2;
 
@@ -542,6 +556,8 @@ void RenderMenu ( void )
 
 void RenderMapDot ( const float self_pos[3], const float pos[16], DWORD color, const char *name )
 {
+	traceLastFunc( "RenderMapDot()" );
+
 	static int	init;
 	float		vect[3], rvect[2];
 	float		a, x, y;
@@ -738,6 +754,8 @@ void RenderMap ( void )
 
 void RenderPedHPBar ( void )
 {
+	traceLastFunc( "RenderPedHPBar()" );
+
 	if ( !set.left_bottom_bars_enable )
 		return;
 
@@ -771,6 +789,8 @@ void RenderPedHPBar ( void )
 
 void RenderVehicleHPBar ( void )
 {
+	traceLastFunc( "RenderVehicleHPBar()" );
+
 	if ( !set.left_bottom_bars_enable )
 		return;
 
@@ -1583,6 +1603,8 @@ void renderVehicleTags ( void )
 
 void RenderTeleportTexts ( void )
 {
+	traceLastFunc( "RenderTeleportTexts()" );
+
 	int					i;
 	struct actor_info	*self = actor_info_get( ACTOR_SELF, 0 );
 	char				buf[32];
@@ -3222,6 +3244,8 @@ void renderSAMP ( void )
 
 void mapMenuTeleport ( void )
 {
+	traceLastFunc( "mapMenuTeleport()" );
+
 	if ( set.map_must_be_open && *(byte *)0xBA68A5 != 5 )
 		return;
 
@@ -3246,6 +3270,8 @@ void mapMenuTeleport ( void )
 
 void texturesInitResources ( IDirect3DDevice9 *pDevice, D3DPRESENT_PARAMETERS *pPresentationParameters )
 {
+	traceLastFunc( "texturesInitResources()" );
+
 	if ( set.speedometer_enable
 	 &&	 (
 			 fopen(set.speedometer_speedo_png_filename, "rb") == NULL
@@ -3285,6 +3311,8 @@ uint32_t	fps_time = GetTickCount();
 int			fpsFrameCounter;
 float getFPS ( void )
 {
+	traceLastFunc( "getFPS()" );
+
 	// increment frame counter
 	fpsFrameCounter++;
 
@@ -3892,6 +3920,8 @@ no_render: ;
 
 proxyIDirect3DDevice9::proxyIDirect3DDevice9 ( IDirect3DDevice9 *pOriginal )
 {
+	traceLastFunc( "proxyIDirect3DDevice9::proxyIDirect3DDevice9()" );
+
 	//Log("proxyIDirect3DDevice9 constructor called. Original IDirect3DDevice9 interface address is 0x%p", pOriginal);
 	origIDirect3DDevice9 = pOriginal;
 	bD3DRenderInit = false;
@@ -3904,6 +3934,8 @@ proxyIDirect3DDevice9::~proxyIDirect3DDevice9 ( void )
 
 HRESULT proxyIDirect3DDevice9::QueryInterface ( REFIID riid, void **ppvObj )
 {
+	traceLastFunc( "proxyIDirect3DDevice9::QueryInterface()" );
+
 	HRESULT hRes;
 
 	*ppvObj = NULL;
@@ -3921,6 +3953,8 @@ ULONG proxyIDirect3DDevice9::AddRef ( void )
 
 ULONG proxyIDirect3DDevice9::Release ( void )
 {
+	traceLastFunc( "proxyIDirect3DDevice9::Release()" );
+
 	ULONG	count = origIDirect3DDevice9->Release();
 
 	if ( count == 0 )
@@ -4475,6 +4509,8 @@ HRESULT proxyIDirect3DDevice9::DrawIndexedPrimitive ( D3DPRIMITIVETYPE Primitive
 													  UINT MinVertexIndex, UINT NumVertices, UINT startIndex,
 													  UINT primCount )
 {
+	traceLastFunc( "proxyIDirect3DDevice9::DrawIndexedPrimitive()" );
+
 	DWORD	dwRet_addr = ( DWORD ) _ReturnAddress();
 
 	// chams probably works better with texture instead of shaders

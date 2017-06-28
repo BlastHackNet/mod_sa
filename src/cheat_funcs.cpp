@@ -2920,7 +2920,7 @@ static int __page_write ( void *_dest, const void *_src, uint32_t len )
 	const uint8_t	*src = (const uint8_t *)_src;
 	DWORD			prot_prev = 0;
 	int				prot_changed = 0;
-	/*SIZE_T			write_len;*/
+	SIZE_T			write_len;
 	int				ret = 1;
 
 	while ( len > 0 )
@@ -2940,9 +2940,8 @@ static int __page_write ( void *_dest, const void *_src, uint32_t len )
 				prot_changed = 1;
 		}
 
-		/*if ( !WriteProcessMemory(GetCurrentProcess(), dest, (void *)src, this_len, &write_len) )
-			write_len = 0;*/
-		memcpy(dest, src, this_len);
+		if ( !WriteProcessMemory(GetCurrentProcess(), dest, (void *)src, this_len, &write_len) )
+			write_len = 0;
 
 		if ( prot_changed )
 		{
@@ -2951,8 +2950,8 @@ static int __page_write ( void *_dest, const void *_src, uint32_t len )
 				Log( "__page_write() could not restore original permissions for ptr %p", dest );
 		}
 
-		/*if ( (int)write_len != this_len )
-			ret = 0;*/
+		if ( (int)write_len != this_len )
+			ret = 0;
 
 		dest += this_len;
 		src += this_len;
@@ -2969,7 +2968,7 @@ static int __page_read ( void *_dest, const void *_src, uint32_t len )
 	uint8_t		*src = (uint8_t *)_src;
 	DWORD		prot_prev = 0;
 	int			prot_changed = 0;
-	/*SIZE_T		read_len;*/
+	SIZE_T		read_len;
 	int			ret = 1;
 
 	while ( len > 0 )
@@ -2989,9 +2988,8 @@ static int __page_read ( void *_dest, const void *_src, uint32_t len )
 				prot_changed = 1;
 		}
 
-		/*if ( !ReadProcessMemory(GetCurrentProcess(), src, dest, this_len, &read_len) )
-			read_len = 0;*/
-		memcpy(dest, src, this_len);
+		if ( !ReadProcessMemory(GetCurrentProcess(), src, dest, this_len, &read_len) )
+			read_len = 0;
 
 		if ( prot_changed )
 		{
@@ -3000,11 +2998,11 @@ static int __page_read ( void *_dest, const void *_src, uint32_t len )
 				Log( "__page_read() could not restore original permissions for ptr %p", src );
 		}
 
-		/*if ( (int)read_len != this_len )
+		if ( (int)read_len != this_len )
 		{
 			memset( dest + read_len, 0, this_len - read_len );
 			ret = 0;
-		}*/
+		}
 
 		dest += this_len;
 		src += this_len;
