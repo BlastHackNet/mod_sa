@@ -7,7 +7,7 @@
 !define NAME 'mod_sa'
 !define MP 'SA-MP'
 !define MP_VERSION 'v0.3.7 R1'
-!define VERSION 'v4.4.1.2'
+!define VERSION 'v4.4.1.3'
 
 ; create output directory if it doesn't exist
 !system 'mkdir "..\_distro_installers\"'
