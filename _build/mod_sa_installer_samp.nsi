@@ -118,7 +118,6 @@ Section "Install" SecDummy
 	File ..\bin\d3d9.dll
 	SetOutPath "$INSTDIR\mod_sa"
 	File ..\bin\mod_sa\mod_sa.raw
-	File ..\bin\mod_sa\mod_sa_ChangeLog.txt
 	File ..\bin\mod_sa\speedo.png
 	File ..\bin\mod_sa\needle.png
 
