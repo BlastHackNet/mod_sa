@@ -1,15 +1,17 @@
-mod_sa
-by notaplane, jflm, nuckfuts, FYP and the game modification community
-https://github.com/BlastHackNet/mod_s0beit_sa/
-http://blasthack.net
+# Changelog
 
-Version 4.4.1.2
+## Version 4.4.1.3
+* Fixed player invulnerability activation via menu
+* Fixed debug mode feature crash
+* Window mode compatibility with other mods
+
+## Version 4.4.1.2
 * Fixed SA-MP anticheat patch
 
-Version 4.4.1.1
+## Version 4.4.1.1
 * Fixed SA-MP incoming packet hook
 
-Version 4.4.1.0
+## Version 4.4.1.0
 * Common optimization
 * Prevented 5 detection ways:
  - Added custom ClientCheck handler to prevent invulnerability detection
@@ -27,18 +29,18 @@ Version 4.4.1.0
 * Fixed 3D-map sigle player crash
 * Fixed player tags position calculation
 
-Version 4.4.0.3
+## Version 4.4.0.3
 * Added VS2013 and VS2015 compatibility
 
-Version 4.4.0.2
+## Version 4.4.0.2
 * Fixed PrintShadow function
 * Updated SA-MP structures: stBulletData, stRemotePlayerData, stChatInfo
 
-Version 4.4.0.1
+## Version 4.4.0.1
 * Improved aimbot
 * Fixed stServerPresets and stRemotePlayerData structs
 
-Version 4.4.0.0
+## Version 4.4.0.0
 * Fully updated to 0.3.7
 * New function FastWarp
 * New function FreezeRot
@@ -51,122 +53,122 @@ Version 4.4.0.0
 * A lot of fixes
 * Map teleport settings
 
-Version 4.3.3.3
+## Version 4.3.3.3
 * Updated on 0.3z R1
 * mod's chat now more colorful
 * Fixed crash when exiting the game
 
-Version 4.3.3.2
+## Version 4.3.3.2
 * Fixed issues with the FPS (caused by the Window Mode).
 * Fixed issues with the Camera looking upwards if you're freezed.
 * Removed "Disable Loading Screen Patch" (it's actually useless.)
 * Added Anticrash & Godmode Patch
 
-Version 4.3.3.1
+## Version 4.3.3.1
 * Fixed SA-MP Patch "NOP SetEngineState", thanks to povargek for this.
 * Fixed issue with connecting to servers from mod_sa's favorite server list.
 * Added more anticheat-patches.
 
-Version 4.3.3.0
-* Fixed SA-MP Patch "Disable unoccupied data", and added new: 
+## Version 4.3.3.0
+* Fixed SA-MP Patch "Disable unoccupied data", and added new:
 NOP SetPlayerSkin, NOP SetPlayerSkillLevel, NOP StopAudioStream, NOP EditObject
 * Added RakClient hook and receiving RPC hook
 * New feature - "Extra invincibility", if Invincibility is set on, server can't drop your HP. You can enable/disable it in "SA:MP Misc. -> Extra godmode" or in mod_sa.ini
 * Fixed problem with sticking keys after losing focus
 
-Version 4.3.2.2
+## Version 4.3.2.2
 * Updated all SA-MP Patches and added new:
 SetPlayerTime, TogglePlayerSpectating, PlayerSpectatePlayer, PlayerSpectateVehicle, SetPlayerFightingStyle
 
-Version 4.3.2.1
+## Version 4.3.2.1
 * Updated some SA-MP Patches
 * Fixed some bugs and problems
 * s0beit's directory moved to <GTA Folder>\mod_sa
 * Windows XP support
 * Windowed mode disabled by default
 
-Version 4.3.2.0
+## Version 4.3.2.0
 * Full support for SA-MP 0.3x (updated by FYP)
 * Improved fakekill function
 * Added 2 special actions:
 Special action cuffed, Special action carry
 
-Version 4.3.1.4
+## Version 4.3.1.4
 * Full support for SA-MP 0.3e (updated by FYP)
 * Added samp-patches (by FYP):
-NOP SetVehicleZAngle, NOP SetVehicleInterior, NOP PlayAudioStream, NOP RemoveBuilding, 
+NOP SetVehicleZAngle, NOP SetVehicleInterior, NOP PlayAudioStream, NOP RemoveBuilding,
 NOP InterpolateCamera, NOP InitGame, NOP SetMapIcon, NOP DisableMapIcon, NOP SetPlayerName,
-NOP RespawnVehicle, NOP SendDeath, NOP SpawnPlayer, Debug mode, Disable spec data, 
+NOP RespawnVehicle, NOP SendDeath, NOP SpawnPlayer, Debug mode, Disable spec data,
 Disable help dialog, Disable vehicle info (/dl) distance limit, Disable weapon data,
 Disable remote driver data, Disable vehicle surfing
 
-Version 4.3.1.2
+## Version 4.3.1.2
 * Really smooth player flying in samp.
 
-Version 4.3.1.1
+## Version 4.3.1.1
 * Support for SA-MP 0.3d
 
-Version 4.3.1.0
+## Version 4.3.1.0
 * Final version for SA-MP 0.3c R3
 * jflm did some stuff. (you gotta add stuff here bro -nf)
 
-Version 4.3.0.1
+## Version 4.3.0.1
 * Many bugs fixed.
 * Slightly unsmooth but awesome enough to use new beta camera for Player Fly
 
-Version 4.3.0.0
+## Version 4.3.0.0
 * Added new menu AntTweakBar (http://www.antisphere.com/Wiki/tools:anttweakbar).
 
-Version 4.2.4.1
+## Version 4.2.4.1
 * Added Player Fly fast turning animations.
 * Support for SA-MP 0.3c R3
 
-Version 4.2.4.0
+## Version 4.2.4.0
 * Added RakNet voice support for SA-MP.
 
-Version 4.2.3.2
+## Version 4.2.3.2
 * Added Player Fly deceleration animation.
 
-Version 4.2.3.1
+## Version 4.2.3.1
 * Added mute-player function to anti-spam.
 * Added Player Fly acceleration/deceleration multipliers to INI.
 * Disabled loading screen, thanks to MTA.
 * Fixed Player Fly animation bugs.
 
-Version 4.2.3.0
+## Version 4.2.3.0
 * Added speed setting for Player Fly to the INI and Cheats menu.
 * Added default keys for Stick - NumPad 4 7 8 9
 * Added default key for disable wall collisions - NumPad 6
 
-Version 4.2.2.1
+## Version 4.2.2.1
 * Added ClickWarp.  Default: Middle Mouse & Left Mouse
 * Improved Fly Player.
 * Fixed Fast Exit.
 
-Version 4.2.2.0
+## Version 4.2.2.0
 * Added text label rendering.
 * Added left/right/up strafing to Fly Player.
 * Improved Fly Player.
 * Improved vehicle HP cheat.
 * Improved actor HP cheat (parachute death fixed).
 
-Version 4.2.1.2
+## Version 4.2.1.2
 * Fixed single player crash.
 * Fixed keys setting/sticking during menu & alt-tab.
 * Removed custom screenshots.
 
-Version 4.2.1.1
+## Version 4.2.1.1
 * Improved Fly Player.
 
-Version 4.2.1.0
+## Version 4.2.1.0
 * Added Fly Player, Default: .
 * Removed Sacky's scripting hook.
 
-Version 4.2.0.0
+## Version 4.2.0.0
 * Support for SA-MP 0.3c.
 * Project renamed to mod_sa.
 
-Version 4.1.0.0
+## Version 4.1.0.0
 * Support for SA-MP 0.3a.
 * This is the only official version of m0d_s0beit_sa for SA-MP 0.3a.
 * Fixed so many things that it's retarded to list them here.
@@ -182,41 +184,41 @@ Version 4.1.0.0
 * Added option in menu (GTA->Misc) to toggle windowed mode.
 * Added Nitro/Brake & 180 degree quick turn ability to trains.
 
-Version 4.0.5.0
+## Version 4.0.5.0
 * Final version for SA:MP v0.2.XU1_2 & U:MP vT3
 * Added our new "AirRide ESP" to m0d's player ESP which prevents ESP collisions
   so you can always see everyone's name easily.  No more jumble-fudge of names.
 * Added "esp_players_airride" to the INI, to turn that on or off.
 * Added "screenshot_clean" to the INI, takes screenshots without m0d's GUI/ESP.
 
-Version 4.0.4.1
+## Version 4.0.4.1
 * Fixed failures on custom screenshot.
 
-Version 4.0.4.0
+## Version 4.0.4.0
 * Added "Teleports -> Teleport to interior" and removed "SA:MP Misc -> Change interior".
 * Lag-free screenshots (screenshot_enable, key_screenshot, jpg_quality, jpg_chrominancetable, jpg_luminancetable).
 * Changed the font size and ESP stuff.
 * Added option to enable/disable clouds.
 
-Version 4.0.3.2
+## Version 4.0.3.2
 * Added mouse_4 and mouse_5 keybinds.
 
-Version 4.0.3.1
+## Version 4.0.3.1
 * Fixed spectator mode bug.
 
-Version 4.0.3.0
+## Version 4.0.3.0
 * Removed the hook version.
 * Fixes to the windowed mode.
 * Support for GTA:U-MP.
 * Added option "Weapons -> Randomize the ammo values".
 
-Version 4.0.2.0
+## Version 4.0.2.0
 * Added ingame vehicle handling (Cheats -> Change vehicle handling).
 * Added key_respawn.
 * Added SA:MP Misc -> Change interior.
 * Randomize ammo values for each weapon.
 
-Version 4.0.1.0
+## Version 4.0.1.0
 * Readded custom sendrates and init screen.
 * Added car jacking prevention (should put you back to the vehicle you were in) (anti_carjacking).
 * Added toggleable GUI from the menu (Misc -> Toggle HUD indicators).
@@ -235,20 +237,20 @@ Version 4.0.1.0
 * Fixed default SA:MP player tags and it now uses default settings.
 * Fixed engine toggleing, it now works with Inv enabled.
 
-Version 4.0.0.3
+## Version 4.0.0.3
 * INI: spec_data, read the note above.
 * INI: use_gta_autoaim.
 
-Version 4.0.0.2
+## Version 4.0.0.2
 * Fix for menu and loading screen flickering on some video cards (flickering_problem).
 * Readded the custom autoaim.
 * Improved ESP layout.
 
-Version 4.0.0.1
+## Version 4.0.0.1
 * Added default ESP states for INI (esp_vehicles_defaulton, esp_players_defaulton).
 * Fixes to Jumper vehicle teleporting.
 
-Version 4.0.0.0
+## Version 4.0.0.0
 * Added a hook version with injector.
 * Fixes to the spectator mode.
 * Custom player and vehicle tags (key_render_player_tags, key_render_vehicle_tags).
@@ -258,36 +260,34 @@ Version 4.0.0.0
 * GUI settings format (gui[]).
 * m0d_s0beit_sa_all.log contains logs of all sessions and m0d_s0beit_sa.log contains logs of the last session.
 
-
-
-Version 3.9.1.3
+## Version 3.9.1.3
 * Added "Jumper" unified to-vehicle teleporting.
 * Added nearest vehicle jumping (key_vehicle_jumper / key_vehicle_occupied_jumper).
 * Fixed Breakdance as airplane passenger crash.
 * Fixed possible crash in "Warp instantly to vehicle" menu.
 * Removed the samp hooks.
 
-Version 3.9.1.2
+## Version 3.9.1.2
 * fixed Breakdance directions, again
 * updated "SA:MP v0.2.X.U1_1 Original" link location
 
-Version 3.9.1.1
+## Version 3.9.1.1
 * Fixed sneaker list bug.
 * logo_intro_enable and logo_enable.
 * Onfoot HP regeneration (hp_regen_onfoot).
 
-Version 3.9.1.0
+## Version 3.9.1.0
 * Support for SA:MP 0.2.X.1
 
-Version 3.9.0.2:
+## Version 3.9.0.2
 * fixed Breakdance directions
 
-Version 3.9.0.1:
+## Version 3.9.0.1
 * Readded the old speedometer (speedometer_old_enable).
 * hud_bar_color.
 
-Version 3.9.0.0:
-New stuff:
+## Version 3.9.0.0
+### Added
 * Few custom GUI settings (hud_draw_bar, ...).
 * basic_mode setting, used to initialize with no SA-MP cheats.
 * In-game "favorite" server list, used to connect to servers from the in-game menu.
@@ -308,7 +308,7 @@ New stuff:
 * freeze_hp_values setting.
 * RPC scripting function hooking.
 
-Changed stuff:
+### Changed
 * Output error messages to the chatbox if the cheat is SA-MP related.
 * GTA/SA-MP changes in the menu. Patches have been splitted (sampPatch[]).
 * Turn the HUD bar to red when there are players spectating.
@@ -318,39 +318,33 @@ Changed stuff:
 * nametags_dist has been renamed to line_of_sight_dist.
 * Removed blur_remove and intro_remove.
 
-Fixes:
+### Fixed
 * Crash when sticking then teleporting directly to a vehicle.
 * Automatically go back to the original position when turning off spectator mode.
 * Invulnerability and HP regen issues.
 
-
-
-Version 3.82:
+## Version 3.82
 * Removed custom netcode rate functions.
 * Optimized for speed, now with SSE2.
 
-
-Version 3.81:
+## Version 3.81
 * Fix body panels on repair key.
 * Changes to the HUD.
 * Removed the old keyhook code.
 
-
-Version 3.8:
+## Version 3.8
 * Full support for SA:MP 0.2.X
 * Patches:
   "SA-MP 0.2.X: Remote client crash"
   "SA-MP 0.2.X: Remote client crash...fix"
 * Added new file patch: surface mod by Kosty@n, disabled by default.
 
-
-Version 3.72:
+## Version 3.72
 * Custom chat "scrolling".
 * Updated the TroyRulz007 logo and added the MTAVCSUX.net logo (both made by Nuckfuts).
 * Minor changes.
 
-
-Version 3.71:
+## Version 3.71
 * Handle vehicle spectating.
 * Added more debug info in the exception filter.
 * Settings: nametags_show, nametags_dist, nametags_see_through_walls, markers_show.
@@ -361,8 +355,7 @@ Version 3.71:
 * Car repair kit (key_repair_car, disabled by default)
 * Patch: "SA-MP 0.2.2R3: Prevent Carjacking"
 
-
-Version 3.7:
+## Version 3.7
 * Players menu reorganized:
   "Players -> Warp to player"
   "Players -> Warp instantly to player's vehicle" (new)
@@ -379,8 +372,7 @@ Version 3.7:
 * Custom GUI has been removed. It caused some crashes.
 * Fixed possible crash in the mini-map.
 
-
-Version 3.6:
+## Version 3.6
 * Player list warp from the menu.
 * Cheats -> Fake kill.
 * Custom rendering: chatbox, and killwindow.
@@ -408,8 +400,7 @@ Version 3.6:
   "SA-MP 0.2.2R3: NOP In car worldbounds"
 * Added custom data files (Transfender Overhaul V2 by Offroader23).
 
-
-Version 3.57d:
+## Version 3.57d
 * Category "Show only occupied vehicles" in Cheats -> Vehicles.
 * Readded the debug window in Miscellaneous.
 * Readded the map.
@@ -420,8 +411,7 @@ Version 3.57d:
   "GTA: Autoaim"
   "SA-MP: Save snapshots as JPG"
 
-
-Version 3.57c:
+## Version 3.57c
 * Right click teleport from gtasa's map menu; patch "No map warp processing".
 * Patches:
   "SA-MP: Custom carmods.dat (data/carmods.two)"
@@ -435,8 +425,7 @@ Version 3.57c:
 * Readded some options that used to be in Miscellaneous.
 * Readded a stable SCM hook and "key_anti_freeze".
 
-
-Version 3.57b:
+## Version 3.57b
 * Spoof weapon readded.
 * Custom ammo, ammo in clip, and money value settings (ammo, ammo_clip, money_value).
 * Hardware or software vertex rendering ini setting.
@@ -448,8 +437,7 @@ Version 3.57b:
   "SA-MP: NOP TogglePlayerControllable"
 * Allow car spawning if the vehicle is occupied.
 
-
-Version 3.57a:
+## Version 3.57a
 * Some more patches:
   "Auto-rejoin on kick"
   "Custom data files (handling, timecyc)" by nuckfuts.
@@ -457,102 +445,93 @@ Version 3.57a:
   "Disable anti-pause"
   "Enable speed blur"
 
-Version 3.57:
+## Version 3.57
 * The sa-mp DLL can now be edited/accessed from s0beit's patcher.
 * Some sa-mp patches added.
 
-
-Version 3.56:
+## Version 3.56
 * Speedometer (not)
 * Auto-aim readded
 * Patch "Scale down the HUD"
-* Added a cracked samp DLL (NorpcsArjoin). This cracked client will giveafuck about almost every 
+* Added a cracked samp DLL (NorpcsArjoin). This cracked client will giveafuck about almost every
   server scripting functions (no RPC server-side scripting registry), and auto-rejoin on kick.
 * SCM hook and key_antifreeze removed. Use the cracked samp.
 
-
-Version 3.55b:
+## Version 3.55b
 * Patch "Toggle radar"
 * Patch "Toggle gtasa's HUD"
 * GUI Options "menu_rows" and "menu_width"
 * FPS Counter
 
-
-Version 3.55a:
+## Version 3.55a
 * Custom GUI options from the ini file.
 * Readded the cracked samp_a.dll in case you get an internal error.
 
-
-Version 3.55:
-New stuff:
+## Version 3.55
+### Added
 * Patch "Prevent SetPlayerPos" by alibaba.
 * Patch "Air Superiority" by nuckfuts.
 * Patch "Colored HP Bar".
 * Patch "Colored Money HUD".
 * 'b' key will unfreeze you. ini:"key_anti_freeze = b" (SCM Hook).
 
-Changed stuff:
+### Changed
 * Removed all samp.dll-accessing related stuff.
 * Changed some of texts/menus colors. WUT.
 
-Fixes:
+### Fixed
 * samp_is_chatting (Chat support).
 
-
-Version 3.54 (REALfreaky's Edit)
-New stuff:
+## Version 3.54 (REALfreaky's Edit)
+### Added
 * Support for tires
 * Support for trailers
 * Added mini-map support for single player (and MTA).
 * Added a new category for the Vehicles menu: Trailers
 
-Changed stuff:
+### Changed
 * Reduced the default hp_minimum to 0.0. This should
   prevent you from getting banned by the new v0.2
   anti vehicle HP cheat scripts.
 
-Fixes:
+### Fixed
 * Fixed the SA-MP v0.2 crash, but some features will
   be disabled until the new addresses are found.
 * Fixed spelling error: Break -> Brake
 * Fixed several vehicles being in the wrong category.
 
-
-Version 3.53:
-New stuff:
+## Version 3.53
+### Added
 * Added a patch that disables the internal "extra actor
   invincibility" patch
 
-Fixes:
+### Fixed
 * Air break / vehicle freeze bug fixed
 
-
-Version 3.52:
-New stuff:
+## Version 3.52
+### Added
 * F7/F9 now cycles through SA:MP rendering, m0d_s0beit rendering,
   and disabled.
 
-Changed stuff:
+### Changed
 * Panic key now disables the HUD text.
 
-Fixes:
+### Fixed
 * Panic key now remembers map state
 
-
-Version 3.51:
-New stuff:
+## Version 3.51
+### Added
 * Fake death by run over / fall
 * HUD indicator for freeze nearby vehicles
 
-Changed stuff:
+### Changed
 * Don't render chat text and kill messages while in the menu
 
-Fixes:
+### Fixed
 * Continuously load weapon models to fix single player crash
 
-
-Version 3.5:
-New stuff:
+## Version 3.5
+### Added
 * Weather and time can be configured from the menu.
 * Freeze nearby cars (oem_2 (one of the keys near return))
   Vehicle teleporter will teleport occupied vehicles
@@ -571,7 +550,7 @@ New stuff:
 * Break (key_break_mod, break_mult)
 * Vehicle hop (oem_3 (one of the keys near return))
 
-Changed stuff:
+### Changed
 * The map now displays the players' name and color, etc.
 * Nitro deceleration will only reduce speed if needed
 * Reduced the default hp_minimum to 1000.0.
@@ -581,15 +560,14 @@ Changed stuff:
   by default in cereal's ini
 * Air breaking works differently when the parachute is selected
 
-Fixes:
+### Fixed
 * Fixed nitro acceleration bug (RaFFeR)
 * Fix freeing of invalid memory pointer in ini_free()
 * Reduced size of font renderer texture size (512^2 -> 256^2)
 * Air break on foot forces your character to stand up
 
-
-Version 3.4:
-New stuff:
+## Version 3.4
+### Added
 * HP cheats configurable from the menu
 * Bike fall-off no damage patch
 * Vehicle teleport error messages
@@ -606,24 +584,21 @@ New stuff:
 * Give HP/Armor
 * Change gravity
 
-Fixes:
+### Fixed
 * Hex viewer no longer crashes in single player mode
 * GTA cheat patches are now persistent
 * Fixed "perfect handling" memory address
 * Fixed force_hour menu toggle
 
-
-Version 3.3b:
+## Version 3.3b
 * "anti admin freezing" patch disabled by default
 
-
-Version 3.3a:
+## Version 3.3a
 * Fixed ini parsing for patch[] entries (playa')
 * Included a copy of cereal's ini file
 
-
-Version 3.3:
-New stuff:
+## Version 3.3
+### Added
 * Anti bike fall off (CrazyT)
 * Put the minimum height checks back in :p
 * GTA cheats can be toggled from the .ini
@@ -632,7 +607,7 @@ New stuff:
 * foo[] now assigns to the first free array index
 * HUD text rendering can now be toggled from the menu
 
-Changes:
+### Changed
 * Moved GTA cheats, "Allow weapons inside", and "Walk under water"
   to the "Patches" menu.
 * Removed the ini reload hotkey
@@ -641,14 +616,13 @@ Changes:
 * Removed a whole bunch of useless GTA cheats (you can add them
   back through the ini file)
 
-Fixes:
+### Fixed
 * Fixed some default .ini entries
 * Fixed some .ini parsing bugs
 * Other minor bug fixes
 
-
-Version 3.2:
-New stuff:
+## Version 3.2
+### Added
 * Re-enabled the checkpoint warp keys. They are disabled by default, though
 * Warp vehicles to your location
 * The default setting for some menu items can now be set in the .ini file
@@ -657,7 +631,7 @@ New stuff:
 * Freeze weather/time can be toggle from the menu
 * ScrTogglePlayerControllable is disabled (prevents admins from freezing you)
 
-Changes:
+### Changed
 * Improved the hex viewer
 * Invulnerability now unsets the "freeze" flag
 * Minor menu improvements
@@ -669,16 +643,15 @@ Changes:
 * Window mode disabled by default
 * Etc...
 
-Fixes:
+### Fixed
 * Fixed speed vector when sticking to actors (REALfreaky)
 * Sped up hex viewer rendering slightly
 * (Hopefully) Fixed "teleport to player" coordinates (REALfreaky, me)
 * Force weather can actually be disabled now (yay!)
 * Lots of other minor fixes...
 
-
-Version 3.1:
-New stuff:
+## Version 3.1
+### Added
 * Walk / drive / fly under water (s0beit)
 * Give jetpack (s0beit)
 * Menu to warp to any vehicle or player.
@@ -691,7 +664,7 @@ New stuff:
 * "Allow weapons inside" is now disabled by default.
 * (In game memory hex viewer)
 
-Fixes:
+### Fixed
 * Fixes to the D3D rendering stuff, should be both
   faster (not that it was ever slow), and cause fewer
   crashes.
@@ -700,7 +673,7 @@ Fixes:
 * Fixed actor/vehicle dead/destroyed detection
 * Fixed spelling error: Heat Seaking -> Heat Seeking RPG ...
 
-Changes:
+### Changed
 * Changed the default menu key to F11 (cereal)
   (SA:MP was using F9, oops.)
 * Moved the weapon menu to the main menu
@@ -710,9 +683,8 @@ Changes:
 * Pressing left in the main menu exits the menu
 * You can now tweak the "anti-cheat revenge"
 
-
-Version 3.0 (supah beta):
-New stuff:
+## Version 3.0 (supah beta):
+### Added
 * .ini format changed slightly, you will need to update
   your .ini file, or replace it with the default one
 * In-game menu (F9,up,down,left,right,return)
@@ -743,7 +715,7 @@ New stuff:
   static_teleport_pos[]
   old_keyhook=false
 
-Changed stuff:
+### Changed
 * Removed fly mode key (now accessible through the in-game menu)
 * Removed perfect handling (accessible through the in-game menu)
 * Increased the number of teleports to 10
@@ -752,19 +724,15 @@ Changed stuff:
   key_fly_mode
   money_amount
 
-Bugs / fixes:
+### Fixed
 * Minor keyhook bugfix
 * Removed default settings for weapons (DeN00b)
 
-
-
-Version 2:
+## Version 2:
 * Fixed exit crash bug
 * Ignore dead actors
 
-
-
-Version 1 Test 3 / Version 2 Test 1:
+## Version 1 Test 3 / Version 2 Test 1:
 * HP no longer continiously set to 100.0. The invulnerability
   cheat is still there, though. This should prevent you from
   get banned by the anti HP cheat script. (Untested; don't know which
@@ -787,7 +755,7 @@ Version 1 Test 3 / Version 2 Test 1:
   can warp cars into stores, etc. (They won't be visible, however)
 
 * Removed intro removal code (sa:mp removes the intro for us)
-* Safe haven HP cheat - just an idea I had to defeat the 
+* Safe haven HP cheat - just an idea I had to defeat the
   anti HP cheat... it's disabled by default, and has not been
   tested much.
 * Fixed a long standing bug in the d3d text renderer (Thanks to caytchen)
