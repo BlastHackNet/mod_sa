@@ -453,12 +453,9 @@ struct stTrailerData
 {
 	uint16_t	sTrailerID;
 	float		fPosition[3];
-	//float		fRoll[3];
-	//float		fDirection[3];
-	float		fQuaternion[4]; // not tested
+	float		fQuaternion[4];
 	float		fSpeed[3];
-	float		fUnk[2];
-	uint32_t	pad;
+	float		fSpin[3];
 };
 
 struct stPassengerData
