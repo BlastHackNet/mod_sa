@@ -3146,7 +3146,7 @@ void renderSAMP ( void )
 	if ( !g_renderSAMP_initSAMPstructs )
 	{
 		g_SAMP = stGetSampInfo();
-		if ( isBadPtr_writeAny(g_SAMP, sizeof(CNetGame)) )
+		if ( isBadPtr_writeAny(g_SAMP, sizeof(stSAMP)) )
 			return;
 		
 		if ( isBadPtr_writeAny(g_SAMP->pPools, sizeof(stSAMPPools)) )
