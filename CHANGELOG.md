@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 4.4.2.0
+* Update to 0.3.DL-R1
+
 ## Version 4.4.1.3
 * Fixed player invulnerability activation via menu
 * Fixed debug mode feature crash
