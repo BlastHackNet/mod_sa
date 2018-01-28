@@ -2,7 +2,7 @@ mod_s0beit_sa
 =============
 
 Multi-purpose cheat tool for GTA San Andreas and SA:MP  
-**Current supported SA-MP version:** `0.3.7-R1`
+**Current supported SA-MP version:** `0.3.DL-R1`
 
 ## Installation
 Download `...Setup.exe` from the [latest release](https://github.com/BlastHackNet/mod_s0beit_sa/releases/latest), run it and follow the installer guide.
