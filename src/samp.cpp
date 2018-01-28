@@ -23,20 +23,20 @@
 #include "main.h"
 
 #define SAMP_DLL		"samp.dll"
-#define SAMP_CMP		"F8036A004050518D4C24"
+#define SAMP_CMP		"528D44240C508D7E09E8"
 
 
 //randomStuff
 extern int						iViewingInfoPlayer;
 int								g_iCursorEnabled = 0;
-char							g_m0dCmdlist[(SAMP_MAX_CLIENTCMDS - 22)][30];
+char							g_m0dCmdlist[(SAMP_MAX_CLIENTCMDS - 23)][30];
 int								g_m0dCmdNum = 0;
 bool							g_m0dCommands = false;
 
 // global samp pointers
 int								iIsSAMPSupported = 0;
 int								g_renderSAMP_initSAMPstructs = 0;
-stSAMP							*g_SAMP = nullptr;
+CNetGame							*g_SAMP = nullptr;
 stPlayerPool					*g_Players = nullptr;
 stVehiclePool					*g_Vehicles = nullptr;
 stChatInfo						*g_Chat = nullptr;
@@ -137,7 +137,7 @@ void getSamp()
 		{
 			if (memcmp_safe((uint8_t *) g_dwSAMP_Addr + 0xBABE, hex_to_bin(SAMP_CMP), 10))
 			{
-				strcpy(g_szSAMPVer, "SA:MP 0.3.7");
+				strcpy(g_szSAMPVer, "SA:MP 0.3.7-DL");
 				Log("%s was detected. g_dwSAMP_Addr: 0x%p", g_szSAMPVer, g_dwSAMP_Addr);
 				sampPatchDisableAnticheat();
 				iIsSAMPSupported = 1;
@@ -189,9 +189,9 @@ T GetSAMPPtrInfo(uint32_t offset)
 	return *(T *)(g_dwSAMP_Addr + offset);
 }
 
-struct stSAMP *stGetSampInfo(void)
+struct CNetGame *stGetSampInfo(void)
 {
-	return GetSAMPPtrInfo<stSAMP *>(SAMP_INFO_OFFSET);
+	return GetSAMPPtrInfo<CNetGame *>(SAMP_INFO_OFFSET);
 }
 
 struct stChatInfo *stGetSampChatInfo(void)
@@ -944,9 +944,8 @@ void sampPatchDisableAnticheat(void)
 	{
 		"kyenub patch", 0, 0,
 		{
-			{ 1, (void *)(g_dwSAMP_Addr + 0x99250), NULL, (uint8_t *)"\xC3", 0 },
-			{ 8, (void *)(g_dwSAMP_Addr + 0x286923), NULL, (uint8_t *)"\xB8\x45\x00\x00\x00\xC2\x1C\x00", 0 },
-			{ 8, (void *)(g_dwSAMP_Addr + 0x298116), NULL, (uint8_t *)"\xB8\x45\x00\x00\x00\xC2\x1C\x00", 0 },
+            { 1, (void *)(g_dwSAMP_Addr + 0x9D6F0), NULL, (uint8_t *)"\xC3", 0 },
+            { 8, (void *)(g_dwSAMP_Addr + 0xC5C10), NULL, (uint8_t *)"\xB8\x45\x00\x00\x00\xC2\x1C\x00", 0 },
 			// { 6, (void *) (g_dwSAMP_Addr + 0xB30F0), NULL, (uint8_t *)"\xB8\x01\x00\x00\x00\xC3", 0 }
 		}
 	};
@@ -955,7 +954,7 @@ void sampPatchDisableAnticheat(void)
 	static uint32_t anticheat = 1;
 	byte acpatch[] = { 0xFF, 0x05, 0x00, 0x00, 0x00, 0x00, 0xA1, 0x00, 0x00, 0x00, 0x00, 0xC3 };
 	*(uint32_t**)&acpatch[2] = *(uint32_t**)&acpatch[7] = &anticheat;
-	memcpy_safe((void *)(g_dwSAMP_Addr + 0x2B9EE4), acpatch, 12);
+    memcpy_safe((void *)(g_dwSAMP_Addr + 0xC5E2B), acpatch, 12);
 }
 
 uint16_t	anticarjacked_vehid;

@@ -2726,9 +2726,9 @@ void renderPlayerInfo ( int iPlayerID )
 		pD3DFontFixed->PrintShadow( 20.0f, y, color, buf );
 		( y ) += 1.0f + pD3DFontFixed->DrawHeight();
 
-		sprintf( buf, "Team ID: %u", g_Players->pLocalPlayer->byteTeamID );
-		pD3DFontFixed->PrintShadow( 20.0f, y, color, buf );
-		( y ) += 1.0f + pD3DFontFixed->DrawHeight();
+		//sprintf( buf, "Team ID: %u", g_Players->pLocalPlayer->byteTeamID );
+		//pD3DFontFixed->PrintShadow( 20.0f, y, color, buf );
+		//( y ) += 1.0f + pD3DFontFixed->DrawHeight();
 		sprintf( buf, "byteCurrentInterior: %u", g_Players->pLocalPlayer->byteCurrentInterior );
 		pD3DFontFixed->PrintShadow( 20.0f, y, color, buf );
 		( y ) += 1.0f + pD3DFontFixed->DrawHeight();
@@ -3146,7 +3146,7 @@ void renderSAMP ( void )
 	if ( !g_renderSAMP_initSAMPstructs )
 	{
 		g_SAMP = stGetSampInfo();
-		if ( isBadPtr_writeAny(g_SAMP, sizeof(stSAMP)) )
+		if ( isBadPtr_writeAny(g_SAMP, sizeof(CNetGame)) )
 			return;
 		
 		if ( isBadPtr_writeAny(g_SAMP->pPools, sizeof(stSAMPPools)) )
