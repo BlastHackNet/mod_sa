@@ -181,7 +181,7 @@ struct stSAMPPools
 	struct stTextdrawPool	*pTextdraw;
 };
 
-struct CNetGame
+struct stSAMP
 {
     uint8_t                  _pad0[20];
 	void					*pUnk0;
@@ -1021,7 +1021,7 @@ void											update_translateGTASAMP_pedPool(void);
 void											getSamp();
 uint32_t										getSampAddress();
 
-struct CNetGame									*stGetSampInfo(void);
+struct stSAMP									*stGetSampInfo(void);
 struct stChatInfo								*stGetSampChatInfo(void);
 struct stInputInfo								*stGetInputInfo(void);
 struct stKillInfo								*stGetKillInfo(void);
@@ -1080,7 +1080,7 @@ void											sampPatchDisableAnticheat(void);
 // global pointer externals
 extern int										iIsSAMPSupported;
 extern int										g_renderSAMP_initSAMPstructs;
-extern struct CNetGame							*g_SAMP;
+extern struct stSAMP							*g_SAMP;
 extern struct stPlayerPool						*g_Players;
 extern struct stVehiclePool						*g_Vehicles;
 extern struct stChatInfo						*g_Chat;

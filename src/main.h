@@ -28,8 +28,8 @@
 
 #define M0D_FOLDER		"mod_sa\\"
 #define M0D_NAME		"mod_sa"
-#define M0D_VERSION		"4.5.0.0 // blast.hk"
-#define SAMP_VERSION	"SA:MP 0.3.7-DL"
+#define M0D_VERSION		"4.4.2.0 // blast.hk"
+#define SAMP_VERSION	"SA:MP 0.3.DL-R1"
 #define M0D_DEV_ADVANCEDINFO
 
 // Use this to activate the SQLite Vehicle Recording.

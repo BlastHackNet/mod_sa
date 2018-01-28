@@ -36,7 +36,7 @@ bool							g_m0dCommands = false;
 // global samp pointers
 int								iIsSAMPSupported = 0;
 int								g_renderSAMP_initSAMPstructs = 0;
-CNetGame							*g_SAMP = nullptr;
+stSAMP							*g_SAMP = nullptr;
 stPlayerPool					*g_Players = nullptr;
 stVehiclePool					*g_Vehicles = nullptr;
 stChatInfo						*g_Chat = nullptr;
@@ -189,9 +189,9 @@ T GetSAMPPtrInfo(uint32_t offset)
 	return *(T *)(g_dwSAMP_Addr + offset);
 }
 
-struct CNetGame *stGetSampInfo(void)
+struct stSAMP *stGetSampInfo(void)
 {
-	return GetSAMPPtrInfo<CNetGame *>(SAMP_INFO_OFFSET);
+	return GetSAMPPtrInfo<stSAMP *>(SAMP_INFO_OFFSET);
 }
 
 struct stChatInfo *stGetSampChatInfo(void)
