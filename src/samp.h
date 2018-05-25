@@ -824,6 +824,7 @@ struct stChatInfo
 	int					m_nPrevScrollBarPosition;
 	int					m_iFontSizeY;
 	int					m_iTimestampWidth;
+	int					m_iTimeStampTextOffset;
 };
 
 struct stInputBox
