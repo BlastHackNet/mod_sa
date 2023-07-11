@@ -588,7 +588,7 @@ struct stLocalPlayer
 	uint32_t			ulUnk0;
 	struct stSAMPPed* pSAMP_Actor;
 	int				iIsSpectating;
-	uint8_t				byteTeamID2;
+	uint8_t				byteTeamID;
 	int				iSpawnClassID;
 	CAMERA_TARGET_AIM       	cameraTarget;
 	uint32_t			ulCameraTargetTick;
