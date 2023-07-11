@@ -23,26 +23,26 @@
 #include "main.h"
 
 #define SAMP_DLL		"samp.dll"
-#define SAMP_CMP		"F8036A004050518D4C24"
+#define SAMP_CMP		"C07406889E3402000088"
 
 
-//randomStuff
+	//randomStuff
 extern int						iViewingInfoPlayer;
 int								g_iCursorEnabled = 0;
-char							g_m0dCmdlist[(SAMP_MAX_CLIENTCMDS - 22)][30];
+char							g_m0dCmdlist[(SAMP_MAX_CLIENTCMDS - 23)][30];
 int								g_m0dCmdNum = 0;
 bool							g_m0dCommands = false;
 
 // global samp pointers
 int								iIsSAMPSupported = 0;
 int								g_renderSAMP_initSAMPstructs = 0;
-stSAMP							*g_SAMP = nullptr;
-stPlayerPool					*g_Players = nullptr;
-stVehiclePool					*g_Vehicles = nullptr;
-stChatInfo						*g_Chat = nullptr;
-stInputInfo						*g_Input = nullptr;
-stKillInfo						*g_DeathList = nullptr;
-stScoreboardInfo				*g_Scoreboard = nullptr;
+stSAMP* g_SAMP = nullptr;
+stPlayerPool* g_Players = nullptr;
+stVehiclePool* g_Vehicles = nullptr;
+stChatInfo* g_Chat = nullptr;
+stInputInfo* g_Input = nullptr;
+stKillInfo* g_DeathList = nullptr;
+stScoreboardInfo* g_Scoreboard = nullptr;
 
 // global managed support variables
 stTranslateGTASAMP_vehiclePool	translateGTASAMP_vehiclePool;
@@ -74,7 +74,7 @@ void update_translateGTASAMP_vehiclePool(void)
 			continue;
 		/*if (isBadPtr_writeAny(g_Vehicles->pSAMP_Vehicle[i], sizeof(stSAMPVehicle)))
 			continue;*/
-		iGTAID = getVehicleGTAIDFromInterface((DWORD *) g_Vehicles->pSAMP_Vehicle[i]->pGTA_Vehicle);
+		iGTAID = getVehicleGTAIDFromInterface((DWORD*)g_Vehicles->pSAMP_Vehicle[i]->pGTA_Vehicle);
 		if (iGTAID <= SAMP_MAX_VEHICLES && iGTAID >= 0)
 		{
 			translateGTASAMP_vehiclePool.iSAMPID[iGTAID] = i;
@@ -105,6 +105,7 @@ void update_translateGTASAMP_pedPool(void)
 			continue;
 		if (g_Players->pRemotePlayer[i]->pPlayerData->pSAMP_Actor->pGTAEntity == nullptr)
 			continue;
+
 		/*
 		if (isBadPtr_writeAny(g_Players->pRemotePlayer[i], sizeof(stRemotePlayer)))
 			continue;
@@ -114,7 +115,8 @@ void update_translateGTASAMP_pedPool(void)
 			continue;
 		*/
 
-		iGTAID = getPedGTAIDFromInterface((DWORD *) g_Players->pRemotePlayer[i]->pPlayerData->pSAMP_Actor->pGTAEntity);
+		iGTAID = getPedGTAIDFromInterface((DWORD*)g_Players->pRemotePlayer[i]->pPlayerData->pSAMP_Actor->pGTAEntity);
+
 		if (iGTAID <= SAMP_MAX_PLAYERS && iGTAID >= 0)
 		{
 			translateGTASAMP_pedPool.iSAMPID[iGTAID] = i;
@@ -131,13 +133,13 @@ void getSamp()
 
 	if (samp_dll != NULL)
 	{
-		g_dwSAMP_Addr = (uint32_t) samp_dll;
+		g_dwSAMP_Addr = (uint32_t)samp_dll;
 
 		if (g_dwSAMP_Addr != NULL)
 		{
-			if (memcmp_safe((uint8_t *) g_dwSAMP_Addr + 0xBABE, hex_to_bin(SAMP_CMP), 10))
+			if (memcmp_safe((uint8_t*)g_dwSAMP_Addr + 0xBABE, hex_to_bin(SAMP_CMP), 10))
 			{
-				strcpy(g_szSAMPVer, "SA:MP 0.3.7");
+				strcpy(g_szSAMPVer, "SA:MP 0.3.7 R5");
 				Log("%s was detected. g_dwSAMP_Addr: 0x%p", g_szSAMPVer, g_dwSAMP_Addr);
 				sampPatchDisableAnticheat();
 				iIsSAMPSupported = 1;
@@ -171,11 +173,11 @@ uint32_t getSampAddress()
 	{
 		if (set.wine_compatibility)
 		{
-			samp_dll = (uint32_t) LoadLibrary(SAMP_DLL);
+			samp_dll = (uint32_t)LoadLibrary(SAMP_DLL);
 		}
 		else
 		{
-			samp_dll = (uint32_t) dll_baseptr_get(SAMP_DLL);
+			samp_dll = (uint32_t)dll_baseptr_get(SAMP_DLL);
 		}
 	}
 	return samp_dll;
@@ -186,37 +188,37 @@ T GetSAMPPtrInfo(uint32_t offset)
 {
 	if (g_dwSAMP_Addr == NULL)
 		return NULL;
-	return *(T *)(g_dwSAMP_Addr + offset);
+	return *(T*)(g_dwSAMP_Addr + offset);
 }
 
-struct stSAMP *stGetSampInfo(void)
+struct stSAMP* stGetSampInfo(void)
 {
-	return GetSAMPPtrInfo<stSAMP *>(SAMP_INFO_OFFSET);
+	return GetSAMPPtrInfo<stSAMP*>(SAMP_INFO_OFFSET);
 }
 
-struct stChatInfo *stGetSampChatInfo(void)
+struct stChatInfo* stGetSampChatInfo(void)
 {
-	return GetSAMPPtrInfo<stChatInfo *>(SAMP_CHAT_INFO_OFFSET);
+	return GetSAMPPtrInfo<stChatInfo*>(SAMP_CHAT_INFO_OFFSET);
 }
 
-struct stInputInfo *stGetInputInfo(void)
+struct stInputInfo* stGetInputInfo(void)
 {
-	return GetSAMPPtrInfo<stInputInfo *>(SAMP_CHAT_INPUT_INFO_OFFSET);
+	return GetSAMPPtrInfo<stInputInfo*>(SAMP_CHAT_INPUT_INFO_OFFSET);
 }
 
-struct stKillInfo *stGetKillInfo(void)
+struct stKillInfo* stGetKillInfo(void)
 {
-	return GetSAMPPtrInfo<stKillInfo *>(SAMP_KILL_INFO_OFFSET);
+	return GetSAMPPtrInfo<stKillInfo*>(SAMP_KILL_INFO_OFFSET);
 }
 
-struct stScoreboardInfo *stGetScoreboardInfo(void)
+struct stScoreboardInfo* stGetScoreboardInfo(void)
 {
-	return GetSAMPPtrInfo<stScoreboardInfo *>(SAMP_SCOREBOARD_INFO);
+	return GetSAMPPtrInfo<stScoreboardInfo*>(SAMP_SCOREBOARD_INFO);
 }
 
 int isBadSAMPVehicleID(int iVehicleID)
 {
-	if (g_Vehicles == NULL || iVehicleID == (uint16_t) -1 || iVehicleID >= SAMP_MAX_VEHICLES)
+	if (g_Vehicles == NULL || iVehicleID == (uint16_t)-1 || iVehicleID >= SAMP_MAX_VEHICLES)
 		return 1;
 	return !g_Vehicles->iIsListed[iVehicleID];
 }
@@ -233,23 +235,23 @@ D3DCOLOR samp_color_get(int id, DWORD trans)
 	if (g_dwSAMP_Addr == NULL)
 		return NULL;
 
-	D3DCOLOR	*color_table;
+	D3DCOLOR* color_table;
 	if (id < 0 || id >= (SAMP_MAX_PLAYERS + 3))
 		return D3DCOLOR_ARGB(0xFF, 0x99, 0x99, 0x99);
 
 	switch (id)
 	{
-		case (SAMP_MAX_PLAYERS) :
-			return 0xFF888888;
+	case (SAMP_MAX_PLAYERS):
+		return 0xFF888888;
 
-		case (SAMP_MAX_PLAYERS + 1) :
-			return 0xFF0000AA;
+	case (SAMP_MAX_PLAYERS + 1):
+		return 0xFF0000AA;
 
-		case (SAMP_MAX_PLAYERS + 2) :
-			return 0xFF63C0E2;
+	case (SAMP_MAX_PLAYERS + 2):
+		return 0xFF63C0E2;
 	}
 
-	color_table = (D3DCOLOR *) ((uint8_t *) g_dwSAMP_Addr + SAMP_COLOR_OFFSET);
+	color_table = (D3DCOLOR*)((uint8_t*)g_dwSAMP_Addr + SAMP_COLOR_OFFSET);
 	return (color_table[id] >> 8) | trans;
 }
 
@@ -296,7 +298,7 @@ int getPlayerCount(void)
 	return iCount + 1;
 }
 
-int setLocalPlayerName(const char *name)
+int setLocalPlayerName(const char* name)
 {
 	if (g_Players == NULL || g_Players->pLocalPlayer == NULL)
 		return 0;
@@ -306,7 +308,7 @@ int setLocalPlayerName(const char *name)
 	if (strlen_name == 0 || strlen_name > SAMP_ALLOWED_PLAYER_NAME_LENGTH)
 		return 0;
 
-	((void(__thiscall *) (void *, const char *name, int len)) (g_dwSAMP_Addr + SAMP_FUNC_NAMECHANGE)) (&g_Players->pVTBL_txtHandler, name, strlen_name);
+	((void(__thiscall*) (void*, const char* name, int len)) (g_dwSAMP_Addr + SAMP_FUNC_NAMECHANGE)) (&g_Players->pVTBL_txtHandler, name, strlen_name);
 	return 1;
 }
 
@@ -332,10 +334,10 @@ int getPlayerPos(int iPlayerID, float fPos[3])
 {
 	traceLastFunc("getPlayerPos()");
 
-	struct actor_info	*pActor = NULL;
-	struct vehicle_info *pVehicle = NULL;
+	struct actor_info* pActor = NULL;
+	struct vehicle_info* pVehicle = NULL;
 
-	struct actor_info	*pSelfActor = actor_info_get(ACTOR_SELF, 0);
+	struct actor_info* pSelfActor = actor_info_get(ACTOR_SELF, 0);
 
 	if (g_Players == NULL)
 		return 0;
@@ -391,7 +393,7 @@ int getPlayerPos(int iPlayerID, float fPos[3])
 	return !vect3_near_zero(fPos);
 }
 
-const char *getPlayerName(int iPlayerID)
+const char* getPlayerName(int iPlayerID)
 {
 	if (g_Players == NULL || iPlayerID < 0 || iPlayerID > SAMP_MAX_PLAYERS)
 		return NULL;
@@ -430,9 +432,9 @@ int getPlayerVehicleGTAScriptingID(int iPlayerID)
 	// fix to always return our own vehicle always if that's what's being asked for
 	if (iPlayerID == ACTOR_SELF)
 	{
-		if (g_Players->pLocalPlayer->sCurrentVehicleID == (uint16_t) -1) return 0;
+		if (g_Players->pLocalPlayer->sCurrentVehicleID == (uint16_t)-1) return 0;
 
-		stSAMPVehicle	*sampveh = g_Vehicles->pSAMP_Vehicle[g_Players->pLocalPlayer->sCurrentVehicleID];
+		stSAMPVehicle* sampveh = g_Vehicles->pSAMP_Vehicle[g_Players->pLocalPlayer->sCurrentVehicleID];
 		if (sampveh)
 		{
 			return ScriptCarId(sampveh->pGTA_Vehicle);
@@ -464,7 +466,7 @@ int getPlayerSAMPVehicleID(int iPlayerID)
 	return g_Players->pRemotePlayer[iPlayerID]->pPlayerData->sVehicleID;
 }
 
-struct actor_info *getGTAPedFromSAMPPlayerID(int iPlayerID)
+struct actor_info* getGTAPedFromSAMPPlayerID(int iPlayerID)
 {
 	if (g_Players == NULL || iPlayerID < 0 || iPlayerID > SAMP_MAX_PLAYERS)
 		return NULL;
@@ -485,7 +487,7 @@ struct actor_info *getGTAPedFromSAMPPlayerID(int iPlayerID)
 	return g_Players->pRemotePlayer[iPlayerID]->pPlayerData->pSAMP_Actor->pGTA_Ped;
 }
 
-struct vehicle_info *getGTAVehicleFromSAMPVehicleID(int iVehicleID)
+struct vehicle_info* getGTAVehicleFromSAMPVehicleID(int iVehicleID)
 {
 	if (g_Vehicles == NULL || iVehicleID < 0 || iVehicleID >= SAMP_MAX_VEHICLES)
 		return NULL;
@@ -498,7 +500,7 @@ struct vehicle_info *getGTAVehicleFromSAMPVehicleID(int iVehicleID)
 	return g_Vehicles->pGTA_Vehicle[iVehicleID];
 }
 
-int getSAMPPlayerIDFromGTAPed(struct actor_info *pGTAPed)
+int getSAMPPlayerIDFromGTAPed(struct actor_info* pGTAPed)
 {
 	if (g_Players == NULL)
 		return 0;
@@ -525,7 +527,7 @@ int getSAMPPlayerIDFromGTAPed(struct actor_info *pGTAPed)
 	return ACTOR_SELF;
 }
 
-int getSAMPVehicleIDFromGTAVehicle(struct vehicle_info *pVehicle)
+int getSAMPVehicleIDFromGTAVehicle(struct vehicle_info* pVehicle)
 {
 	if (g_Vehicles == NULL)
 		return NULL;
@@ -574,7 +576,7 @@ uint32_t getVehicleGTAScriptingIDFromVehicleID(int iVehicleID)
 	return g_Vehicles->pSAMP_Vehicle[iVehicleID]->ulGTAEntityHandle;
 }
 
-void addClientCommand(char *name, CMDPROC function)
+void addClientCommand(char* name, CMDPROC function)
 {
 	if (name == NULL || function == NULL || g_Input == NULL)
 		return;
@@ -599,11 +601,11 @@ void addClientCommand(char *name, CMDPROC function)
 	else
 		Log("m0d_cmd_list[] too short.");
 
-	((void(__thiscall *) (void *_this, char *command, CMDPROC function)) (g_dwSAMP_Addr + SAMP_FUNC_ADDCLIENTCMD)) (g_Input, name, function);
+	((void(__thiscall*) (void* _this, char* command, CMDPROC function)) (g_dwSAMP_Addr + SAMP_FUNC_ADDCLIENTCMD)) (g_Input, name, function);
 }
 
-struct gui	*gui_samp_cheat_state_text = &set.guiset[1];
-void addMessageToChatWindow(const char *text, ...)
+struct gui* gui_samp_cheat_state_text = &set.guiset[1];
+void addMessageToChatWindow(const char* text, ...)
 {
 	if (g_SAMP != NULL)
 	{
@@ -638,7 +640,7 @@ void addMessageToChatWindow(const char *text, ...)
 	}
 }
 
-void addMessageToChatWindowSS(const char *text, ...)
+void addMessageToChatWindowSS(const char* text, ...)
 {
 	if (g_SAMP != NULL)
 	{
@@ -672,7 +674,7 @@ void addMessageToChatWindowSS(const char *text, ...)
 	}
 }
 
-void addToChatWindow(char *text, D3DCOLOR textColor, int playerID)
+void addToChatWindow(char* text, D3DCOLOR textColor, int playerID)
 {
 	if (g_SAMP == NULL || g_Chat == NULL)
 		return;
@@ -683,14 +685,14 @@ void addToChatWindow(char *text, D3DCOLOR textColor, int playerID)
 	if (playerID < -1)
 		playerID = -1;
 
-	void(__thiscall *AddToChatWindowBuffer) (void *, ChatMessageType, const char *, const char *, D3DCOLOR, D3DCOLOR) =
-		(void(__thiscall *) (void *_this, ChatMessageType Type, const char *szString, const char *szPrefix, D3DCOLOR TextColor, D3DCOLOR PrefixColor))
+	void(__thiscall * AddToChatWindowBuffer) (void*, ChatMessageType, const char*, const char*, D3DCOLOR, D3DCOLOR) =
+		(void(__thiscall*) (void* _this, ChatMessageType Type, const char* szString, const char* szPrefix, D3DCOLOR TextColor, D3DCOLOR PrefixColor))
 		(g_dwSAMP_Addr + SAMP_FUNC_ADDTOCHATWND);
 
 	if (playerID != -1)
 	{
 		// getPlayerName does the needed validity checks, no need for doubles
-		char *playerName = (char*) getPlayerName(playerID);
+		char* playerName = (char*)getPlayerName(playerID);
 		if (playerName == NULL)
 			return;
 		AddToChatWindowBuffer(g_Chat, CHAT_TYPE_CHAT, text, playerName, textColor, samp_color_get(playerID));
@@ -706,10 +708,10 @@ void restartGame()
 	if (g_SAMP == NULL)
 		return;
 
-	((void(__thiscall *) (void *)) (g_dwSAMP_Addr + SAMP_FUNC_RESTARTGAME)) (g_SAMP);
+	((void(__thiscall*) (void*)) (g_dwSAMP_Addr + SAMP_FUNC_RESTARTGAME)) (g_SAMP);
 }
 
-void say(char *text, ...)
+void say(char* text, ...)
 {
 	if (g_SAMP == NULL)
 		return;
@@ -731,7 +733,7 @@ void say(char *text, ...)
 	addSayToChatWindow(tmp);
 }
 
-void addSayToChatWindow(char *msg)
+void addSayToChatWindow(char* msg)
 {
 	if (g_SAMP == NULL)
 		return;
@@ -747,11 +749,11 @@ void addSayToChatWindow(char *msg)
 
 	if (msg[0] == '/')
 	{
-		((void(__thiscall *) (void *_this, char *message)) (g_dwSAMP_Addr + SAMP_FUNC_SENDCMD))(g_Input, msg);
+		((void(__thiscall*) (void* _this, char* message)) (g_dwSAMP_Addr + SAMP_FUNC_SENDCMD))(g_Input, msg);
 	}
 	else
 	{
-		((void(__thiscall *) (void *_this, char *message)) (g_dwSAMP_Addr + SAMP_FUNC_SAY)) (g_Players->pLocalPlayer, msg);
+		((void(__thiscall*) (void* _this, char* message)) (g_dwSAMP_Addr + SAMP_FUNC_SAY)) (g_Players->pLocalPlayer, msg);
 	}
 }
 
@@ -760,8 +762,8 @@ void playerSpawn(void)
 	if (g_SAMP == NULL)
 		return;
 
-	((void(__thiscall *) (void *_this)) (g_dwSAMP_Addr + SAMP_FUNC_REQUEST_SPAWN)) (g_Players->pLocalPlayer);
-	((void(__thiscall *) (void *_this)) (g_dwSAMP_Addr + SAMP_FUNC_SPAWN)) (g_Players->pLocalPlayer);
+	((void(__thiscall*) (void* _this)) (g_dwSAMP_Addr + SAMP_FUNC_REQUEST_SPAWN)) (g_Players->pLocalPlayer);
+	((void(__thiscall*) (void* _this)) (g_dwSAMP_Addr + SAMP_FUNC_SPAWN)) (g_Players->pLocalPlayer);
 }
 
 void disconnect(int reason /*0=timeout, 500=quit*/)
@@ -772,7 +774,7 @@ void disconnect(int reason /*0=timeout, 500=quit*/)
 	g_RakClient->GetInterface()->Disconnect(reason);
 }
 
-void setPassword(const char *password)
+void setPassword(const char* password)
 {
 	if (g_SAMP == NULL)
 		return;
@@ -785,7 +787,7 @@ void sendSetInterior(uint8_t interiorID)
 	if (g_SAMP == NULL)
 		return;
 
-	((void(__thiscall *) (void *_this, byte interiorID)) (g_dwSAMP_Addr + SAMP_FUNC_SENDINTERIOR)) (g_Players->pLocalPlayer, interiorID);
+	((void(__thiscall*) (void* _this, byte interiorID)) (g_dwSAMP_Addr + SAMP_FUNC_SENDINTERIOR)) (g_Players->pLocalPlayer, interiorID);
 }
 
 void setSpecialAction(uint8_t byteSpecialAction)
@@ -796,7 +798,7 @@ void setSpecialAction(uint8_t byteSpecialAction)
 	if (g_Players->pLocalPlayer == NULL)
 		return;
 
-	((void(__thiscall *) (void *_this, byte specialActionId)) (g_dwSAMP_Addr + SAMP_FUNC_SETSPECIALACTION)) (g_Players->pLocalPlayer, byteSpecialAction);
+	((void(__thiscall*) (void* _this, byte specialActionId)) (g_dwSAMP_Addr + SAMP_FUNC_SETSPECIALACTION)) (g_Players->pLocalPlayer, byteSpecialAction);
 }
 
 void sendSCMEvent(int iEvent, int iVehicleID, int iParam1, int iParam2)
@@ -809,10 +811,10 @@ void toggleSAMPCursor(int iToggle)
 	if (g_SAMP == NULL) return;
 	if (g_Input->iInputEnabled) return;
 
-	void		*obj = *(void **) (g_dwSAMP_Addr + SAMP_MISC_INFO);
-	((void(__thiscall *) (void *, int, bool)) (g_dwSAMP_Addr + SAMP_FUNC_TOGGLECURSOR))(obj, iToggle ? 3 : 0, !iToggle);
+	void* obj = *(void**)(g_dwSAMP_Addr + SAMP_MISC_INFO);
+	((void(__thiscall*) (void*, int, bool)) (g_dwSAMP_Addr + SAMP_FUNC_TOGGLECURSOR))(obj, iToggle ? 3 : 0, !iToggle);
 	if (!iToggle)
-		((void(__thiscall *) (void *)) (g_dwSAMP_Addr + SAMP_FUNC_CURSORUNLOCKACTORCAM))(obj);
+		((void(__thiscall*) (void*)) (g_dwSAMP_Addr + SAMP_FUNC_CURSORUNLOCKACTORCAM))(obj);
 	// g_iCursorEnabled = iToggle;
 }
 
@@ -820,16 +822,16 @@ void sendDeath(void)
 {
 	if (g_SAMP == NULL)
 		return;
-	((void(__thiscall *) (void *)) (g_dwSAMP_Addr + SAMP_FUNC_DEATH))
+	((void(__thiscall*) (void*)) (g_dwSAMP_Addr + SAMP_FUNC_DEATH))
 		(g_Players->pLocalPlayer);
 }
 
-void changeServer(const char *pszIp, unsigned ulPort, const char *pszPassword)
+void changeServer(const char* pszIp, unsigned ulPort, const char* pszPassword)
 {
 	if (!g_SAMP)
 		return;
 
-	((void(__cdecl *)(unsigned))(g_dwSAMP_Addr + SAMP_FUNC_ENCRYPT_PORT))(ulPort);
+	((void(__cdecl*)(unsigned))(g_dwSAMP_Addr + SAMP_FUNC_ENCRYPT_PORT))(ulPort);
 
 	disconnect(500);
 	strcpy(g_SAMP->szIP, pszIp);
@@ -840,12 +842,12 @@ void changeServer(const char *pszIp, unsigned ulPort, const char *pszPassword)
 
 void updateScoreboardData(void)
 {
-	((void(__thiscall *) (void *_this)) (g_dwSAMP_Addr + SAMP_FUNC_UPDATESCOREBOARDDATA)) (g_SAMP);
+	((void(__thiscall*) (void* _this)) (g_dwSAMP_Addr + SAMP_FUNC_UPDATESCOREBOARDDATA)) (g_SAMP);
 }
 
 void toggleOffScoreboard(void)
 {
-	((void(__thiscall *) (void *_this, bool hideCursor)) (g_dwSAMP_Addr + SAMP_FUNC_DISABLE_SCOREBOARD)) (g_Scoreboard, true);
+	((void(__thiscall*) (void* _this, bool hideCursor)) (g_dwSAMP_Addr + SAMP_FUNC_DISABLE_SCOREBOARD)) (g_Scoreboard, true);
 }
 
 void setSAMPCustomSendRates(int iOnFoot, int iInCar, int iAim, int iHeadSync)
@@ -857,9 +859,9 @@ void setSAMPCustomSendRates(int iOnFoot, int iInCar, int iAim, int iHeadSync)
 	if (g_SAMP == NULL)
 		return;
 
-	memcpy_safe((void *) (g_dwSAMP_Addr + SAMP_ONFOOTSENDRATE), &iOnFoot, sizeof(int));
-	memcpy_safe((void *) (g_dwSAMP_Addr + SAMP_INCARSENDRATE), &iInCar, sizeof(int));
-	memcpy_safe((void *) (g_dwSAMP_Addr + SAMP_AIMSENDRATE), &iAim, sizeof(int));
+	memcpy_safe((void*)(g_dwSAMP_Addr + SAMP_ONFOOTSENDRATE), &iOnFoot, sizeof(int));
+	memcpy_safe((void*)(g_dwSAMP_Addr + SAMP_INCARSENDRATE), &iInCar, sizeof(int));
+	memcpy_safe((void*)(g_dwSAMP_Addr + SAMP_AIMSENDRATE), &iAim, sizeof(int));
 }
 
 int sampPatchDisableNameTags(int iEnabled)
@@ -870,8 +872,8 @@ int sampPatchDisableNameTags(int iEnabled)
 		0,
 		0,
 		{
-			{ 1, (void *) ((uint8_t *) g_dwSAMP_Addr + SAMP_PATCH_DISABLE_NAMETAGS), NULL, (uint8_t *)"\xC3", NULL },
-			{ 1, (void *) ((uint8_t *) g_dwSAMP_Addr + SAMP_PATCH_DISABLE_NAMETAGS_HP), NULL, (uint8_t *)"\xC3", NULL }
+			{ 1, (void*)((uint8_t*)g_dwSAMP_Addr + SAMP_PATCH_DISABLE_NAMETAGS), NULL, (uint8_t*)"\xC3", NULL },
+			{ 1, (void*)((uint8_t*)g_dwSAMP_Addr + SAMP_PATCH_DISABLE_NAMETAGS_HP), NULL, (uint8_t*)"\xC3", NULL }
 		}
 	};
 	if (iEnabled && !sampPatchEnableNameTags_patch.installed)
@@ -889,7 +891,7 @@ int sampPatchDisableInteriorUpdate(int iEnabled)
 		0,
 		0,
 		{
-			{ 1, (void *) ((uint8_t *) g_dwSAMP_Addr + SAMP_PATCH_SKIPSENDINTERIOR), NULL, (uint8_t *)"\xEB", NULL }
+			{ 1, (void*)((uint8_t*)g_dwSAMP_Addr + SAMP_PATCH_SKIPSENDINTERIOR), NULL, (uint8_t*)"\xEB", NULL }
 		}
 	};
 
@@ -908,8 +910,8 @@ int sampPatchDisableScoreboardToggleOn(int iEnabled)
 		0,
 		0,
 		{
-			{ 1, (void *) ((uint8_t *) g_dwSAMP_Addr + SAMP_PATCH_SCOREBOARDTOGGLEON), NULL, (uint8_t *)"\xC3", NULL },
-			{ 1, (void *) ((uint8_t *) g_dwSAMP_Addr + SAMP_PATCH_SCOREBOARDTOGGLEONKEYLOCK), NULL, (uint8_t *)"\xC3", NULL }
+			{ 1, (void*)((uint8_t*)g_dwSAMP_Addr + SAMP_PATCH_SCOREBOARDTOGGLEON), NULL, (uint8_t*)"\xC3", NULL },
+			{ 1, (void*)((uint8_t*)g_dwSAMP_Addr + SAMP_PATCH_SCOREBOARDTOGGLEONKEYLOCK), NULL, (uint8_t*)"\xC3", NULL }
 		}
 	};
 	if (iEnabled && !sampPatchDisableScoreboard_patch.installed)
@@ -927,8 +929,8 @@ int sampPatchDisableChatInputAdjust(int iEnabled)
 		0,
 		0,
 		{
-			{ 6, (void *) ((uint8_t *) g_dwSAMP_Addr + SAMP_PATCH_CHATINPUTADJUST_Y), NULL, (uint8_t *)"\x90\x90\x90\x90\x90\x90", NULL },
-			{ 7, (void *) ((uint8_t *) g_dwSAMP_Addr + SAMP_PATCH_CHATINPUTADJUST_X), NULL, (uint8_t *)"\x90\x90\x90\x90\x90\x90\x90", NULL }
+			{ 6, (void*)((uint8_t*)g_dwSAMP_Addr + SAMP_PATCH_CHATINPUTADJUST_Y), NULL, (uint8_t*)"\x90\x90\x90\x90\x90\x90", NULL },
+			{ 7, (void*)((uint8_t*)g_dwSAMP_Addr + SAMP_PATCH_CHATINPUTADJUST_X), NULL, (uint8_t*)"\x90\x90\x90\x90\x90\x90\x90", NULL }
 		}
 	};
 	if (iEnabled && !sampPatchDisableChatInputAdj_patch.installed)
@@ -944,10 +946,8 @@ void sampPatchDisableAnticheat(void)
 	{
 		"kyenub patch", 0, 0,
 		{
-			{ 1, (void *)(g_dwSAMP_Addr + 0x99250), NULL, (uint8_t *)"\xC3", 0 },
-			{ 8, (void *)(g_dwSAMP_Addr + 0x286923), NULL, (uint8_t *)"\xB8\x45\x00\x00\x00\xC2\x1C\x00", 0 },
-			{ 8, (void *)(g_dwSAMP_Addr + 0x298116), NULL, (uint8_t *)"\xB8\x45\x00\x00\x00\xC2\x1C\x00", 0 },
-			// { 6, (void *) (g_dwSAMP_Addr + 0xB30F0), NULL, (uint8_t *)"\xB8\x01\x00\x00\x00\xC3", 0 }
+			{ 1, (void*)(g_dwSAMP_Addr + 0x9D8B0), NULL, (uint8_t*)"\xC3", 0 },
+			{ 8, (void*)(g_dwSAMP_Addr + 0xC4530), NULL, (uint8_t*)"\xB8\x45\x00\x00\x00\xC2\x1C\x00", 0 },
 		}
 	};
 	patcher_install(&fuckAC);
@@ -955,7 +955,7 @@ void sampPatchDisableAnticheat(void)
 	static uint32_t anticheat = 1;
 	byte acpatch[] = { 0xFF, 0x05, 0x00, 0x00, 0x00, 0x00, 0xA1, 0x00, 0x00, 0x00, 0x00, 0xC3 };
 	*(uint32_t**)&acpatch[2] = *(uint32_t**)&acpatch[7] = &anticheat;
-	memcpy_safe((void *)(g_dwSAMP_Addr + 0x2B9EE4), acpatch, 12);
+	memcpy_safe((void*)(g_dwSAMP_Addr + 0xC474B), acpatch, 12);
 }
 
 uint16_t	anticarjacked_vehid;
@@ -972,7 +972,7 @@ uint8_t _declspec (naked) carjacked_hook(void)
 
 	if (g_Vehicles != NULL && g_Vehicles->pGTA_Vehicle[anticarjacked_vehid] != NULL)
 		vect3_copy(&g_Vehicles->pGTA_Vehicle[anticarjacked_vehid]->base.matrix[4 * 3],
-		cheat_state->_generic.car_jacked_lastPos);
+			cheat_state->_generic.car_jacked_lastPos);
 
 	__asm popad
 	__asm mov ebx, g_dwSAMP_Addr
@@ -985,8 +985,8 @@ uint8_t _declspec (naked) carjacked_hook(void)
 
 uint8_t _declspec (naked) hook_handle_rpc_packet(void)
 {
-	static RPCParameters *pRPCParams = nullptr;
-	static RPCNode *pRPCNode = nullptr;
+	static RPCParameters* pRPCParams = nullptr;
+	static RPCNode* pRPCNode = nullptr;
 	static DWORD dwTmp = 0;
 
 	__asm pushad;
@@ -1003,8 +1003,8 @@ uint8_t _declspec (naked) hook_handle_rpc_packet(void)
 
 uint8_t _declspec (naked) hook_handle_rpc_packet2(void)
 {
-	static RPCParameters *pRPCParams = nullptr;
-	static RPCNode *pRPCNode = nullptr;
+	static RPCParameters* pRPCParams = nullptr;
+	static RPCNode* pRPCNode = nullptr;
 	static DWORD dwTmp = 0;
 
 	__asm pushad;
@@ -1024,18 +1024,18 @@ void __stdcall CNetGame__destructor(void)
 	if (g_SAMP->pRakClientInterface != NULL)
 		delete g_SAMP->pRakClientInterface;
 	g_SAMP->pRakClientInterface = g_RakClient->GetInterface();
-	return ((void(__thiscall *) (void *)) (g_dwSAMP_Addr + SAMP_FUNC_CNETGAMEDESTRUCTOR))(g_SAMP);
+	return ((void(__thiscall*) (void*)) (g_dwSAMP_Addr + SAMP_FUNC_CNETGAMEDESTRUCTOR))(g_SAMP);
 }
 
-void SetupSAMPHook(char *szName, DWORD dwFuncOffset, void *Func, int iType, int iSize, char *szCompareBytes)
+void SetupSAMPHook(char* szName, DWORD dwFuncOffset, void* Func, int iType, int iSize, char* szCompareBytes)
 {
 	CDetour api;
 	int strl = strlen(szCompareBytes);
-	uint8_t *bytes = hex_to_bin(szCompareBytes);
+	uint8_t* bytes = hex_to_bin(szCompareBytes);
 
-	if (!strl || !bytes || memcmp_safe((uint8_t *) g_dwSAMP_Addr + dwFuncOffset, bytes, strl / 2))
+	if (!strl || !bytes || memcmp_safe((uint8_t*)g_dwSAMP_Addr + dwFuncOffset, bytes, strl / 2))
 	{
-		if (api.Create((uint8_t *) ((uint32_t) g_dwSAMP_Addr) + dwFuncOffset, (uint8_t *) Func, iType, iSize) == 0)
+		if (api.Create((uint8_t*)((uint32_t)g_dwSAMP_Addr) + dwFuncOffset, (uint8_t*)Func, iType, iSize) == 0)
 			Log("Failed to hook %s.", szName);
 	}
 	else
