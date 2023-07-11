@@ -525,7 +525,7 @@ static void ini_init ( void )
 		ini_register_data( ent, &set.key_stick_prev, "&0" );
 	if ( (ent = ini_register_entry("key_stick_next", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_stick_next, "&0" );
-	if ( (ent = ini_register_entry("key_stick_nearest", TYPE_KEY)) != NULL )
+	if ( (ent = ini_register_entry("key_stick_nearest", TYPE_KEYCOMBO)) != NULL )
 		ini_register_data( ent, &set.key_stick_nearest, "&0" );
 
 	/* movement */
