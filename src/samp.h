@@ -461,7 +461,8 @@ struct stTrailerData
 struct stPassengerData
 {
 	uint16_t	sVehicleID;
-	uint8_t		byteSeatID;
+	uint8_t		byteSeatID : 6;
+	uint8_t		byteDriveBy : 2;
 	uint8_t		byteCurrentWeapon;
 	uint8_t		byteHealth;
 	uint8_t		byteArmor;
