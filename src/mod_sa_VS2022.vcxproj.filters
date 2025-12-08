@@ -1,0 +1,1310 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="game">
+      <UniqueIdentifier>{3acbb6a1-2dad-4652-a0f4-50998bd6bf34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="game_sa">
+      <UniqueIdentifier>{7e564f64-d0bf-4a5c-89d2-83c66e1b6aad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cheat">
+      <UniqueIdentifier>{ad2fa68d-2906-4414-9dee-9f83e44cc897}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="D3D9">
+      <UniqueIdentifier>{9ae3016e-5310-4986-8c0f-04920b5da7e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sparshash">
+      <UniqueIdentifier>{1b956e19-8747-4fa8-976e-aa5c14c5e5c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sparshash\google">
+      <UniqueIdentifier>{cec61312-62d4-4342-9cb9-d6433b8beebc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sparshash\google\sparsehash">
+      <UniqueIdentifier>{96ffe87c-8439-4110-87cc-638cb4d4dac4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sparshash\windows">
+      <UniqueIdentifier>{5ad2f905-f911-4555-8f40-52cf47962098}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sparshash\windows\google">
+      <UniqueIdentifier>{31cb1d64-d4ce-4c90-a17d-ec556e417472}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sparshash\windows\google\sparsehash">
+      <UniqueIdentifier>{d3f13339-400e-4391-bb01-447f6644f256}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cheat\RakNet">
+      <UniqueIdentifier>{4fca762a-c0e6-4c1a-b4e7-ea6d3aa07b72}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="game_sa\game\C3DMarker.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\C3DMarkers.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CAERadioTrackManager.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CAnimBlendAssocGroup.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CAnimBlendAssociation.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CAnimBlendHierarchy.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CAnimBlendSequence.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CAnimBlendStaticAssociation.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CAnimBlock.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CAnimManager.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CAudio.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CAutomobile.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CBike.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CBmx.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CBoat.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CBuilding.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CCam.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CCamera.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CCarEnterExit.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CCarGenerator.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CCheckpoint.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CCheckpoints.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CCivilianPed.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CClock.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CColModel.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CColPoint.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CControllerConfigManager.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CCoronas.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CDamageManager.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CDoor.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CEntity.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CEvent.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CEventDamage.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CEventGroup.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CEventGunShot.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CEventList.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CExplosion.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CExplosionManager.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CFire.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CFireManager.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CFont.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CFx.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CGame.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CGarage.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CGarages.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CHandlingEntry.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CHandlingManager.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CHud.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CKeyGen.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CMarker.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CMenuManager.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CModelInfo.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CMonsterTruck.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CObject.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\Common.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CPad.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CParticle.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CParticleObject.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CParticleSystemManager.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CPathFind.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CPed.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CPedDamageResponse.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CPedDamageResponseCalculator.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CPedIK.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CPedIntelligence.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CPedModelInfo.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CPedSound.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CPhysical.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CPickup.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CPickups.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CPlane.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CPlayerInfo.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CPlayerPed.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CPools.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CPopulation.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CProjectile.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CProjectileInfo.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CQuadBike.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CRadar.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CRegisteredCorona.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CRemote.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CRenderWare.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CRestart.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CRopes.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CSettings.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CStats.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CStreaming.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CTaskManagementSystem.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CTaskManager.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CTasks.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CText.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CTheCarGenerators.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CTrailer.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CVehicle.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CVehicleScanner.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CVisibilityPlugins.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CWanted.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CWater.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CWaterManager.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CWeapon.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CWeaponInfo.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CWeather.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\CWorld.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\RenderWare.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\Task.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\TaskAttack.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\TaskBasic.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\TaskCar.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\TaskCarAccessories.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\TaskGoTo.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\TaskIK.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\TaskJumpFall.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\TaskPhysicalResponse.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\TaskSecondary.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\game\TaskTypes.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\C3DMarkerSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\C3DMarkersSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CAERadioTrackManagerSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CAnimBlendAssocGroupSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CAnimBlendAssociationSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CAnimBlendHierarchySA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CAnimBlendSequenceSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CAnimBlendStaticAssociationSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CAnimBlockSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CAnimManagerSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CAudioSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CAutomobileSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CBikeSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CBmxSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CBoatSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CBuildingSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CCameraSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CCamSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CCarEnterExitSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CCarGeneratorSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CCheckpointSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CCheckpointsSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CCivilianPedSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CClockSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CColModelSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CColPointSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CControllerConfigManagerSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CCoronasSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CDamageManagerSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CDoorSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CEntitySA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CEventDamageSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CEventGroupSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CEventGunShotSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CEventListSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CEventSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CExplosionManagerSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CExplosionSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CFireManagerSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CFireSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CFontSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CFxSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CGameSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CGarageSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CGaragesSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CHandlingEntrySA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CHandlingManagerSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CHudSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CKeyGenSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CMarkerSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CMatrix.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CMatrix4.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CMatrix_Pad.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CMenuManagerSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CModelInfoSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CMonsterTruckSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CObjectSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\COffsets.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\Common.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CPadSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CParticleObjectSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CParticleSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CParticleSystemManagerSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CPathFindSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CPedDamageResponseCalculatorSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CPedDamageResponseSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CPedIKSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CPedIntelligenceSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CPedModelInfoSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CPedSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CPedSoundSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CPhysicalSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CPickupSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CPickupsSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CPlaneSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CPlayerInfoSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CPlayerPedSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CPoolsSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CPopulationSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CProjectileInfoSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CProjectileSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CQuadBikeSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CRadarSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CRegisteredCoronaSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CRemoteSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CRenderWareSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CRestartSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CRopesSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CSettingsSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CStatsSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CStreamingSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CTaskManagementSystemSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CTaskManagerSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CTasksSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CTextSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CTheCarGeneratorsSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CTrailerSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CVector.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CVector2D.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CVehicleSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CVehicleScannerSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CVisibilityPluginsSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CWantedSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CWaterManagerSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CWaterSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CWeaponInfoSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CWeaponSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CWeatherSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\CWorldSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\gamesa_renderware.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\HeapTrace.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\HookSystem.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\StdInc.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\TaskAttackSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\TaskBasicSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\TaskCarAccessoriesSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\TaskCarSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\TaskGoToSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\TaskIKSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\TaskJumpFallSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\TaskNamesSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\TaskPhysicalResponseSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\TaskSA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="game_sa\TaskSecondarySA.h">
+      <Filter>game_sa</Filter>
+    </ClInclude>
+    <ClInclude Include="ADE32.h">
+      <Filter>Cheat</Filter>
+    </ClInclude>
+    <ClInclude Include="CDetour.h">
+      <Filter>Cheat</Filter>
+    </ClInclude>
+    <ClInclude Include="cheat.h">
+      <Filter>Cheat</Filter>
+    </ClInclude>
+    <ClInclude Include="cheat_actor.h">
+      <Filter>Cheat</Filter>
+    </ClInclude>
+    <ClInclude Include="cheat_funcs.h">
+      <Filter>Cheat</Filter>
+    </ClInclude>
+    <ClInclude Include="cheat_generic.h">
+      <Filter>Cheat</Filter>
+    </ClInclude>
+    <ClInclude Include="cheat_hookers.h">
+      <Filter>Cheat</Filter>
+    </ClInclude>
+    <ClInclude Include="cheat_patches.h">
+      <Filter>Cheat</Filter>
+    </ClInclude>
+    <ClInclude Include="cheat_vehicle.h">
+      <Filter>Cheat</Filter>
+    </ClInclude>
+    <ClInclude Include="cheat_vehRecording.h">
+      <Filter>Cheat</Filter>
+    </ClInclude>
+    <ClInclude Include="debug_classify.h">
+      <Filter>Cheat</Filter>
+    </ClInclude>
+    <ClInclude Include="dumb_menu.h">
+      <Filter>Cheat</Filter>
+    </ClInclude>
+    <ClInclude Include="GTAfuncs.h">
+      <Filter>Cheat</Filter>
+    </ClInclude>
+    <ClInclude Include="ini.h">
+      <Filter>Cheat</Filter>
+    </ClInclude>
+    <ClInclude Include="keyhook.h">
+      <Filter>Cheat</Filter>
+    </ClInclude>
+    <ClInclude Include="math_stuff.h">
+      <Filter>Cheat</Filter>
+    </ClInclude>
+    <ClInclude Include="patcher.h">
+      <Filter>Cheat</Filter>
+    </ClInclude>
+    <ClInclude Include="samp.h">
+      <Filter>Cheat</Filter>
+    </ClInclude>
+    <ClInclude Include="CDirect3DData.h">
+      <Filter>D3D9</Filter>
+    </ClInclude>
+    <ClInclude Include="d3drender.h">
+      <Filter>D3D9</Filter>
+    </ClInclude>
+    <ClInclude Include="proxyIDirect3D9.h">
+      <Filter>D3D9</Filter>
+    </ClInclude>
+    <ClInclude Include="proxyIDirect3DDevice9.h">
+      <Filter>D3D9</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\google\dense_hash_map.h">
+      <Filter>sparshash\google</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\google\dense_hash_set.h">
+      <Filter>sparshash\google</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\google\sparse_hash_map.h">
+      <Filter>sparshash\google</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\google\sparse_hash_set.h">
+      <Filter>sparshash\google</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\google\sparsetable.h">
+      <Filter>sparshash\google</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\google\type_traits.h">
+      <Filter>sparshash\google</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\google\sparsehash\densehashtable.h">
+      <Filter>sparshash\google\sparsehash</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\google\sparsehash\sparsehashtable.h">
+      <Filter>sparshash\google\sparsehash</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\windows\config.h">
+      <Filter>sparshash\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\windows\port.h">
+      <Filter>sparshash\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="sparsehash\windows\google\sparsehash\sparseconfig.h">
+      <Filter>sparshash\windows\google\sparsehash</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h" />
+    <ClInclude Include="stddefs.h" />
+    <ClInclude Include="stdtypes.h" />
+    <ClInclude Include="BitStream.h">
+      <Filter>Cheat\RakNet</Filter>
+    </ClInclude>
+    <ClInclude Include="RakClient.h">
+      <Filter>Cheat\RakNet</Filter>
+    </ClInclude>
+    <ClInclude Include="HookedRakClient.h">
+      <Filter>Cheat\RakNet</Filter>
+    </ClInclude>
+    <ClInclude Include="cheat_samp.h">
+      <Filter>Cheat</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="game_sa\C3DMarkerSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\C3DMarkersSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CAERadioTrackManagerSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CAnimBlendAssocGroupSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CAnimBlendAssociationSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CAnimBlendHierarchySA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CAnimBlendSequenceSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CAnimBlendStaticAssociationSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CAnimBlockSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CAnimManagerSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CAudioSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CAutomobileSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CBikeSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CBmxSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CBoatSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CBuildingSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CCameraSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CCamSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CCarEnterExitSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CCarGeneratorSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CCheckpointSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CCheckpointsSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CCivilianPedSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CClockSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CColModelSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CColPointSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CControllerConfigManagerSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CCoronasSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CDamageManagerSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CDoorSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CEntitySA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CEventDamageSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CEventGroupSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CEventGunShotSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CEventListSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CEventSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CExplosionManagerSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CExplosionSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CFireManagerSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CFireSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CFontSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CFxSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CGameSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CGarageSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CGaragesSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CHandlingEntrySA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CHandlingManagerSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CHudSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CKeyGenSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CMarkerSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CMenuManagerSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CModelInfoSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CMonsterTruckSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CObjectSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\COffsets.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CPadSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CParticleObjectSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CParticleSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CParticleSystemManagerSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CPathFindSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CPedDamageResponseCalculatorSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CPedDamageResponseSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CPedIKSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CPedIntelligenceSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CPedModelInfoSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CPedSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CPedSoundSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CPhysicalSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CPickupSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CPickupsSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CPlaneSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CPlayerInfoSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CPlayerPedSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CPoolsSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CPopulationSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CProjectileInfoSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CProjectileSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CQuadBikeSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CRadarSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CRegisteredCoronaSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CRemoteSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CRenderWareSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CRestartSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CRopesSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CSettingsSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CStatsSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CStreamingSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CTaskManagementSystemSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CTaskManagerSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CTasksSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CTextSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CTheCarGeneratorsSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CTrailerSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CVehicleSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CVehicleScannerSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CVisibilityPluginsSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CWantedSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CWaterManagerSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CWaterSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CWeaponInfoSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CWeaponSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CWeatherSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\CWorldSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\HeapTrace.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\HookSystem.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\StdInc.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\TaskAttackSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\TaskBasicSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\TaskCarAccessoriesSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\TaskCarSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\TaskGoToSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\TaskIKSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\TaskJumpFallSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\TaskNamesSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\TaskPhysicalResponseSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\TaskSA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="game_sa\TaskSecondarySA.cpp">
+      <Filter>game_sa</Filter>
+    </ClCompile>
+    <ClCompile Include="ADE32.cpp">
+      <Filter>Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="CDetour.cpp">
+      <Filter>Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="cheat.cpp">
+      <Filter>Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="cheat_actor.cpp">
+      <Filter>Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="cheat_funcs.cpp">
+      <Filter>Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="cheat_generic.cpp">
+      <Filter>Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="cheat_hookers.cpp">
+      <Filter>Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="cheat_patches.cpp">
+      <Filter>Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="cheat_vehicle.cpp">
+      <Filter>Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="cheat_vehRecording.cpp">
+      <Filter>Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="debug_classify.cpp">
+      <Filter>Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="dumb_menu.cpp">
+      <Filter>Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="GTAfuncs.cpp">
+      <Filter>Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="ini.cpp">
+      <Filter>Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="keyhook.cpp">
+      <Filter>Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="math_stuff.cpp">
+      <Filter>Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="patcher.cpp">
+      <Filter>Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="samp.cpp">
+      <Filter>Cheat</Filter>
+    </ClCompile>
+    <ClCompile Include="CDirect3DData.cpp">
+      <Filter>D3D9</Filter>
+    </ClCompile>
+    <ClCompile Include="d3drender.cpp">
+      <Filter>D3D9</Filter>
+    </ClCompile>
+    <ClCompile Include="proxyIDirect3D9.cpp">
+      <Filter>D3D9</Filter>
+    </ClCompile>
+    <ClCompile Include="proxyIDirect3DDevice9.cpp">
+      <Filter>D3D9</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="BitStream.cpp">
+      <Filter>Cheat\RakNet</Filter>
+    </ClCompile>
+    <ClCompile Include="RakClient.cpp">
+      <Filter>Cheat\RakNet</Filter>
+    </ClCompile>
+    <ClCompile Include="HookedRakClient.cpp">
+      <Filter>Cheat\RakNet</Filter>
+    </ClCompile>
+    <ClCompile Include="cheat_samp.cpp">
+      <Filter>Cheat</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="mod_sa.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="rsrc.rc" />
+  </ItemGroup>
+</Project>
