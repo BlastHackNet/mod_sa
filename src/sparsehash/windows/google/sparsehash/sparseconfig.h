@@ -13,9 +13,9 @@
  *      #defines in your own programs!
  */
 #define GOOGLE_NAMESPACE	::google
-#define HASH_NAMESPACE		stdext
+#define HASH_NAMESPACE		std
 #define HASH_FUN_H			<unordered_map>
-#define SPARSEHASH_HASH		HASH_NAMESPACE::hash_compare
+#define SPARSEHASH_HASH		HASH_NAMESPACE::hash
 #undef HAVE_UINT16_T
 #undef HAVE_U_INT16_T
 #define HAVE___UINT16		1
